@@ -1,0 +1,441 @@
+------------------------------------------------------------------
+released -> waiting: open_dataset-f1f587117c6a0e66ed291cf490f8b0fd = {
+  f: <function open_dataset at 0x7f2741bc84a0>,
+  args: {'name': 'air_temperature', 'chunks': {'lat': 25, 'lon': 25, 'time': -1}},
+  prefix: <open_dataset: waiting: 1>,
+  group_key: open_dataset
+  group: <open_dataset: waiting: 1>
+  dependencies: set()
+  dependents: set()
+}
+------------------------------------------------------------------
+waiting -> processing: open_dataset-f1f587117c6a0e66ed291cf490f8b0fd = {
+  f: <function open_dataset at 0x7f2741bc84a0>,
+  args: {'name': 'air_temperature', 'chunks': {'lat': 25, 'lon': 25, 'time': -1}},
+  prefix: <open_dataset: processing: 1>,
+  group_key: open_dataset
+  group: <open_dataset: processing: 1>
+  dependencies: set()
+  dependents: set()
+}
+------------------------------------------------------------------
+processing -> memory: open_dataset-f1f587117c6a0e66ed291cf490f8b0fd = {
+  f: <function open_dataset at 0x7f2741bc84a0>,
+  args: {'name': 'air_temperature', 'chunks': {'lat': 25, 'lon': 25, 'time': -1}},
+  prefix: <open_dataset: memory: 1>,
+  group_key: open_dataset
+  group: <open_dataset: memory: 1>
+  dependencies: set()
+  dependents: set()
+}
+------------------------------------------------------------------
+memory -> forgotten: open_dataset-f1f587117c6a0e66ed291cf490f8b0fd = {
+  f: <function open_dataset at 0x7f2741bc84a0>,
+  args: {'name': 'air_temperature', 'chunks': {'lat': 25, 'lon': 25, 'time': -1}},
+  prefix: <open_dataset: forgotten: 1>,
+  group_key: open_dataset
+  group: <open_dataset: forgotten: 1>
+  dependencies: set()
+  dependents: set()
+}
+------------------------------------------------------------------
+released -> waiting: original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426 = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': ImplicitToExplicitIndexingAdapter(array=CopyOnWriteArray(array=LazilyIndexedArray(array=_ElementwiseFunctionArray(<xarray.backends.scipy_.ScipyArrayWrapper object at 0x7f26f16aba70>, func=functools.partial(<function _scale_offset_decoding at 0x7f2741f1c040>, scale_factor=np.float64(0.01), add_offset=None, dtype=<class 'numpy.float64'>), dtype=dtype('float64')), key=BasicIndexer((slice(None, None, None), slice(None, None, None), slice(None, None, None))))))},
+  prefix: <original: waiting: 1>,
+  group_key: original
+  group: <original: waiting: 1>
+  dependencies: set()
+  dependents: {<TaskState ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 2) released>, <TaskState ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 0) released>, <TaskState ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 1) released>}
+}
+------------------------------------------------------------------
+waiting -> processing: original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426 = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': ImplicitToExplicitIndexingAdapter(array=CopyOnWriteArray(array=LazilyIndexedArray(array=_ElementwiseFunctionArray(<xarray.backends.scipy_.ScipyArrayWrapper object at 0x7f26f16aba70>, func=functools.partial(<function _scale_offset_decoding at 0x7f2741f1c040>, scale_factor=np.float64(0.01), add_offset=None, dtype=<class 'numpy.float64'>), dtype=dtype('float64')), key=BasicIndexer((slice(None, None, None), slice(None, None, None), slice(None, None, None))))))},
+  prefix: <original: processing: 1>,
+  group_key: original
+  group: <original: processing: 1>
+  dependencies: set()
+  dependents: {<TaskState ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 2) released>, <TaskState ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 0) released>, <TaskState ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 1) released>}
+}
+------------------------------------------------------------------
+released -> waiting: ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 2) = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': (functools.partial(<function mean_agg at 0x7f26f1819800>, dtype=dtype('float64'), axis=(0,), keepdims=False), [(subgraph_callable-b9004e95e05fca8c298123661a5ef903, 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426', (slice(0, 2920, None), slice(0, 25, None), slice(50, 53, None)))])},
+  prefix: <mean_chunk: released: 2, waiting: 1>,
+  group_key: mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a
+  group: <mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a: released: 2, waiting: 1>
+  dependencies: {<TaskState 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426' processing>}
+  dependents: {<TaskState ('mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 2) released>}
+}
+------------------------------------------------------------------
+released -> waiting: ('mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 2) = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 2)},
+  prefix: <mean_agg-aggregate: released: 2, waiting: 1>,
+  group_key: mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a
+  group: <mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a: released: 2, waiting: 1>
+  dependencies: {<TaskState ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 2) waiting>}
+  dependents: set()
+}
+------------------------------------------------------------------
+released -> waiting: ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 1) = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': (functools.partial(<function mean_agg at 0x7f26f1819800>, dtype=dtype('float64'), axis=(0,), keepdims=False), [(subgraph_callable-b9004e95e05fca8c298123661a5ef903, 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426', (slice(0, 2920, None), slice(0, 25, None), slice(25, 50, None)))])},
+  prefix: <mean_chunk: released: 1, waiting: 2>,
+  group_key: mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a
+  group: <mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a: released: 1, waiting: 2>
+  dependencies: {<TaskState 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426' processing>}
+  dependents: {<TaskState ('mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 1) released>}
+}
+------------------------------------------------------------------
+released -> waiting: ('mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 1) = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 1)},
+  prefix: <mean_agg-aggregate: released: 1, waiting: 2>,
+  group_key: mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a
+  group: <mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a: released: 1, waiting: 2>
+  dependencies: {<TaskState ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 1) waiting>}
+  dependents: set()
+}
+------------------------------------------------------------------
+released -> waiting: ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 0) = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': (functools.partial(<function mean_agg at 0x7f26f1819800>, dtype=dtype('float64'), axis=(0,), keepdims=False), [(subgraph_callable-b9004e95e05fca8c298123661a5ef903, 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426', (slice(0, 2920, None), slice(0, 25, None), slice(0, 25, None)))])},
+  prefix: <mean_chunk: waiting: 3>,
+  group_key: mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a
+  group: <mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a: waiting: 3>
+  dependencies: {<TaskState 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426' processing>}
+  dependents: {<TaskState ('mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 0) released>}
+}
+------------------------------------------------------------------
+released -> waiting: ('mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 0) = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 0)},
+  prefix: <mean_agg-aggregate: waiting: 3>,
+  group_key: mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a
+  group: <mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a: waiting: 3>
+  dependencies: {<TaskState ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 0) waiting>}
+  dependents: set()
+}
+------------------------------------------------------------------
+processing -> memory: original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426 = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': ImplicitToExplicitIndexingAdapter(array=CopyOnWriteArray(array=LazilyIndexedArray(array=_ElementwiseFunctionArray(<xarray.backends.scipy_.ScipyArrayWrapper object at 0x7f26f16aba70>, func=functools.partial(<function _scale_offset_decoding at 0x7f2741f1c040>, scale_factor=np.float64(0.01), add_offset=None, dtype=<class 'numpy.float64'>), dtype=dtype('float64')), key=BasicIndexer((slice(None, None, None), slice(None, None, None), slice(None, None, None))))))},
+  prefix: <original: memory: 1>,
+  group_key: original
+  group: <original: memory: 1>
+  dependencies: set()
+  dependents: {<TaskState ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 2) waiting>, <TaskState ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 0) waiting>, <TaskState ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 1) waiting>}
+}
+------------------------------------------------------------------
+waiting -> processing: ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 2) = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': (functools.partial(<function mean_agg at 0x7f26f1819800>, dtype=dtype('float64'), axis=(0,), keepdims=False), [(subgraph_callable-b9004e95e05fca8c298123661a5ef903, 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426', (slice(0, 2920, None), slice(0, 25, None), slice(50, 53, None)))])},
+  prefix: <mean_chunk: processing: 1, waiting: 2>,
+  group_key: mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a
+  group: <mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a: processing: 1, waiting: 2>
+  dependencies: {<TaskState 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426' memory>}
+  dependents: {<TaskState ('mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 2) waiting>}
+}
+------------------------------------------------------------------
+waiting -> processing: ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 1) = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': (functools.partial(<function mean_agg at 0x7f26f1819800>, dtype=dtype('float64'), axis=(0,), keepdims=False), [(subgraph_callable-b9004e95e05fca8c298123661a5ef903, 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426', (slice(0, 2920, None), slice(0, 25, None), slice(25, 50, None)))])},
+  prefix: <mean_chunk: processing: 2, waiting: 1>,
+  group_key: mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a
+  group: <mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a: processing: 2, waiting: 1>
+  dependencies: {<TaskState 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426' memory>}
+  dependents: {<TaskState ('mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 1) waiting>}
+}
+------------------------------------------------------------------
+waiting -> processing: ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 0) = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': (functools.partial(<function mean_agg at 0x7f26f1819800>, dtype=dtype('float64'), axis=(0,), keepdims=False), [(subgraph_callable-b9004e95e05fca8c298123661a5ef903, 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426', (slice(0, 2920, None), slice(0, 25, None), slice(0, 25, None)))])},
+  prefix: <mean_chunk: processing: 3>,
+  group_key: mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a
+  group: <mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a: processing: 3>
+  dependencies: {<TaskState 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426' memory>}
+  dependents: {<TaskState ('mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 0) waiting>}
+}
+------------------------------------------------------------------
+processing -> memory: ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 2) = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': (functools.partial(<function mean_agg at 0x7f26f1819800>, dtype=dtype('float64'), axis=(0,), keepdims=False), [(subgraph_callable-b9004e95e05fca8c298123661a5ef903, 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426', (slice(0, 2920, None), slice(0, 25, None), slice(50, 53, None)))])},
+  prefix: <mean_chunk: memory: 1, processing: 2>,
+  group_key: mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a
+  group: <mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a: memory: 1, processing: 2>
+  dependencies: {<TaskState 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426' memory>}
+  dependents: {<TaskState ('mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 2) waiting>}
+}
+------------------------------------------------------------------
+waiting -> processing: ('mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 2) = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 2)},
+  prefix: <mean_agg-aggregate: processing: 1, waiting: 2>,
+  group_key: mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a
+  group: <mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a: processing: 1, waiting: 2>
+  dependencies: {<TaskState ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 2) memory>}
+  dependents: set()
+}
+------------------------------------------------------------------
+processing -> memory: ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 1) = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': (functools.partial(<function mean_agg at 0x7f26f1819800>, dtype=dtype('float64'), axis=(0,), keepdims=False), [(subgraph_callable-b9004e95e05fca8c298123661a5ef903, 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426', (slice(0, 2920, None), slice(0, 25, None), slice(25, 50, None)))])},
+  prefix: <mean_chunk: memory: 2, processing: 1>,
+  group_key: mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a
+  group: <mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a: memory: 2, processing: 1>
+  dependencies: {<TaskState 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426' memory>}
+  dependents: {<TaskState ('mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 1) waiting>}
+}
+------------------------------------------------------------------
+waiting -> processing: ('mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 1) = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 1)},
+  prefix: <mean_agg-aggregate: processing: 2, waiting: 1>,
+  group_key: mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a
+  group: <mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a: processing: 2, waiting: 1>
+  dependencies: {<TaskState ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 1) memory>}
+  dependents: set()
+}
+------------------------------------------------------------------
+processing -> memory: ('mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 2) = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 2)},
+  prefix: <mean_agg-aggregate: memory: 1, processing: 1, waiting: 1>,
+  group_key: mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a
+  group: <mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a: memory: 1, processing: 1, waiting: 1>
+  dependencies: {<TaskState ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 2) memory>}
+  dependents: set()
+}
+------------------------------------------------------------------
+memory -> released: ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 2) = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': (functools.partial(<function mean_agg at 0x7f26f1819800>, dtype=dtype('float64'), axis=(0,), keepdims=False), [(subgraph_callable-b9004e95e05fca8c298123661a5ef903, 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426', (slice(0, 2920, None), slice(0, 25, None), slice(50, 53, None)))])},
+  prefix: <mean_chunk: memory: 1, processing: 1, released: 1>,
+  group_key: mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a
+  group: <mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a: memory: 1, processing: 1, released: 1>
+  dependencies: {<TaskState 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426' memory>}
+  dependents: {<TaskState ('mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 2) memory>}
+}
+------------------------------------------------------------------
+processing -> memory: ('mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 1) = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 1)},
+  prefix: <mean_agg-aggregate: memory: 2, waiting: 1>,
+  group_key: mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a
+  group: <mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a: memory: 2, waiting: 1>
+  dependencies: {<TaskState ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 1) memory>}
+  dependents: set()
+}
+------------------------------------------------------------------
+memory -> released: ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 1) = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': (functools.partial(<function mean_agg at 0x7f26f1819800>, dtype=dtype('float64'), axis=(0,), keepdims=False), [(subgraph_callable-b9004e95e05fca8c298123661a5ef903, 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426', (slice(0, 2920, None), slice(0, 25, None), slice(25, 50, None)))])},
+  prefix: <mean_chunk: processing: 1, released: 2>,
+  group_key: mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a
+  group: <mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a: processing: 1, released: 2>
+  dependencies: {<TaskState 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426' memory>}
+  dependents: {<TaskState ('mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 1) memory>}
+}
+------------------------------------------------------------------
+processing -> memory: ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 0) = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': (functools.partial(<function mean_agg at 0x7f26f1819800>, dtype=dtype('float64'), axis=(0,), keepdims=False), [(subgraph_callable-b9004e95e05fca8c298123661a5ef903, 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426', (slice(0, 2920, None), slice(0, 25, None), slice(0, 25, None)))])},
+  prefix: <mean_chunk: memory: 1, released: 2>,
+  group_key: mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a
+  group: <mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a: memory: 1, released: 2>
+  dependencies: {<TaskState 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426' memory>}
+  dependents: {<TaskState ('mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 0) waiting>}
+}
+------------------------------------------------------------------
+memory -> released: original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426 = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': ImplicitToExplicitIndexingAdapter(array=CopyOnWriteArray(array=LazilyIndexedArray(array=_ElementwiseFunctionArray(<xarray.backends.scipy_.ScipyArrayWrapper object at 0x7f26f16aba70>, func=functools.partial(<function _scale_offset_decoding at 0x7f2741f1c040>, scale_factor=np.float64(0.01), add_offset=None, dtype=<class 'numpy.float64'>), dtype=dtype('float64')), key=BasicIndexer((slice(None, None, None), slice(None, None, None), slice(None, None, None))))))},
+  prefix: <original: released: 1>,
+  group_key: original
+  group: <original: released: 1>
+  dependencies: set()
+  dependents: {<TaskState ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 2) released>, <TaskState ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 0) memory>, <TaskState ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 1) released>}
+}
+------------------------------------------------------------------
+waiting -> processing: ('mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 0) = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 0)},
+  prefix: <mean_agg-aggregate: memory: 2, processing: 1>,
+  group_key: mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a
+  group: <mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a: memory: 2, processing: 1>
+  dependencies: {<TaskState ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 0) memory>}
+  dependents: set()
+}
+------------------------------------------------------------------
+processing -> memory: ('mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 0) = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 0)},
+  prefix: <mean_agg-aggregate: memory: 3>,
+  group_key: mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a
+  group: <mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a: memory: 3>
+  dependencies: {<TaskState ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 0) memory>}
+  dependents: set()
+}
+------------------------------------------------------------------
+memory -> released: ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 0) = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': (functools.partial(<function mean_agg at 0x7f26f1819800>, dtype=dtype('float64'), axis=(0,), keepdims=False), [(subgraph_callable-b9004e95e05fca8c298123661a5ef903, 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426', (slice(0, 2920, None), slice(0, 25, None), slice(0, 25, None)))])},
+  prefix: <mean_chunk: released: 3>,
+  group_key: mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a
+  group: <mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a: released: 3>
+  dependencies: {<TaskState 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426' released>}
+  dependents: {<TaskState ('mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 0) memory>}
+}
+------------------------------------------------------------------
+memory -> forgotten: ('mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 1) = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 1)},
+  prefix: <mean_agg-aggregate: forgotten: 1, memory: 2>,
+  group_key: mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a
+  group: <mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a: forgotten: 1, memory: 2>
+  dependencies: {<TaskState ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 1) released>}
+  dependents: set()
+}
+------------------------------------------------------------------
+released -> forgotten: ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 1) = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': (functools.partial(<function mean_agg at 0x7f26f1819800>, dtype=dtype('float64'), axis=(0,), keepdims=False), [(subgraph_callable-b9004e95e05fca8c298123661a5ef903, 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426', (slice(0, 2920, None), slice(0, 25, None), slice(25, 50, None)))])},
+  prefix: <mean_chunk: forgotten: 1, released: 2>,
+  group_key: mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a
+  group: <mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a: forgotten: 1, released: 2>
+  dependencies: {<TaskState 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426' released>}
+  dependents: set()
+}
+------------------------------------------------------------------
+memory -> forgotten: ('mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 2) = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 2)},
+  prefix: <mean_agg-aggregate: forgotten: 2, memory: 1>,
+  group_key: mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a
+  group: <mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a: forgotten: 2, memory: 1>
+  dependencies: {<TaskState ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 2) released>}
+  dependents: set()
+}
+------------------------------------------------------------------
+released -> forgotten: ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 2) = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': (functools.partial(<function mean_agg at 0x7f26f1819800>, dtype=dtype('float64'), axis=(0,), keepdims=False), [(subgraph_callable-b9004e95e05fca8c298123661a5ef903, 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426', (slice(0, 2920, None), slice(0, 25, None), slice(50, 53, None)))])},
+  prefix: <mean_chunk: forgotten: 2, released: 1>,
+  group_key: mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a
+  group: <mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a: forgotten: 2, released: 1>
+  dependencies: {<TaskState 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426' released>}
+  dependents: set()
+}
+------------------------------------------------------------------
+released -> waiting: baz-b8acdd4bb9a715a7b2b1df2428b90c80 = {
+  f: <function baz at 0x7f26f16b5620>,
+  args: {'x': [1, 2, 3], 'd': 3, 'a': 6},
+  prefix: <baz: waiting: 1>,
+  group_key: baz
+  group: <baz: waiting: 1>
+  dependencies: set()
+  dependents: set()
+}
+------------------------------------------------------------------
+waiting -> processing: baz-b8acdd4bb9a715a7b2b1df2428b90c80 = {
+  f: <function baz at 0x7f26f16b5620>,
+  args: {'x': [1, 2, 3], 'd': 3, 'a': 6},
+  prefix: <baz: processing: 1>,
+  group_key: baz
+  group: <baz: processing: 1>
+  dependencies: set()
+  dependents: set()
+}
+------------------------------------------------------------------
+memory -> forgotten: ('mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 0) = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 0)},
+  prefix: <mean_agg-aggregate: forgotten: 3>,
+  group_key: mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a
+  group: <mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a: forgotten: 3>
+  dependencies: {<TaskState ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 0) released>}
+  dependents: set()
+}
+------------------------------------------------------------------
+released -> forgotten: ('mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a', 0, 0) = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': (functools.partial(<function mean_agg at 0x7f26f1819800>, dtype=dtype('float64'), axis=(0,), keepdims=False), [(subgraph_callable-b9004e95e05fca8c298123661a5ef903, 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426', (slice(0, 2920, None), slice(0, 25, None), slice(0, 25, None)))])},
+  prefix: <mean_chunk: forgotten: 3>,
+  group_key: mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a
+  group: <mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a: forgotten: 3>
+  dependencies: {<TaskState 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426' released>}
+  dependents: set()
+}
+------------------------------------------------------------------
+released -> forgotten: original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426 = {
+  f: <function execute_task at 0x7f274e9be480>,
+  args: {'task': ImplicitToExplicitIndexingAdapter(array=CopyOnWriteArray(array=LazilyIndexedArray(array=_ElementwiseFunctionArray(<xarray.backends.scipy_.ScipyArrayWrapper object at 0x7f26f16aba70>, func=functools.partial(<function _scale_offset_decoding at 0x7f2741f1c040>, scale_factor=np.float64(0.01), add_offset=None, dtype=<class 'numpy.float64'>), dtype=dtype('float64')), key=BasicIndexer((slice(None, None, None), slice(None, None, None), slice(None, None, None))))))},
+  prefix: <original: forgotten: 1>,
+  group_key: original
+  group: <original: forgotten: 1>
+  dependencies: set()
+  dependents: set()
+}
+------------------------------------------------------------------
+processing -> memory: baz-b8acdd4bb9a715a7b2b1df2428b90c80 = {
+  f: <function baz at 0x7f26f16b5620>,
+  args: {'x': [1, 2, 3], 'd': 3, 'a': 6},
+  prefix: <baz: memory: 1>,
+  group_key: baz
+  group: <baz: memory: 1>
+  dependencies: set()
+  dependents: set()
+}
+------------------------------------------------------------------
+released -> waiting: sin-2c9fba60d543f760e63fbdffdb396242 = {
+  f: <built-in function sin>,
+  args: {'x': 9},
+  prefix: <sin: waiting: 1>,
+  group_key: sin
+  group: <sin: waiting: 1>
+  dependencies: set()
+  dependents: set()
+}
+------------------------------------------------------------------
+waiting -> processing: sin-2c9fba60d543f760e63fbdffdb396242 = {
+  f: <built-in function sin>,
+  args: {'x': 9},
+  prefix: <sin: processing: 1>,
+  group_key: sin
+  group: <sin: processing: 1>
+  dependencies: set()
+  dependents: set()
+}
+------------------------------------------------------------------
+processing -> memory: sin-2c9fba60d543f760e63fbdffdb396242 = {
+  f: <built-in function sin>,
+  args: {'x': 9},
+  prefix: <sin: memory: 1>,
+  group_key: sin
+  group: <sin: memory: 1>
+  dependencies: set()
+  dependents: set()
+}
+[9, 2, 3] -- 0.4121184852417566
+------------------------------------------------------------------
+memory -> forgotten: baz-b8acdd4bb9a715a7b2b1df2428b90c80 = {
+  f: <function baz at 0x7f26f16b5620>,
+  args: {'x': [1, 2, 3], 'd': 3, 'a': 6},
+  prefix: <baz: forgotten: 1>,
+  group_key: baz
+  group: <baz: forgotten: 1>
+  dependencies: set()
+  dependents: set()
+}
+------------------------------------------------------------------
+memory -> forgotten: sin-2c9fba60d543f760e63fbdffdb396242 = {
+  f: <built-in function sin>,
+  args: {'x': 9},
+  prefix: <sin: forgotten: 1>,
+  group_key: sin
+  group: <sin: forgotten: 1>
+  dependencies: set()
+  dependents: set()
+}
