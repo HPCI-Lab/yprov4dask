@@ -175,3 +175,6 @@ cython_debug/
 
 # setup.py stuff
 dask_provenance.egg-info/
+
+# vscode
+.vscode/
