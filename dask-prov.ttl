@@ -41,12 +41,40 @@ dskp:dtype a rdf:Propery ;
     rdfs:isDefinedBy <file://./dask-prov.ttl> ;
 	rdfs:label "dtype" ;
 	rdfs:comment "The datatype of the value" ;
-	rdfs:range prov:Activity ;
+	rdfs:range prov:Entity ;
 	rdfs:domain rdfs:Literal .
 
 dskp:nbyte a rdf:Propery ;
     rdfs:isDefinedBy <file://./dask-prov.ttl> ;
 	rdfs:label "nbyte" ;
 	rdfs:comment "The size in bytes of the value" ;
-	rdfs:range prov:Activity ;
+	rdfs:range prov:Entity ;
+	rdfs:domain rdfs:Literal .
+
+dskp:is_error a rdf:Propery ;
+    rdfs:isDefinedBy <file://./dask-prov.ttl> ;
+	rdfs:label "is_error" ;
+	rdfs:comment "Tells if this value is an exception raised because an error has occured" ;
+	rdfs:range prov:Entity ;
+	rdfs:domain rdfs:Literal .
+
+dskp:exception_text a rdf:Propery ;
+    rdfs:isDefinedBy <file://./dask-prov.ttl> ;
+	rdfs:label "exception_text" ;
+	rdfs:comment "The text message of the exception" ;
+	rdfs:range prov:Entity ;
+	rdfs:domain rdfs:Literal .
+
+dskp:stacktrace a rdf:Propery ;
+    rdfs:isDefinedBy <file://./dask-prov.ttl> ;
+	rdfs:label "stacktrace" ;
+	rdfs:comment "The stacktrace of the exception" ;
+	rdfs:range prov:Entity ;
+	rdfs:domain rdfs:Literal .
+
+dskp:blamed_task a rdf:Propery ;
+    rdfs:isDefinedBy <file://./dask-prov.ttl> ;
+	rdfs:label "blamed_task" ;
+	rdfs:comment "Key for the subtask that generated this exception" ;
+	rdfs:range prov:Entity ;
 	rdfs:domain rdfs:Literal .

@@ -25,6 +25,8 @@ class Documenter:
   def __init__(self, **kwargs):
     self.document = prov.ProvDocument()
     self.document.set_default_namespace('dask-prov.dict')
+    self.format = kwargs.get('format')
+    self.destination = kwargs.get('destination')
     self.kwargs = kwargs
   
   def register_function_call(
@@ -89,11 +91,35 @@ class Documenter:
     now = dt.datetime.now()
     self.document.wasGeneratedBy(entity=name, activity=task_id, time=now)
 
+  def register_function_error(
+    self, task_id: str, exception_text: str, stacktrace: str | None,
+    blamed_task: TaskState | None
+  ):
+    task_id = sanitize(task_id)
+    name = f'{task_id}.return_value'
+    attributes = {
+      'is_error': True,
+      'exception_text': exception_text,
+    }
+    if stacktrace is not None:
+      attributes.setdefault('stacktrace', stacktrace)
+
+    if blamed_task is not None and blamed_task.key != task_id:
+      other_task_id = sanitize(str(blamed_task.key))
+      attributed.setdefault('blamed_task', other_task_id)
+      self.document.wasInformedBy(informed=task_id, informant=other_task_id)
+
+    self.document.entity(
+      identifier=name,
+      other_attributes=attributes
+    )
+    self.document.wasGeneratedBy(entity=name, activity=task_id, time=dt.datetime.now())
+
   def serialize(self, destination, format: str | None, **kwargs: dict[str, any]):
-    if format is None and 'format' in self.kwargs:
-      format = kwargs['format']
-    if destination is None and 'destination' in self.kwargs:
-      destination = self.kwargs['destination']
+    if format is None and self.format is not None:
+      format = self.format
+    if destination is None and self.destination is not None:
+      destination = self.destination
 
     return self.document.serialize(
       destination=destination, format=format, **kwargs

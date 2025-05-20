@@ -1,3 +1,4 @@
+import dask
 from distributed import Client
 from prov_tracking.plugin import ProvTracker
 import xarray as xr
@@ -15,7 +16,7 @@ def baz(x, a, d):
 
 if __name__ == '__main__':
   client = Client()
-  plugin = ProvTracker(destination = 'prov.json', format = 'json', indent = 2)
+  plugin = ProvTracker(destination = 'prov.json', format = 'json', indent = 2, keep_stacktrace = True)
   client.register_plugin(plugin)
   plugin.start(client.scheduler)
 
@@ -30,16 +31,15 @@ if __name__ == '__main__':
   ).result()
   # Computes the mean along the `time` axis. The arrays is reduced from 3D to 2D.
   # It create a 2D matrix in which, for each pair of (lat, lon), it shows the
-  # average air temperature across time. Chunking is preserved, so whe have chunks
+  # average air temperature across time. Chunking is preserved, so we have chunks
   # of size (25) for lat and (25, 25, 3) for lon
   air = ds['air']
   ds_mean = ds.mean(dim = 'time').compute()
   #ds.close()
   #ds_mean.close()
 
-  a = [1, 2, 3]
-  x = client.submit(baz, a, d=3, a=6)
+  x = client.submit(baz, ds_mean['air'], d=3, a=6)
   z = client.submit(math.sin, x.result()[0])
   print(f'{x.result()} -- {z.result()}')
+  
   client.close()
-  client.cluster.close()

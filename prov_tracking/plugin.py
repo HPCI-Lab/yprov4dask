@@ -12,8 +12,15 @@ class ProvTracker(SchedulerPlugin):
   """Prov tracking plugin"""
 
   def __init__(self, **kwargs):
+    # kwargs that are only used by the plugin, should be removed because some
+    # methods used by libraries, unpack kwargs and any additional argument would
+    # cause an exception
+    self.keep_stacktrace: bool = kwargs.pop('keep_stacktrace') or False
+    
     self.documenter = Documenter(**kwargs)
-    self.kwargs = kwargs
+    self.destination: str = kwargs.get('destination')
+    self.kwargs: dict[str, any] = kwargs
+    self.closed = False
 
   def start(self, scheduler: Scheduler):
     self._scheduler = scheduler
@@ -23,25 +30,7 @@ class ProvTracker(SchedulerPlugin):
     *args, **kwargs
   ):
     task = self._scheduler.tasks[key]
-#    func = task.run_spec[0]
-#    f_args = task.run_spec[1]
-#    f_kwargs = task.run_spec[2]
-#    args_dict = {}
-#    param_names = list(inspect.signature(func).parameters)
-#    for name, value in zip(param_names, f_args):
-#      args_dict[name] = value
-#    args_dict.update(f_kwargs)
-#    print(f'''------------------------------------------------------------------
-#{start} -> {finish}: {key} = {{
-#  f: {func},
-#  args: {args_dict},
-#  prefix: {task.prefix},
-#  group_key: {task.group_key}
-#  group: {task.group}
-#  dependencies: {task.dependencies}
-#  dependents: {task.dependents},
-#  result: {task.type} ({task.nbytes})
-#}}''')
+
     # A new task has been assigned to a worker for compute: register the activity
     # and other related data
     if start == 'processing':
@@ -64,17 +53,29 @@ class ProvTracker(SchedulerPlugin):
       except Exception as e:
         print(f'Task {key}: {e}')
     elif start == 'memory':
+      # A task is finished succesfully, so register its result
       t = task.type
       size = task.nbytes
       self.documenter.register_function_result(str(key), t, size)
     elif start == 'erred':
-      pass
-    else:
-      pass
+      # A task is finished with an error, so register the exception
+      text = task.exception_text
+      blamed_task = task.exception_blame
+      traceback = None
+      if self.keep_stacktrace:
+        traceback = task.traceback_text
+      self.documenter.register_function_error(str(key), text, traceback, blamed_task)
+
+      # When an exception occurs, the plugin is closed before it has the chance
+      # to detect the erred task and register its information. So, if the plugin
+      # has already been closed, serialize the document again
+      if self.closed:
+        self.serialize_document(**self.kwargs)
 
   async def close(self):
-    ser_str = self.documenter.serialize(**self.kwargs)
-    if 'destination' not in self.kwargs:
+    self.closed = True
+    ser_str = self.serialize_document(**self.kwargs)
+    if ser_str is not None:
       print(ser_str)
 
   @staticmethod
@@ -123,3 +124,6 @@ class ProvTracker(SchedulerPlugin):
         return tuple(task.run_spec)
 
     return (internal_func, (), {})
+
+  def serialize_document(self, **kwargs: dict[str, any]) -> str | None:
+    return self.documenter.serialize(**self.kwargs)

@@ -4,61 +4,61 @@
   },
   "activity": {
     "open_dataset-f1f587117c6a0e66ed291cf490f8b0fd": {
-      "prov:startTime": "2025-05-19T13:20:26.337849",
+      "prov:startTime": "2025-05-20T16:29:04.592212",
       "name": "open_dataset",
       "module": "xarray.tutorial",
       "group": "open_dataset"
     },
     "original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426": {
-      "prov:startTime": "2025-05-19T13:20:27.002482",
+      "prov:startTime": "2025-05-20T16:29:05.124956",
       "name": "execute_task",
       "module": "distributed.worker",
       "group": "original"
     },
     "mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a_0_2": {
-      "prov:startTime": "2025-05-19T13:20:27.539494",
+      "prov:startTime": "2025-05-20T16:29:05.681325",
       "name": "mean_agg",
       "module": "dask.array.reductions",
       "group": "mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a"
     },
     "mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a_0_1": {
-      "prov:startTime": "2025-05-19T13:20:27.565228",
+      "prov:startTime": "2025-05-20T16:29:05.714224",
       "name": "mean_agg",
       "module": "dask.array.reductions",
       "group": "mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a"
     },
     "mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a_0_2": {
-      "prov:startTime": "2025-05-19T13:20:27.569161",
+      "prov:startTime": "2025-05-20T16:29:05.717695",
       "name": "execute_task",
       "module": "distributed.worker",
       "group": "mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a"
     },
     "mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a_0_1": {
-      "prov:startTime": "2025-05-19T13:20:27.571969",
+      "prov:startTime": "2025-05-20T16:29:05.721282",
       "name": "execute_task",
       "module": "distributed.worker",
       "group": "mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a"
     },
     "mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a_0_0": {
-      "prov:startTime": "2025-05-19T13:20:27.579077",
+      "prov:startTime": "2025-05-20T16:29:05.723766",
       "name": "mean_agg",
       "module": "dask.array.reductions",
       "group": "mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a"
     },
     "mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a_0_0": {
-      "prov:startTime": "2025-05-19T13:20:27.584209",
+      "prov:startTime": "2025-05-20T16:29:05.731626",
       "name": "execute_task",
       "module": "distributed.worker",
       "group": "mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a"
     },
-    "baz-b8acdd4bb9a715a7b2b1df2428b90c80": {
-      "prov:startTime": "2025-05-19T13:20:27.604955",
+    "baz-f45b43271a98185baa4524e4171d0314": {
+      "prov:startTime": "2025-05-20T16:29:05.761967",
       "name": "baz",
       "module": "__main__",
       "group": "baz"
     },
-    "sin-2c9fba60d543f760e63fbdffdb396242": {
-      "prov:startTime": "2025-05-19T13:20:27.620447",
+    "sin-0beafd3fb9f626381bbd1a26d21504d5": {
+      "prov:startTime": "2025-05-20T16:29:06.852134",
       "name": "sin",
       "module": "math",
       "group": "sin"
@@ -78,7 +78,7 @@
       "nbyte": "24697"
     },
     "original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426.task": {
-      "value": "ImplicitToExplicitIndexingAdapter(array=CopyOnWriteArray(array=LazilyIndexedArray(array=_ElementwiseFunctionArray(<xarray.backends.scipy_.ScipyArrayWrapper object at 0x7f8725f5cc20>, func=functools.partial(<function _scale_offset_decoding at 0x7f876a6200e0>, scale_factor=np.float64(0.01), add_offset=None, dtype=<class 'numpy.float64'>), dtype=dtype('float64')), key=BasicIndexer((slice(None, None, None), slice(None, None, None), slice(None, None, None))))))",
+      "value": "ImplicitToExplicitIndexingAdapter(array=CopyOnWriteArray(array=LazilyIndexedArray(array=_ElementwiseFunctionArray(<xarray.backends.scipy_.ScipyArrayWrapper object at 0x7f303d2fd730>, func=functools.partial(<function _scale_offset_decoding at 0x7f308d91c2c0>, scale_factor=np.float64(0.01), add_offset=None, dtype=<class 'numpy.float64'>), dtype=dtype('float64')), key=BasicIndexer((slice(None, None, None), slice(None, None, None), slice(None, None, None))))))",
       "dtype": "ImplicitToExplicitIndexingAdapter"
     },
     "mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a_0_2.pairs": {
@@ -114,7 +114,7 @@
       "dtype": "bool"
     },
     "mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a_0_2.task": {
-      "value": "(\"functools.partial(<function mean_agg at 0x7f8725f1cc20>, dtype=dtype('float64'), axis=(0,), keepdims=False)\", [('subgraph_callable-b9004e95e05fca8c298123661a5ef903', 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426', ('slice(0, 2920, None)', 'slice(0, 25, None)', 'slice(50, 53, None)'))])",
+      "value": "(\"functools.partial(<function mean_agg at 0x7f303d2b8c20>, dtype=dtype('float64'), axis=(0,), keepdims=False)\", [('subgraph_callable-b9004e95e05fca8c298123661a5ef903', 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426', ('slice(0, 2920, None)', 'slice(0, 25, None)', 'slice(50, 53, None)'))])",
       "dtype": "tuple"
     },
     "mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a_0_2.return_value": {
@@ -122,7 +122,7 @@
       "nbyte": "600"
     },
     "mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a_0_1.task": {
-      "value": "(\"functools.partial(<function mean_agg at 0x7f8725f1cc20>, dtype=dtype('float64'), axis=(0,), keepdims=False)\", [('subgraph_callable-b9004e95e05fca8c298123661a5ef903', 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426', ('slice(0, 2920, None)', 'slice(0, 25, None)', 'slice(25, 50, None)'))])",
+      "value": "(\"functools.partial(<function mean_agg at 0x7f303d2b8c20>, dtype=dtype('float64'), axis=(0,), keepdims=False)\", [('subgraph_callable-b9004e95e05fca8c298123661a5ef903', 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426', ('slice(0, 2920, None)', 'slice(0, 25, None)', 'slice(25, 50, None)'))])",
       "dtype": "tuple"
     },
     "mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a_0_1.return_value": {
@@ -150,7 +150,7 @@
       "nbyte": "48"
     },
     "mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a_0_0.task": {
-      "value": "(\"functools.partial(<function mean_agg at 0x7f8725f1cc20>, dtype=dtype('float64'), axis=(0,), keepdims=False)\", [('subgraph_callable-b9004e95e05fca8c298123661a5ef903', 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426', ('slice(0, 2920, None)', 'slice(0, 25, None)', 'slice(0, 25, None)'))])",
+      "value": "(\"functools.partial(<function mean_agg at 0x7f303d2b8c20>, dtype=dtype('float64'), axis=(0,), keepdims=False)\", [('subgraph_callable-b9004e95e05fca8c298123661a5ef903', 'original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426', ('slice(0, 2920, None)', 'slice(0, 25, None)', 'slice(0, 25, None)'))])",
       "dtype": "tuple"
     },
     "mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a_0_0.return_value": {
@@ -169,29 +169,30 @@
       "dtype": "numpy.ndarray",
       "nbyte": "5000"
     },
-    "baz-b8acdd4bb9a715a7b2b1df2428b90c80.x": {
-      "value": "[1, 2, 3]",
-      "dtype": "list"
+    "baz-f45b43271a98185baa4524e4171d0314.x": {
+      "value": "<xarray.DataArray 'air' (lat: 25, lon: 53)> Size: 11kB\narray([[260.37644178, 260.18305137, 259.88662671, ..., 250.81590068,\n        251.93811644, 253.43804795],\n       [262.73439384, 262.79397603, 262.74933904, ..., 249.75590411,\n        251.58575685, 254.35926027],\n       [264.7687637 , 264.32730822, 264.06169521, ..., 250.60789041,\n        253.58351027, 257.71559932],\n       ...,\n       [297.64986301, 296.95333219, 296.62931507, ..., 296.81092466,\n        296.28796233, 295.81645548],\n       [298.12920205, 297.93700685, 297.47039384, ..., 296.85954795,\n        296.7770274 , 296.44383562],\n       [298.36615068, 298.38573973, 298.11414384, ..., 297.33820548,\n        297.28144521, 297.30510274]], shape=(25, 53))\nCoordinates:\n  * lat      (lat) float32 100B 75.0 72.5 70.0 67.5 65.0 ... 22.5 20.0 17.5 15.0\n  * lon      (lon) float32 212B 200.0 202.5 205.0 207.5 ... 325.0 327.5 330.0",
+      "dtype": "DataArray"
     },
-    "baz-b8acdd4bb9a715a7b2b1df2428b90c80.d": {
+    "baz-f45b43271a98185baa4524e4171d0314.d": {
       "value": "3",
       "dtype": "int"
     },
-    "baz-b8acdd4bb9a715a7b2b1df2428b90c80.a": {
+    "baz-f45b43271a98185baa4524e4171d0314.a": {
       "value": "6",
       "dtype": "int"
     },
-    "sin-2c9fba60d543f760e63fbdffdb396242.x": {
-      "value": "9",
-      "dtype": "int"
+    "sin-0beafd3fb9f626381bbd1a26d21504d5.x": {
+      "value": "<xarray.DataArray 'air' (lon: 53)> Size: 424B\narray([9., 9., 9., 9., 9., 9., 9., 9., 9., 9., 9., 9., 9., 9., 9., 9., 9.,\n       9., 9., 9., 9., 9., 9., 9., 9., 9., 9., 9., 9., 9., 9., 9., 9., 9.,\n       9., 9., 9., 9., 9., 9., 9., 9., 9., 9., 9., 9., 9., 9., 9., 9., 9.,\n       9., 9.])\nCoordinates:\n    lat      float32 4B 75.0\n  * lon      (lon) float32 212B 200.0 202.5 205.0 207.5 ... 325.0 327.5 330.0",
+      "dtype": "DataArray"
     },
-    "baz-b8acdd4bb9a715a7b2b1df2428b90c80.return_value": {
-      "dtype": "list",
-      "nbyte": "172"
+    "baz-f45b43271a98185baa4524e4171d0314.return_value": {
+      "dtype": "xarray.core.dataarray.DataArray",
+      "nbyte": "10704"
     },
-    "sin-2c9fba60d543f760e63fbdffdb396242.return_value": {
-      "dtype": "float",
-      "nbyte": "24"
+    "sin-0beafd3fb9f626381bbd1a26d21504d5.return_value": {
+      "is_error": true,
+      "exception_text": "TypeError('only length-1 arrays can be converted to Python scalars')",
+      "stacktrace": "  File \"/nix/store/3n6cfb4pnysrzc25lx1b6m7q6h4iiq4f-python3-3.12.9-env/lib/python3.12/site-packages/xarray/core/common.py\", line 157, in __float__\n    return float(self.values)\n           ^^^^^^^^^^^^^^^^^^\n"
     }
   },
   "used": {
@@ -268,72 +269,72 @@
       "prov:entity": "mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a_0_0.task"
     },
     "_:id33": {
-      "prov:activity": "baz-b8acdd4bb9a715a7b2b1df2428b90c80",
-      "prov:entity": "baz-b8acdd4bb9a715a7b2b1df2428b90c80.x"
+      "prov:activity": "baz-f45b43271a98185baa4524e4171d0314",
+      "prov:entity": "baz-f45b43271a98185baa4524e4171d0314.x"
     },
     "_:id34": {
-      "prov:activity": "baz-b8acdd4bb9a715a7b2b1df2428b90c80",
-      "prov:entity": "baz-b8acdd4bb9a715a7b2b1df2428b90c80.d"
+      "prov:activity": "baz-f45b43271a98185baa4524e4171d0314",
+      "prov:entity": "baz-f45b43271a98185baa4524e4171d0314.d"
     },
     "_:id35": {
-      "prov:activity": "baz-b8acdd4bb9a715a7b2b1df2428b90c80",
-      "prov:entity": "baz-b8acdd4bb9a715a7b2b1df2428b90c80.a"
+      "prov:activity": "baz-f45b43271a98185baa4524e4171d0314",
+      "prov:entity": "baz-f45b43271a98185baa4524e4171d0314.a"
     },
     "_:id36": {
-      "prov:activity": "sin-2c9fba60d543f760e63fbdffdb396242",
-      "prov:entity": "sin-2c9fba60d543f760e63fbdffdb396242.x"
+      "prov:activity": "sin-0beafd3fb9f626381bbd1a26d21504d5",
+      "prov:entity": "sin-0beafd3fb9f626381bbd1a26d21504d5.x"
     }
   },
   "wasGeneratedBy": {
     "_:id3": {
       "prov:entity": "open_dataset-f1f587117c6a0e66ed291cf490f8b0fd.return_value",
       "prov:activity": "open_dataset-f1f587117c6a0e66ed291cf490f8b0fd",
-      "prov:time": "2025-05-19T13:20:26.959608"
+      "prov:time": "2025-05-20T16:29:05.090272"
     },
     "_:id17": {
       "prov:entity": "mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a_0_2.return_value",
       "prov:activity": "mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a_0_2",
-      "prov:time": "2025-05-19T13:20:27.569716"
+      "prov:time": "2025-05-20T16:29:05.718148"
     },
     "_:id20": {
       "prov:entity": "mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a_0_1.return_value",
       "prov:activity": "mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a_0_1",
-      "prov:time": "2025-05-19T13:20:27.572388"
+      "prov:time": "2025-05-20T16:29:05.721739"
     },
     "_:id26": {
       "prov:entity": "original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426.return_value",
       "prov:activity": "original-open_dataset-air-93dee1f365e03d8b8669e975e6fd6426",
-      "prov:time": "2025-05-19T13:20:27.579605"
+      "prov:time": "2025-05-20T16:29:05.724372"
     },
     "_:id29": {
       "prov:entity": "mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a_0_0.return_value",
       "prov:activity": "mean_chunk-mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a_0_0",
-      "prov:time": "2025-05-19T13:20:27.584557"
+      "prov:time": "2025-05-20T16:29:05.732130"
     },
     "_:id30": {
       "prov:entity": "mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a_0_1.return_value",
       "prov:activity": "mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a_0_1",
-      "prov:time": "2025-05-19T13:20:27.600359"
+      "prov:time": "2025-05-20T16:29:05.754178"
     },
     "_:id31": {
       "prov:entity": "mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a_0_2.return_value",
       "prov:activity": "mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a_0_2",
-      "prov:time": "2025-05-19T13:20:27.600594"
+      "prov:time": "2025-05-20T16:29:05.754462"
     },
     "_:id32": {
       "prov:entity": "mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a_0_0.return_value",
       "prov:activity": "mean_agg-aggregate-cf96f7384ee70def7c32606333d6500a_0_0",
-      "prov:time": "2025-05-19T13:20:27.600792"
+      "prov:time": "2025-05-20T16:29:05.754696"
     },
     "_:id37": {
-      "prov:entity": "baz-b8acdd4bb9a715a7b2b1df2428b90c80.return_value",
-      "prov:activity": "baz-b8acdd4bb9a715a7b2b1df2428b90c80",
-      "prov:time": "2025-05-19T13:20:27.627320"
+      "prov:entity": "baz-f45b43271a98185baa4524e4171d0314.return_value",
+      "prov:activity": "baz-f45b43271a98185baa4524e4171d0314",
+      "prov:time": "2025-05-20T16:29:06.867605"
     },
     "_:id38": {
-      "prov:entity": "sin-2c9fba60d543f760e63fbdffdb396242.return_value",
-      "prov:activity": "sin-2c9fba60d543f760e63fbdffdb396242",
-      "prov:time": "2025-05-19T13:20:27.627529"
+      "prov:entity": "sin-0beafd3fb9f626381bbd1a26d21504d5.return_value",
+      "prov:activity": "sin-0beafd3fb9f626381bbd1a26d21504d5",
+      "prov:time": "2025-05-20T16:29:07.667020"
     }
   },
   "wasInformedBy": {
