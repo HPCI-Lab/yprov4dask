@@ -10,13 +10,12 @@ def bar(x, y):
 def foo(x, y):
   return x + bar(x, y)
 
-def baz(x, a, d):
-  x[0] = a + d
-  return x
+def baz(a, d):
+  return a * d
 
 if __name__ == '__main__':
   client = Client()
-  plugin = ProvTracker(destination = 'prov.json', format = 'json', indent = 2, keep_stacktrace = True)
+  plugin = ProvTracker(destination = 'prov.json', format = 'json', indent = 2, keep_stacktrace=True, rich_types=True)
   client.register_plugin(plugin)
   plugin.start(client.scheduler)
 
@@ -38,9 +37,10 @@ if __name__ == '__main__':
   #ds.close()
   #ds_mean.close()
 
-  # The following calls generate an exception
-  x = client.submit(baz, ds_mean['air'], d=3, a=6)
+  plugin.serialize_document()
+  ## The following calls generate an exception
+  x = client.submit(baz, d=3, a=6)
   z = client.submit(math.sin, x.result()[0])
-  print(f'{x.result()} -- {z.result()}')
+  #print(f'{x.result()} -- {z.result()}')
   
   client.close()

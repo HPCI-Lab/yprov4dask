@@ -1,25 +1,52 @@
+from dask.task_spec import DataNode, Task, Alias
 from dask.typing import Key
-import datetime as dt
 from distributed.scheduler import TaskState
+
+import datetime as dt
+import inspect
 import prov.model as prov
+from prov_tracking.runnable import RunnableTaskInfo, GeneratedValue, ReadyValue
 
 def _sanitize(string: str):
   return string.replace('(', '').replace(')', '').replace('\'', '').replace(', ', '_')
   return string
 
 def _serialize_value(obj):
-  if isinstance(obj, (int, float, complex, bool, type(None))):
+  if isinstance(obj, str):
     return obj
   elif isinstance(obj, (list, tuple)):
     tmp_list = [ _serialize_value(x) for x in obj ]
     if isinstance(obj, tuple):
-      return tuple(tmp_list)
+      return str(tuple(tmp_list))
     else:
-      return tmp_list
+      return str(tmp_list)
   elif isinstance(obj, dict):
-    return { k: _serialize_value(v) for k, v in obj.items() }
+    return str({ k: _serialize_value(v) for k, v in obj.items() })
   else:
     return str(obj)
+
+def _type(obj) -> str:
+  if isinstance(obj, list):
+    if len(obj) == 0:
+      return 'list[()]'
+    else:
+      return f'list[{_type(obj[0])}]'
+  if isinstance(obj, tuple):
+    if len(obj) == 0:
+      return 'tuple[()]'
+    else:
+      types = []
+      for item in obj:
+        types.append(_type(item))
+      return f'tuple[{', '.join(types)}]'
+  if not isinstance(obj, type):
+    obj = type(obj)
+  module = obj.__module__
+  if module != 'builtins':
+    return f'{module}.{obj.__qualname__}'
+  else:
+    return obj.__qualname__
+    
 
 class Documenter:
   def __init__(self, **kwargs):
@@ -27,105 +54,126 @@ class Documenter:
     self.document.set_default_namespace('dask-prov.dict')
     self.format = kwargs.get('format')
     self.destination = kwargs.get('destination')
+    self.rich_types = kwargs.pop('rich_types', False)
     self.kwargs = kwargs
-  
-  def register_function_call(
-    self, task_id: str, func_name: str, func_module: str,
-    func_args: dict[str, any], group: str, depts: set[TaskState]
-  ) -> (Key, list[str]):
-    """
-    Registers in the provenance document a function call, i.e. a new activity is
-    created and it is linked with its arguments through a `used` relation.
-    An entity for each argument is also created.
-    """
-    parameters = []
-    
-    task_id = _sanitize(task_id)
-    self.document.activity(
+
+  def register_non_runnable_task(self, task_id: Key, task: DataNode):
+    """Non-runnable tasks are registered as entity as they are in fact just data"""
+
+    key = _sanitize(str(task_id))
+    self.document.entity(
       identifier=task_id,
-      startTime=dt.datetime.now(),
       other_attributes={
-        'name': func_name,
-        'module': func_module,
-        'group': group
+        'value': _serialize_value(task.value),
+        'dtype': str(type(task.typ)) if not self.rich_types else _type(task.typ)
       }
     )
 
-    for arg, value in func_args.items():
-      name = f'{task_id}.{arg}'
-      parameters.append(name)
+  def register_runnable_task(self, info: RunnableTaskInfo) -> str:
+    """Runnble tasks are registered as activities. Parameters to the task are
+    registered as entities linked to the activity via used relations. All
+    runnable dependencies of the task are registered via communication relations."""
 
-      ser_value = None
-      try:
-        ser_value = f'{value.__module__}.{value.__name__}'
-      except:
-        ser_value = str(_serialize_value(value))
-      
-      self.document.entity(
-        identifier=name,
+    activity_id = _sanitize(str(info.key))
+    attributes = {
+      'name': str(info.func),
+      'module': info.func.__module__,
+      'group': info.group,
+    }
+    if hasattr(info.func, '__name__'):
+      attributes['nice_name'] = info.func.__name__
+
+    self.document.activity(
+      identifier=activity_id,
+      startTime=info.start_time,
+      endTime=info.finish_time,
+      other_attributes=attributes
+    )
+
+    # Records the used parameters
+    used_params = []
+    for name, param in info.args_dict.items():
+      if isinstance(param, ReadyValue):
+        key = f'{activity_id}.{name}'
+        self.document.entity(
+          identifier=key,
+          other_attributes={
+            'value': _serialize_value(param.value),
+            'dtype': str(type(param.value)) if not self.rich_types else _type(param.value)
+          }
+        )
+        used_params.append((name, key))
+      else:
+        key = f'{_sanitize(param.generatedBy)}.return_value'
+        used_params.append((name, key))
+    for name, key in used_params:
+      self.document.used(
+        activity=activity_id,
+        entity=key,
+        time=info.start_time,
         other_attributes={
-          'value': ser_value,
-          'dtype': type(value).__qualname__
+          'as_parameter': name
         }
       )
-      self.document.used(task_id, entity=name)
-
-    for task in depts:
-      key = _sanitize(str(task.key))
-      self.document.wasInformedBy(informed=task_id, informant=key)
     
-    return (task_id, parameters)
+    # Register all dependencies of this task
+    for dep in info.dependencies:
+      key = _sanitize(str(dep))
+      self.document.wasInformedBy(informed=activity_id, informant=key)
+    return activity_id
 
-  def register_function_result(
-    self, task_id: str, dtype: any, nbytes: int
+  def register_successful_task(
+    self, info: RunnableTaskInfo, dtype: type, nbytes: int
   ):
-    """
-    Registers in the provenance document the completion of a function call, i.e.
-    the return value of that function is registered as a new entity generated by
-    the completed activity. An entity for the produced value is created, while
-    the activity should already be present.
-    """
-    task_id = _sanitize(task_id)
-    name = f'{task_id}.return_value'
+    """Registers the successful completion of a runnble task that has produced
+    some value"""
+
+    activity_id = self.register_runnable_task(info)
+
+    # Records the value generated by this funcion
+    key = f'{activity_id}.return_value'
     self.document.entity(
-      identifier=name,
+      identifier=key,
       other_attributes={
-        'dtype': dtype,
-        'nbyte': str(nbytes)
+        'dtype': str(dtype) if not self.rich_types else _type(dtype),
+        'nbytes': str(nbytes)
       }
     )
-    now = dt.datetime.now()
-    self.document.wasGeneratedBy(entity=name, activity=task_id, time=now)
+    self.document.wasGeneratedBy(
+      entity=key,
+      activity=activity_id,
+      time=info.finish_time
+    )
 
-  def register_function_error(
-    self, task_id: str, exception_text: str, stacktrace: str | None,
+  def register_failed_task(
+    self, info: RunnableTaskInfo, exception_text: str, stacktrace: str | None,
     blamed_task: TaskState | None
   ):
-    """
-    Registers an exception generated by a task as its returned value
-    """
+    """Registers the failed completion of a runnble task that has terminated
+    with an exception"""
 
-    task_id = _sanitize(task_id)
-    name = f'{task_id}.return_value'
+    activity_id = self.register_runnable_task(info)
+    key = f'{activity_id}.return_value'
     attributes = {
       'is_error': True,
       'exception_text': exception_text,
     }
     if stacktrace is not None:
-      attributes.setdefault('stacktrace', stacktrace)
-
-    if blamed_task is not None and blamed_task.key != task_id:
+      attributes['stacktrace'] = stacktrace
+    if blamed_task is not None and blamed_task.key != activity_id:
       other_task_id = _sanitize(str(blamed_task.key))
-      attributed.setdefault('blamed_task', other_task_id)
+      attributed['blamed_task'] = other_task_id
       self.document.wasInformedBy(informed=task_id, informant=other_task_id)
 
     self.document.entity(
-      identifier=name,
+      identifier=key,
       other_attributes=attributes
     )
-    self.document.wasGeneratedBy(entity=name, activity=task_id, time=dt.datetime.now())
+    self.document.wasGeneratedBy(
+      entity=key, activity=activity_id, time=info.finish_time
+    )
 
-  def serialize(self, destination, format: str | None, **kwargs: dict[str, any]):
+  def serialize(self, destination=None, format=None, **kwargs: dict[str, any]):
     """
     Serializes the provenance document into `destination`, or returns the
     serialized string if no destination was provided. The format used is `format`,

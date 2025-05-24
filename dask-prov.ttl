@@ -30,6 +30,13 @@ dskp:group a rdf:Propery ;
 	rdfs:range prov:Activity ;
 	rdfs:domain rdfs:Literal .
 
+dskp:name a rdf:Propery ;
+    rdfs:isDefinedBy <file://./dask-prov.ttl> ;
+	rdfs:label "name" ;
+	rdfs:comment "The human readable name of the function as defined in source code" ;
+	rdfs:range prov:Activity ;
+	rdfs:domain rdfs:Literal .
+
 dskp:value a rdf:Propery ;
     rdfs:isDefinedBy <file://./dask-prov.ttl> ;
 	rdfs:label "value" ;
@@ -77,4 +84,11 @@ dskp:blamed_task a rdf:Propery ;
 	rdfs:label "blamed_task" ;
 	rdfs:comment "Key for the subtask that generated this exception" ;
 	rdfs:range prov:Entity ;
+	rdfs:domain rdfs:Literal .
+
+dskp:as_parameter a rdf:Property ;
+	rdfs:isDefinedBy <file://./dask-prov.ttl> ;
+	rdfs:label "as_parameter" ;
+	rdfs:comment "Name of the parameter of a function that used this entity" ;
+	rdfs:range prov:used;
 	rdfs:domain rdfs:Literal .
