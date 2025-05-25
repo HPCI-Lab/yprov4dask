@@ -34,6 +34,8 @@ class ProvTracker(SchedulerPlugin):
     *args, **kwargs
   ):
     try:
+      with open('file.txt', 'a') as file:
+        file.write(f'ciao\n')
       task = self._scheduler.tasks[key]
 
       #if start == 'released' and finish == 'waiting':
@@ -51,9 +53,6 @@ class ProvTracker(SchedulerPlugin):
           except Exception as e:
             print(f'Waiting {key}: {e}')
         elif isinstance(task.run_spec, Task):
-          if ProvTracker._is_dask_internal(task.run_spec):
-            new_task = task.run_spec.args
-            pass
           self.runnables[key] = RunnableTaskInfo(task)
         else: # Task.run_spec is of type Alias
           target = self._scheduler.tasks[task.run_spec.target]
