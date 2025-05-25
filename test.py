@@ -14,7 +14,7 @@ def baz(a, d):
   return a * d
 
 if __name__ == '__main__':
-  client = Client()
+  client: Client = Client()
   plugin = ProvTracker(destination = 'prov.json', format = 'json', indent = 2, keep_stacktrace=True, rich_types=True)
   client.register_plugin(plugin)
   plugin.start(client.scheduler)
@@ -40,7 +40,7 @@ if __name__ == '__main__':
   plugin.serialize_document()
   ## The following calls generate an exception
   x = client.submit(baz, d=3, a=6)
-  z = client.submit(math.sin, x.result()[0])
+  z = client.submit(math.sin, x)
   #print(f'{x.result()} -- {z.result()}')
   
   client.close()

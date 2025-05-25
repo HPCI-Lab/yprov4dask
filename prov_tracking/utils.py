@@ -15,13 +15,16 @@ class RunnableTaskInfo:
     specs: Task = task.run_spec
     self.func: Callable = specs.func
     self.group: str = task.group_key
-    self.dependencies: list[str] = []
+    self.dependencies: list[str] = [] # For runnable tasks and aliases
+    self.other_dependencies: list[str] = [] # For non-runnable tasks
     for dep in task.dependencies:
       # This is to avoid registering non-runnable tasks, registered as entities,
       # as informant activities of this task since that would be inconsistent
       # with the W3C Prov data model
-      if isinstance(dep.run_spec, Task):
+      if isinstance(dep.run_spec, Task) or isinstance(dep.run_spec, Alias):
         self.dependencies.append(dep.key)
+      else:
+        self.other_dependencies.append(dep.key)
     self.start_time = None
     self.finish_time = None
 

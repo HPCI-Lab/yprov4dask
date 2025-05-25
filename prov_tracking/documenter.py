@@ -1,11 +1,10 @@
+from typing import Any
 from dask.task_spec import DataNode, Task, Alias
 from dask.typing import Key
 from distributed.scheduler import TaskState
 
-import datetime as dt
-import inspect
 import prov.model as prov
-from prov_tracking.runnable import RunnableTaskInfo, GeneratedValue, ReadyValue
+from prov_tracking.utils import RunnableTaskInfo, GeneratedValue, ReadyValue
 
 def _sanitize(string: str):
   return string.replace('(', '').replace(')', '').replace('\'', '').replace(', ', '_')
@@ -52,8 +51,8 @@ class Documenter:
   def __init__(self, **kwargs):
     self.document = prov.ProvDocument()
     self.document.set_default_namespace('dask-prov.dict')
-    self.format = kwargs.get('format')
-    self.destination = kwargs.get('destination')
+    self.format = kwargs.pop('format', None)
+    self.destination = kwargs.pop('destination', None)
     self.rich_types = kwargs.pop('rich_types', False)
     self.kwargs = kwargs
 
@@ -120,6 +119,15 @@ class Documenter:
     for dep in info.dependencies:
       key = _sanitize(str(dep))
       self.document.wasInformedBy(informed=activity_id, informant=key)
+
+    for dep in info.other_dependencies:
+      key = _sanitize(str(dep))
+      self.document.used(
+        entity=key,
+        activity=activity_id,
+        time=info.start_time
+      )
+
     return activity_id
 
   def register_successful_task(
@@ -135,7 +143,7 @@ class Documenter:
     self.document.entity(
       identifier=key,
       other_attributes={
-        'dtype': str(dtype) if not self.rich_types else _type(dtype),
+        'dtype': dtype,
         'nbytes': str(nbytes)
       }
     )
@@ -162,8 +170,8 @@ class Documenter:
       attributes['stacktrace'] = stacktrace
     if blamed_task is not None and blamed_task.key != activity_id:
       other_task_id = _sanitize(str(blamed_task.key))
-      attributed['blamed_task'] = other_task_id
-      self.document.wasInformedBy(informed=task_id, informant=other_task_id)
+      attributes['blamed_task'] = other_task_id
+      self.document.wasInformedBy(informed=activity_id, informant=other_task_id)
 
     self.document.entity(
       identifier=key,
@@ -173,7 +181,18 @@ class Documenter:
       entity=key, activity=activity_id, time=info.finish_time
     )
 
-  def serialize(self, destination=None, format=None, **kwargs: dict[str, any]):
+  def register_alias(self, task: TaskState, target_task: TaskState):
+    task_id = _sanitize(str(task.key))
+    target_id = _sanitize(str(target_task.key))
+    self.document.activity(
+      identifier=task_id,
+    )
+    self.document.wasInformedBy(
+      informed=task_id,
+      informant=target_id
+    )
+
+  def serialize(self, destination=None, format=None, **kwargs: dict[str, Any]):
     """
     Serializes the provenance document into `destination`, or returns the
     serialized string if no destination was provided. The format used is `format`,
@@ -185,6 +204,8 @@ class Documenter:
       format = self.format
     if destination is None and self.destination is not None:
       destination = self.destination
+    if len(kwargs) == 0:
+      kwargs = self.kwargs
 
     return self.document.serialize(
       destination=destination, format=format, **kwargs

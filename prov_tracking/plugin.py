@@ -1,9 +1,9 @@
-from dask.task_spec import DataNode, Task
+from dask.task_spec import DataNode, Task, Alias
 from dask.typing import Key
 from distributed.diagnostics.plugin import SchedulerPlugin
 from distributed.scheduler import Scheduler, TaskState, TaskStateState as SchedulerTaskState
 from prov_tracking.documenter import Documenter
-from prov_tracking.runnable import RunnableTaskInfo
+from prov_tracking.utils import RunnableTaskInfo
 
 import datetime as dt
 from typing import Any
@@ -33,68 +33,84 @@ class ProvTracker(SchedulerPlugin):
     self, key: Key, start: SchedulerTaskState, finish: SchedulerTaskState,
     *args, **kwargs
   ):
-    task = self._scheduler.tasks[key]
+    try:
+      task = self._scheduler.tasks[key]
 
-    # A new task has been created: register the activity and its data
-    if start == 'waiting' and key not in self.tasks:
-      # This is a never-seen-before task. Register it as an entity if it is a
-      # non-runnable task. Otherwise, register its info are registered in an 
-      # internal structure that will be saved as an activity later on.
+      #if start == 'released' and finish == 'waiting':
+        #print(f'Relased: {key}:\n\tSPEC:{task.run_spec}\n\tDEPENDENTS:{task.dependents}\n\tDEPENCIES:{task.dependencies}')
+      # A new task has been created: register the activity and its data
+      if start == 'waiting' and key not in self.tasks:
+        # This is a never-seen-before task. Register it as an entity if it is a
+        # non-runnable task. Otherwise, register its info are registered in an 
+        # internal structure that will be saved as an activity later on.
 
-      self.tasks.add(key)
-      if isinstance(task.run_spec, DataNode):
+        self.tasks.add(key)
+        if isinstance(task.run_spec, DataNode):
+          try:
+            self.documenter.register_non_runnable_task(str(key), task.run_spec)
+          except Exception as e:
+            print(f'Waiting {key}: {e}')
+        elif isinstance(task.run_spec, Task):
+          if ProvTracker._is_dask_internal(task.run_spec):
+            new_task = task.run_spec.args
+            pass
+          self.runnables[key] = RunnableTaskInfo(task)
+        else: # Task.run_spec is of type Alias
+          target = self._scheduler.tasks[task.run_spec.target]
+          #print(f'{key} [{type(task.run_spec)}]: {task.run_spec}')
+      elif start == 'processing' and key in self.runnables:
+        info: RunnableTaskInfo = self.runnables[key]
+        info.start_time = dt.datetime.now()
+      elif start == 'memory' and key in self.runnables:
+        info: RunnableTaskInfo = self.runnables[key]
+        info.finish_time = dt.datetime.now()
+        dtype = task.type
+        nbytes = task.nbytes
         try:
-          self.documenter.register_non_runnable_task(str(key), task.run_spec)
+          self.documenter.register_successful_task(info, dtype, nbytes)
         except Exception as e:
-          print(f'Waiting {key}: {e}')
-      else: # task.runspec is of type Task
-        self.runnables[key] = RunnableTaskInfo(task)
-    elif start == 'processing' and key in self.runnables:
-      info: RunnableTaskInfo = self.runnables[key]
-      info.start_time = dt.datetime.now()
-    elif start == 'memory' and key in self.runnables:
-      info: RunnableTaskInfo = self.runnables[key]
-      info.finish_time = dt.datetime.now()
-      dtype = task.type
-      nbytes = task.nbytes
-      try:
-        self.documenter.register_successful_task(info, dtype, nbytes)
-      except Exception as e:
-        print(f'Memory {key}: {e}')
-    elif start == 'erred' and key in self.runnables:
-      info: RunnableTaskInfo = self.runnables[key]
-      info.finish_time = dt.datetime.now()
-      # A task is finished with an error, so register the exception
-      text = task.exception_text
-      blamed_task = task.exception_blame
-      stacktrace = None
-      if self.keep_stacktrace:
-        stacktrace = task.traceback_text
-      
-      try:
-        self.documenter.register_failed_task(info, text, stacktrace, blamed_task)
-      except Exception as e:
-        print(f'Erred {key}: {e}')
+          print(f'Memory {key}: {e}')
+      elif start == 'memory' and isinstance(task.run_spec, Alias):
+        target = self._scheduler.tasks[task.run_spec.target]
+        self.documenter.register_alias(task, target)
+      elif start == 'erred' and key in self.runnables:
+        info: RunnableTaskInfo = self.runnables[key]
+        info.finish_time = dt.datetime.now()
+        # A task is finished with an error, so register the exception
+        text = task.exception_text
+        blamed_task = task.exception_blame
+        stacktrace = None
+        if self.keep_stacktrace:
+          stacktrace = task.traceback_text
+        
+        try:
+          self.documenter.register_failed_task(info, text, stacktrace, blamed_task)
+        except Exception as e:
+          print(f'Erred {key}: {e}')
 
-      # When an exception occurs, the plugin is closed before it has the chance
-      # to detect the erred task and register its information. So, if the plugin
-      # has already been closed, serialize the document again
-      if self.closed:
-        self.serialize_document(**self.kwargs)
+        # When an exception occurs, the plugin is closed before it has the chance
+        # to detect the erred task and register its information. So, if the plugin
+        # has already been closed, serialize the document again
+        if self.closed:
+          self.serialize_document()
+    except Exception as e:
+      print(f'Task {key} generated exception at line {e.__traceback__.tb_lineno}:\n{e}')
 
   async def close(self):
     self.closed = True
-    ser_str = self.serialize_document(**self.kwargs)
+    ser_str = self.serialize_document()
     if ser_str is not None:
       print(ser_str)
 
   @staticmethod
   def _is_dask_internal(task: Task) -> bool:
     func = task.func
-    return (
-      func.__name__ == 'execute_task' and
-      func.__module__ == 'distributed.worker'
-    )
+    if hasattr(func, '__name__'):
+      return (
+        func.__name__ == '_execute_subgraph' and
+        func.__module__ == 'dask._task_spec'
+      )
+    return false
 
   def _track_dask_internal(self, task: TaskState):
     # Execute task has always 1 arg, so this is safe
