@@ -66,5 +66,3 @@ if __name__ == "__main__":
   corr
 
   corr.plot(figsize=(12, 8))
-
-  plugin.serialize_document()

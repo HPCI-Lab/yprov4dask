@@ -37,7 +37,6 @@ if __name__ == '__main__':
   #ds.close()
   #ds_mean.close()
 
-  plugin.serialize_document()
   ## The following calls generate an exception
   x = client.submit(baz, d=3, a=6)
   z = client.submit(math.sin, x)

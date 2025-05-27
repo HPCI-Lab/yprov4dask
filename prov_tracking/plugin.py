@@ -18,7 +18,6 @@ class ProvTracker(SchedulerPlugin):
     
     self.keep_stacktrace: bool = kwargs.pop('keep_stacktrace', False)
     self.documenter = Documenter(**kwargs)
-    self.destination: str = kwargs.get('destination')
     self.kwargs: dict[str, Any] = kwargs
     self.closed = False
     # Used to avoid registering multiple times the same task. A task can be put
@@ -34,12 +33,8 @@ class ProvTracker(SchedulerPlugin):
     *args, **kwargs
   ):
     try:
-      with open('file.txt', 'a') as file:
-        file.write(f'ciao\n')
       task = self._scheduler.tasks[key]
 
-      #if start == 'released' and finish == 'waiting':
-        #print(f'Relased: {key}:\n\tSPEC:{task.run_spec}\n\tDEPENDENTS:{task.dependents}\n\tDEPENCIES:{task.dependencies}')
       # A new task has been created: register the activity and its data
       if start == 'waiting' and key not in self.tasks:
         # This is a never-seen-before task. Register it as an entity if it is a
@@ -56,7 +51,6 @@ class ProvTracker(SchedulerPlugin):
           self.runnables[key] = RunnableTaskInfo(task)
         else: # Task.run_spec is of type Alias
           target = self._scheduler.tasks[task.run_spec.target]
-          #print(f'{key} [{type(task.run_spec)}]: {task.run_spec}')
       elif start == 'processing' and key in self.runnables:
         info: RunnableTaskInfo = self.runnables[key]
         info.start_time = dt.datetime.now()
@@ -97,7 +91,7 @@ class ProvTracker(SchedulerPlugin):
 
   async def close(self):
     self.closed = True
-    ser_str = self.serialize_document()
+    ser_str = self.documenter.serialize()
     if ser_str is not None:
       print(ser_str)
 
@@ -149,6 +143,3 @@ class ProvTracker(SchedulerPlugin):
         return tuple(task.run_spec)
 
     return (internal_func, (), {})
-
-  def serialize_document(self, **kwargs: dict[str, Any]) -> str | None:
-    return self.documenter.serialize()
