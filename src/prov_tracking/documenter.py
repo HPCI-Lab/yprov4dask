@@ -51,10 +51,10 @@ class Documenter:
   def __init__(self, **kwargs):
     self.document = prov.ProvDocument()
     self.document.set_default_namespace('dask-prov.dict')
-    self.format = kwargs.pop('format', None)
-    self.destination = kwargs.pop('destination', None)
-    self.rich_types = kwargs.pop('rich_types', False)
-    self.kwargs = kwargs
+    self.format = kwargs.pop('format', 'json')
+    self.destination = kwargs.pop('destination', './provenance.json')
+    self.rich_types: bool = kwargs.pop('rich_types', False)
+    self.kwargs: dict[str, Any] = kwargs
 
   def register_non_runnable_task(self, task_id: Key, task: DataNode):
     """Non-runnable tasks are registered as entity as they are in fact just data"""
@@ -154,7 +154,7 @@ class Documenter:
     )
 
   def register_failed_task(
-    self, info: RunnableTaskInfo, exception_text: str, stacktrace: str | None,
+    self, info: RunnableTaskInfo, exception_text: str, traceback: str | None,
     blamed_task: TaskState | None
   ):
     """Registers the failed completion of a runnble task that has terminated
@@ -166,8 +166,8 @@ class Documenter:
       'is_error': True,
       'exception_text': exception_text,
     }
-    if stacktrace is not None:
-      attributes['stacktrace'] = stacktrace
+    if traceback is not None:
+      attributes['traceback'] = traceback
     if blamed_task is not None and blamed_task.key != activity_id:
       other_task_id = _sanitize(str(blamed_task.key))
       attributes['blamed_task'] = other_task_id

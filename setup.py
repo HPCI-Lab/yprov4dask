@@ -9,10 +9,11 @@ setup(
   author='Leonardo De Faveri',
   author_email='leonardo.defaveri01@gmail.com',
   url='https://github.com/HPCI-Lab/yprov4dask',
+  package_dir={'': 'src'},
   packages=['prov_tracking'],
   install_requires = [
-    'distributed',
-    'dask',
-    'prov',
+    'distributed', # 2025.5.1
+    'dask', # 2025.5.1
+    'prov', # 2.0.1
   ]
 )

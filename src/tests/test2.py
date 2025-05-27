@@ -6,7 +6,7 @@ import zarr
 
 import dask
 from dask.distributed import Client
-from prov_tracking.plugin import ProvTracker
+from prov_tracking import ProvTracker
 
 def _id(x):
   return x

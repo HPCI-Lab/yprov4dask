@@ -16,7 +16,7 @@ class ProvTracker(SchedulerPlugin):
     # methods used by libraries, unpack kwargs and any additional argument would
     # cause an exception
     
-    self.keep_stacktrace: bool = kwargs.pop('keep_stacktrace', False)
+    self.keep_traceback: bool = kwargs.pop('keep_traceback', False)
     self.documenter = Documenter(**kwargs)
     self.kwargs: dict[str, Any] = kwargs
     self.closed = False
@@ -72,12 +72,12 @@ class ProvTracker(SchedulerPlugin):
         # A task is finished with an error, so register the exception
         text = task.exception_text
         blamed_task = task.exception_blame
-        stacktrace = None
-        if self.keep_stacktrace:
-          stacktrace = task.traceback_text
+        traceback = None
+        if self.keep_traceback:
+          traceback = task.traceback_text
         
         try:
-          self.documenter.register_failed_task(info, text, stacktrace, blamed_task)
+          self.documenter.register_failed_task(info, text, traceback, blamed_task)
         except Exception as e:
           print(f'Erred {key}: {e}')
 
@@ -91,9 +91,7 @@ class ProvTracker(SchedulerPlugin):
 
   async def close(self):
     self.closed = True
-    ser_str = self.documenter.serialize()
-    if ser_str is not None:
-      print(ser_str)
+    self.documenter.serialize()
 
   @staticmethod
   def _is_dask_internal(task: Task) -> bool:

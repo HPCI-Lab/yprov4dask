@@ -72,10 +72,10 @@ dskp:exception_text a rdf:Propery ;
 	rdfs:range prov:Entity ;
 	rdfs:domain rdfs:Literal .
 
-dskp:stacktrace a rdf:Propery ;
+dskp:traceback a rdf:Propery ;
     rdfs:isDefinedBy <file://./dask-prov.ttl> ;
-	rdfs:label "stacktrace" ;
-	rdfs:comment "The stacktrace of the exception" ;
+	rdfs:label "traceback" ;
+	rdfs:comment "The traceback of the exception" ;
 	rdfs:range prov:Entity ;
 	rdfs:domain rdfs:Literal .
 
