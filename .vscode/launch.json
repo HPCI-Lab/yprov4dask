@@ -8,7 +8,7 @@
             "name": "Python Debugger: Current File",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/src/tests/test2.py",
+            "program": "${workspaceFolder}/src/tests/test_netcdf.py",
             "console": "integratedTerminal",
             "justMyCode": false,
             "subProcess": true

@@ -32,12 +32,12 @@ class RunnableTaskInfo:
     param_names = list(inspect.signature(self.func).parameters)
     for name, value in zip(param_names, specs.args):
       if isinstance(value, Alias):
-        self.args_dict[name] = GeneratedValue(value.target)
+        self.args_dict[name] = GeneratedValue(str(value.target))
       else:
         self.args_dict[name] = ReadyValue(value)
     for name, value in specs.kwargs.items():
       if isinstance(value, Alias):
-        self.args_dict[name] = GeneratedValue(value.target)
+        self.args_dict[name] = GeneratedValue(str(value.target))
       else:
         self.args_dict[name] = ReadyValue(value)
 
