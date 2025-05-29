@@ -6,6 +6,12 @@ Dowload the repo from `https://github.com/HPCI-Lab/yprov4dask` and install the
 plugin in your python environment by running `pip install .` from within the
 root folder of the repository.
 
+### Note for developers
+Install the package in development mode using `pip install -e .` if you want
+new modifications to the code to be reflected immediately in your environment.
+If the `-e` option is missing, you will have to reinstall the plugin every time
+you modify it.
+
 ## Usage
 To use the plugin, simply import it into your code, instantiate the plugin and
 register it with your Dask client.
