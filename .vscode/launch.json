@@ -8,7 +8,7 @@
             "name": "Python Debugger: Current File",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/src/tests/test.py",
+            "program": "${workspaceFolder}/src/tests/xarray_script.py",
             "console": "integratedTerminal",
             "justMyCode": false,
             "subProcess": true

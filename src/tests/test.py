@@ -15,7 +15,7 @@ def baz(a, d):
 
 if __name__ == '__main__':
   client: Client = Client()
-  plugin = ProvTracker(destination = 'prov.json', format = 'json', indent = 2, keep_traceback=True, rich_types=True)
+  plugin = ProvTracker(destination = 'prov.json', format = 'json', indent = 2, keep_traceback=True, rich_types=True, track_groups = True)
   client.register_plugin(plugin)
   plugin.start(client.scheduler)
 

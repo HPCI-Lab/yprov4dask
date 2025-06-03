@@ -1,7 +1,7 @@
 from dask.task_spec import DataNode, Task, Alias
 from dask.typing import Key
 from distributed.diagnostics.plugin import SchedulerPlugin
-from distributed.scheduler import Scheduler, TaskState, TaskStateState as SchedulerTaskState
+from distributed.scheduler import Scheduler, TaskState, TaskStateState as SchedulerTaskState, TaskGroup
 from prov_tracking.documenter import Documenter
 from prov_tracking.utils import RunnableTaskInfo
 
@@ -17,6 +17,7 @@ class ProvTracker(SchedulerPlugin):
     # cause an exception
     
     self.keep_traceback: bool = kwargs.pop('keep_traceback', False)
+    self.track_groups: bool = kwargs.pop('track_groups', False)
     self.documenter = Documenter(**kwargs)
     self.kwargs: dict[str, Any] = kwargs
     self.closed = False
@@ -24,6 +25,9 @@ class ProvTracker(SchedulerPlugin):
     # multiple times in waiting state
     self.tasks: set[Key] = set()
     self.runnables: dict[key, RunnableTaskInfo] = {}
+    self.tasks_per_group: dict[str, list[TaskState]] = {}
+    self.aliases: dict[Key, Key] = {}
+    self.internals: dict[Key, Key] = {}
 
   def start(self, scheduler: Scheduler):
     self._scheduler = scheduler
@@ -42,6 +46,25 @@ class ProvTracker(SchedulerPlugin):
         # internal structure that will be saved as an activity later on.
 
         self.tasks.add(key)
+        if self._is_dask_internal(task):
+          try:
+            internal_info = self._track_dask_internal(task)
+            if self._is_dask_internal(self._scheduler.tasks[internal_info.key]):
+              print(f'{key} -> {internal_info.key} -> ... multiple chain of _execute_subgraph')
+            #if internal_info.key.startswith('sub'):
+            #  print('ok')
+            self.internals[internal_info.key] = key
+            #print(internal_info)
+          except Exception as e:
+            print(f'Internal: wrong internal tracking:\n{e}')
+
+        if self.track_groups:
+          group = task.group
+          if task.group_key not in self.tasks_per_group:
+            self.tasks_per_group[task.group_key] = [task]
+          else:
+            self.tasks_per_group[task.group_key].append(task)
+
         if isinstance(task.run_spec, DataNode):
           try:
             self.documenter.register_non_runnable_task(str(key), task.run_spec)
@@ -51,6 +74,9 @@ class ProvTracker(SchedulerPlugin):
           self.runnables[key] = RunnableTaskInfo(task)
         else: # Task.run_spec is of type Alias
           target = self._scheduler.tasks[task.run_spec.target]
+          #print(f'Alias: {key} -> {target.key}')
+          self.aliases[key] = target.key
+          pass
       elif start == 'processing' and key in self.runnables:
         info: RunnableTaskInfo = self.runnables[key]
         info.start_time = dt.datetime.now()
@@ -91,56 +117,52 @@ class ProvTracker(SchedulerPlugin):
 
   async def close(self):
     self.closed = True
+
+    s1 = set(self.aliases.items())
+    s2 = set(self.internals.items())
+    diff = s1 ^ s2
+    print(f'Difference: {diff}')
+
+    s = list(diff)[0][0]
+
+    if s in self.aliases:
+      print(f'Alias: {s} -> {self.aliases[s]}')
+    else:
+      print(f'Alias: {s} -> Nothing')
+    if s in self.internals:
+      print(f'Internal: {s} -> {self.internals[s]}')
+      i = self.internals[s]
+      print(type(i))
+      t = self._scheduler.tasks[self.internals[s]]
+      print(t)
+    else:
+      print(f'Internal: {s} -> Nothing')
+
     try:
       self.documenter.serialize()
     except Exception as e:
       print(f'Close: {e}')
 
   @staticmethod
-  def _is_dask_internal(task: Task) -> bool:
-    func = task.func
+  def _is_dask_internal(task: TaskState) -> bool:
+    if not hasattr(task, 'run_spec'):
+      return False
+
+    if not isinstance(task.run_spec, Task):
+      return False
+
+    func = task.run_spec.func
     if hasattr(func, '__name__'):
       return (
         func.__name__ == '_execute_subgraph' and
         func.__module__ == 'dask._task_spec'
       )
-    return false
+    return False
 
-  def _track_dask_internal(self, task: TaskState):
-    # Execute task has always 1 arg, so this is safe
-    internal_func = task.run_spec[1][0]
-
-    if isinstance(internal_func, tuple):
-      func_id = internal_func[0]
-
-      if isinstance(func_id, str):
-        # internal_func is actually the id of another task, so retrieve its info        
-        task = self._scheduler.tasks[internal_func]
-        func = task.run_spec[0]
-        f_args = task.run_spec[1]
-        f_kwargs = task.run_spec[2]
-        return (func, f_args, f_kwargs)
-      elif callable(func_id):
-        # Maybe here we can avoid all checks, but some test are required
-        if func_id.__module__ == 'functools':
-          # This is most probably a functools.partial function
-          # Take the actual function being executed and its arguments
-          func = func_id.func
-          f_args = list(func_id.args)
-          f_kwargs = func_id.keywords
-          other_args = internal_func[1]
-          if (isinstance(other_args, dict)):
-            f_kwargs.update(other_args)
-          else:
-            f_args.extend(list(other_args))
-          return (func, f_args, f_kwargs)
-        else:
-          return (func_id, task.run_spec[1], task.run_spec[2])
-    else:
-      # func is an object os some kind
-      if not callable(internal_func):
-        # Since the object is not callable, keep execute_task as function so
-        # just return the original specs
-        return tuple(task.run_spec)
-
-    return (internal_func, (), {})
+  def _track_dask_internal(self, task: TaskState) -> TaskState:
+    specs: Task = task.run_spec
+    
+    # Take _execute_subgraph arguments
+    outkey = specs.args[1]
+    out_task = specs.args[0][outkey]
+    return out_task
