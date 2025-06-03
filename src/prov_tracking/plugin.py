@@ -91,7 +91,10 @@ class ProvTracker(SchedulerPlugin):
 
   async def close(self):
     self.closed = True
-    self.documenter.serialize()
+    try:
+      self.documenter.serialize()
+    except Exception as e:
+      print(f'Close: {e}')
 
   @staticmethod
   def _is_dask_internal(task: Task) -> bool:

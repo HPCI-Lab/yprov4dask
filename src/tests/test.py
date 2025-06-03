@@ -33,13 +33,10 @@ if __name__ == '__main__':
   # average air temperature across time. Chunking is preserved, so we have chunks
   # of size (25) for lat and (25, 25, 3) for lon
   air = ds['air']
-  ds_mean = ds.mean(dim = 'time').compute()
-  #ds.close()
-  #ds_mean.close()
+  ds_mean = ds.mean(dim = 'time')
+  ds_mean = ds_mean.compute()
 
-  ## The following calls generate an exception
   x = client.submit(baz, d=3, a=6)
   z = client.submit(math.sin, x)
-  #print(f'{x.result()} -- {z.result()}')
   
   client.close()

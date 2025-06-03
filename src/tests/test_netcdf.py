@@ -8,7 +8,7 @@ if __name__ == '__main__':
   client.register_plugin(plugin)
   plugin.start(client.scheduler)
 
-  file = '/various/shared/università/master-thesis/python/clt_day_CanESM5_ssp126_r12i1p2f1_gn_20150101-21001231.nc'
+  file = '/various/shared/università/master-thesis/python/heavy_tests/clt_day_CanESM5_ssp126_r12i1p2f1_gn_20150101-21001231.nc'
   ds = xr.open_dataset(file, engine = 'netcdf4', chunks={
     'time': -1
   })

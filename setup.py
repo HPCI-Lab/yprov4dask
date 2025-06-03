@@ -7,7 +7,7 @@ setup(
   version='0.1',
   description='Plugin for the Dask scheduler that enables provance tracking',
   author='Leonardo De Faveri',
-  author_email='leonardo.defaveri01@gmail.com',
+  author_email='',
   url='https://github.com/HPCI-Lab/yprov4dask',
   package_dir={'': 'src'},
   packages=['prov_tracking'],

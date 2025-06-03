@@ -35,6 +35,8 @@ if __name__ == '__main__':
     # Your analysis...
 
     # When the client is closed the provenance document is automatically generated
+    # If you define you're custom cluster, the document is registered then the
+    # cluster closes
     client.close()
 ```
 
