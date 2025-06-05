@@ -4,52 +4,103 @@
   },
   "activity": {
     "open_dataset-405b6cd8127495e524b06ba7f40a8bb7": {
-      "prov:startTime": "2025-06-03T16:29:26.893131",
-      "prov:endTime": "2025-06-03T16:29:27.818551",
-      "name": "<function open_dataset at 0x7fe9c0571260>",
+      "prov:startTime": "2025-06-05T17:09:22.137505",
+      "prov:endTime": "2025-06-05T17:09:22.549840",
+      "name": "<function open_dataset at 0x7f81b86896c0>",
       "module": "xarray.tutorial",
       "group": "open_dataset",
       "nice_name": "open_dataset"
     },
-    "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2": {
-      "prov:startTime": "2025-06-03T16:29:29.221576",
-      "prov:endTime": "2025-06-03T16:29:29.224870",
-      "name": "<function _execute_subgraph at 0x7fe9e0e8aca0>",
-      "module": "dask._task_spec",
-      "group": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b",
-      "nice_name": "_execute_subgraph"
+    "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2": [
+      {
+        "prov:startTime": "2025-06-05T17:09:23.011825",
+        "prov:endTime": "2025-06-05T17:09:23.013823",
+        "name": "<function getter at 0x7f8175d7b380>",
+        "module": "dask.array.core",
+        "group": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b",
+        "nice_name": "getter"
+      },
+      {
+        "prov:startTime": "2025-06-05T17:09:23.028173",
+        "prov:endTime": "2025-06-05T17:09:23.030961",
+        "name": "<function getter at 0x7f8175d7b380>",
+        "module": "dask.array.core",
+        "group": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b",
+        "nice_name": "getter"
+      },
+      {
+        "prov:startTime": "2025-06-05T17:09:23.044251",
+        "prov:endTime": "2025-06-05T17:09:23.049525",
+        "name": "<function getter at 0x7f8175d7b380>",
+        "module": "dask.array.core",
+        "group": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b",
+        "nice_name": "getter"
+      }
+    ],
+    "mean_chunk-200b37f43f5503d86441f14cbafc5eba": [
+      {
+        "prov:startTime": "2025-06-05T17:09:23.011825",
+        "prov:endTime": "2025-06-05T17:09:23.013823",
+        "name": "functools.partial(<function mean_chunk at 0x7f816d2254e0>, sum=<function nansum at 0x7f81d551c5b0>, numel=<function nannumel at 0x7f816dfedee0>, dtype=dtype('float64'))",
+        "module": "functools",
+        "group": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b"
+      },
+      {
+        "prov:startTime": "2025-06-05T17:09:23.028173",
+        "prov:endTime": "2025-06-05T17:09:23.030961",
+        "name": "functools.partial(<function mean_chunk at 0x7f816d2254e0>, sum=<function nansum at 0x7f81d551c5b0>, numel=<function nannumel at 0x7f816dfedee0>, dtype=dtype('float64'))",
+        "module": "functools",
+        "group": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b"
+      },
+      {
+        "prov:startTime": "2025-06-05T17:09:23.044251",
+        "prov:endTime": "2025-06-05T17:09:23.049525",
+        "name": "functools.partial(<function mean_chunk at 0x7f816d2254e0>, sum=<function nansum at 0x7f81d551c5b0>, numel=<function nannumel at 0x7f816dfedee0>, dtype=dtype('float64'))",
+        "module": "functools",
+        "group": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b"
+      }
+    ],
+    "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2": {
+      "prov:startTime": "2025-06-05T17:09:23.011825",
+      "prov:endTime": "2025-06-05T17:09:23.013823",
+      "name": "functools.partial(<function mean_agg at 0x7f816d2258a0>, dtype=dtype('float64'), axis=(0,), keepdims=False)",
+      "module": "functools",
+      "group": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b"
     },
-    "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0": {
-      "prov:startTime": "2025-06-03T16:29:29.309975",
-      "prov:endTime": "2025-06-03T16:29:29.319876",
-      "name": "<function _execute_subgraph at 0x7fe9e0e8aca0>",
-      "module": "dask._task_spec",
-      "group": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b",
-      "nice_name": "_execute_subgraph"
+    "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1": {
+      "prov:startTime": "2025-06-05T17:09:23.028173",
+      "prov:endTime": "2025-06-05T17:09:23.030961",
+      "name": "functools.partial(<function mean_agg at 0x7f816d2258a0>, dtype=dtype('float64'), axis=(0,), keepdims=False)",
+      "module": "functools",
+      "group": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b"
     },
-    "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1": {
-      "prov:startTime": "2025-06-03T16:29:29.326624",
-      "prov:endTime": "2025-06-03T16:29:29.335419",
-      "name": "<function _execute_subgraph at 0x7fe9e0e8aca0>",
-      "module": "dask._task_spec",
-      "group": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b",
-      "nice_name": "_execute_subgraph"
+    "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0": {
+      "prov:startTime": "2025-06-05T17:09:23.044251",
+      "prov:endTime": "2025-06-05T17:09:23.049525",
+      "name": "functools.partial(<function mean_agg at 0x7f816d2258a0>, dtype=dtype('float64'), axis=(0,), keepdims=False)",
+      "module": "functools",
+      "group": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b"
     },
-    "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2": {},
-    "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1": {},
-    "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0": {},
-    "finalize-hlgfinalizecompute-1c21f64eb1644e308b4fb3954ef81443": {
-      "prov:startTime": "2025-06-03T16:29:29.368324",
-      "prov:endTime": "2025-06-03T16:29:29.399904",
-      "name": "<function finalize at 0x7fe97c7904a0>",
+    "finalize-hlgfinalizecompute-8a7eead79bee4bb69ca56a56ed6999fb": {
+      "prov:startTime": "2025-06-05T17:09:23.058210",
+      "prov:endTime": "2025-06-05T17:09:23.066519",
+      "name": "<function finalize at 0x7f8175da45e0>",
       "module": "dask.array.core",
       "group": "finalize-hlgfinalizecompute",
       "nice_name": "finalize"
     },
+    "sin-c9f91088372d65e938dce8d4e743692d": {
+      "prov:startTime": "2025-06-05T17:09:23.072701",
+      "prov:endTime": "2025-06-05T17:09:23.075865",
+      "name": "<built-in function sin>",
+      "module": "math",
+      "group": "sin",
+      "nice_name": "sin"
+    },
     "baz-a28e3571a4a7af3fd3f8713990619e52": {
-      "prov:startTime": "2025-06-03T16:29:29.404602",
-      "prov:endTime": "2025-06-03T16:29:29.407168",
-      "name": "<function baz at 0x7fe9752500e0>",
+      "prov:startTime": "2025-06-05T17:09:23.068014",
+      "prov:endTime": "2025-06-05T17:09:23.076031",
+      "name": "<function baz at 0x7f816d2fe980>",
       "module": "__main__",
       "group": "baz",
       "nice_name": "baz"
@@ -69,76 +120,78 @@
       "nbytes": "24697"
     },
     "original-open_dataset-air-3f1df329a711599ff3e0d046481d61be": {
-      "value": "ImplicitToExplicitIndexingAdapter(array=CopyOnWriteArray(array=LazilyIndexedArray(array=_ElementwiseFunctionArray(LazilyIndexedArray(array=<xarray.backends.netCDF4_.NetCDF4ArrayWrapper object at 0x7fe97520ff40>, key=BasicIndexer((slice(None, None, None), slice(None, None, None), slice(None, None, None)))), func=functools.partial(<function _scale_offset_decoding at 0x7fe9c04ee520>, scale_factor=np.float64(0.01), add_offset=None, dtype=<class 'numpy.float64'>), dtype=dtype('float64')), key=BasicIndexer((slice(None, None, None), slice(None, None, None), slice(None, None, None))))))",
+      "value": "ImplicitToExplicitIndexingAdapter(array=CopyOnWriteArray(array=LazilyIndexedArray(array=_ElementwiseFunctionArray(LazilyIndexedArray(array=<xarray.backends.netCDF4_.NetCDF4ArrayWrapper object at 0x7f816d2c1640>, key=BasicIndexer((slice(None, None, None), slice(None, None, None), slice(None, None, None)))), func=functools.partial(<function _scale_offset_decoding at 0x7f81b8602980>, scale_factor=np.float64(0.01), add_offset=None, dtype=<class 'numpy.float64'>), dtype=dtype('float64')), key=BasicIndexer((slice(None, None, None), slice(None, None, None), slice(None, None, None))))))",
       "dtype": "xarray.core.indexing.ImplicitToExplicitIndexingAdapter"
     },
-    "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2.inner_dsk": {
-      "value": "{('mean_chunk-200b37f43f5503d86441f14cbafc5eba', 0, 0, 2): \"<Task ('mean_chunk-200b37f43f5503d86441f14cbafc5eba', 0, 0, 2) _execute_subgraph(...)>\", ('mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b', 0, 2): \"<Task ('mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b', 0, 2) mean_agg(...)>\"}",
-      "dtype": "dict"
+    "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2.key": {
+      "value": "('slice(0, 2920, None)', 'slice(0, 25, None)', 'slice(50, 53, None)')",
+      "dtype": "tuple"
     },
-    "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2.outkey": {
-      "value": "('mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b', '0', '2')",
-      "dtype": "tuple[str, int, int]"
+    "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1.key": {
+      "value": "('slice(0, 2920, None)', 'slice(0, 25, None)', 'slice(25, 50, None)')",
+      "dtype": "tuple"
     },
-    "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2.inkeys": {
-      "value": "('original-open_dataset-air-3f1df329a711599ff3e0d046481d61be',)",
-      "dtype": "tuple[str]"
+    "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0.key": {
+      "value": "('slice(0, 2920, None)', 'slice(0, 25, None)', 'slice(0, 25, None)')",
+      "dtype": "tuple"
     },
-    "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2.dependencies": {
-      "value": "original-open_dataset-air-3f1df329a711599ff3e0d046481d61be",
-      "dtype": "dask._task_spec.TaskRef"
-    },
-    "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2.return_value": {
+    "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2.return_value": [
+      {},
+      {},
+      {}
+    ],
+    "mean_chunk-200b37f43f5503d86441f14cbafc5eba.axis": [
+      {
+        "value": "('0',)",
+        "dtype": "tuple[int]"
+      },
+      {
+        "value": "('0',)",
+        "dtype": "tuple[int]"
+      },
+      {
+        "value": "('0',)",
+        "dtype": "tuple[int]"
+      }
+    ],
+    "mean_chunk-200b37f43f5503d86441f14cbafc5eba.keepdims": [
+      {
+        "value": "True",
+        "dtype": "bool"
+      },
+      {
+        "value": "True",
+        "dtype": "bool"
+      },
+      {
+        "value": "True",
+        "dtype": "bool"
+      }
+    ],
+    "mean_chunk-200b37f43f5503d86441f14cbafc5eba.return_value": [
+      {},
+      {},
+      {}
+    ],
+    "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2.return_value": {
       "dtype": "numpy.ndarray",
       "nbytes": "600"
     },
-    "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0.inner_dsk": {
-      "value": "{('mean_chunk-200b37f43f5503d86441f14cbafc5eba', 0, 0, 0): \"<Task ('mean_chunk-200b37f43f5503d86441f14cbafc5eba', 0, 0, 0) _execute_subgraph(...)>\", ('mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b', 0, 0): \"<Task ('mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b', 0, 0) mean_agg(...)>\"}",
-      "dtype": "dict"
-    },
-    "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0.outkey": {
-      "value": "('mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b', '0', '0')",
-      "dtype": "tuple[str, int, int]"
-    },
-    "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0.inkeys": {
-      "value": "('original-open_dataset-air-3f1df329a711599ff3e0d046481d61be',)",
-      "dtype": "tuple[str]"
-    },
-    "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0.dependencies": {
-      "value": "original-open_dataset-air-3f1df329a711599ff3e0d046481d61be",
-      "dtype": "dask._task_spec.TaskRef"
-    },
-    "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0.return_value": {
+    "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1.return_value": {
       "dtype": "numpy.ndarray",
       "nbytes": "5000"
     },
-    "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1.inner_dsk": {
-      "value": "{('mean_chunk-200b37f43f5503d86441f14cbafc5eba', 0, 0, 1): \"<Task ('mean_chunk-200b37f43f5503d86441f14cbafc5eba', 0, 0, 1) _execute_subgraph(...)>\", ('mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b', 0, 1): \"<Task ('mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b', 0, 1) mean_agg(...)>\"}",
-      "dtype": "dict"
-    },
-    "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1.outkey": {
-      "value": "('mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b', '0', '1')",
-      "dtype": "tuple[str, int, int]"
-    },
-    "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1.inkeys": {
-      "value": "('original-open_dataset-air-3f1df329a711599ff3e0d046481d61be',)",
-      "dtype": "tuple[str]"
-    },
-    "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1.dependencies": {
-      "value": "original-open_dataset-air-3f1df329a711599ff3e0d046481d61be",
-      "dtype": "dask._task_spec.TaskRef"
-    },
-    "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1.return_value": {
+    "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0.return_value": {
       "dtype": "numpy.ndarray",
       "nbytes": "5000"
     },
-    "finalize-hlgfinalizecompute-1c21f64eb1644e308b4fb3954ef81443.results": {
-      "value": "List((List((TaskRef(('mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b', 0, 0)), TaskRef(('mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b', 0, 1)), TaskRef(('mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b', 0, 2)))),))",
-      "dtype": "dask._task_spec.List"
-    },
-    "finalize-hlgfinalizecompute-1c21f64eb1644e308b4fb3954ef81443.return_value": {
+    "finalize-hlgfinalizecompute-8a7eead79bee4bb69ca56a56ed6999fb.return_value": {
       "dtype": "numpy.ndarray",
       "nbytes": "10600"
+    },
+    "sin-c9f91088372d65e938dce8d4e743692d.return_value": {
+      "dtype": "float",
+      "nbytes": "24"
     },
     "baz-a28e3571a4a7af3fd3f8713990619e52.d": {
       "value": "3",
@@ -157,118 +210,187 @@
     "_:id1": {
       "prov:activity": "open_dataset-405b6cd8127495e524b06ba7f40a8bb7",
       "prov:entity": "open_dataset-405b6cd8127495e524b06ba7f40a8bb7.name",
-      "prov:time": "2025-06-03T16:29:26.893131",
+      "prov:time": "2025-06-05T17:09:22.137505",
       "as_parameter": "name"
     },
     "_:id2": {
       "prov:activity": "open_dataset-405b6cd8127495e524b06ba7f40a8bb7",
       "prov:entity": "open_dataset-405b6cd8127495e524b06ba7f40a8bb7.chunks",
-      "prov:time": "2025-06-03T16:29:26.893131",
+      "prov:time": "2025-06-05T17:09:22.137505",
       "as_parameter": "chunks"
     },
     "_:id4": {
-      "prov:activity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2",
-      "prov:entity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2.inner_dsk",
-      "prov:time": "2025-06-03T16:29:29.221576",
-      "as_parameter": "inner_dsk"
+      "prov:activity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2",
+      "prov:entity": "__dask_blockwise__0.return_value",
+      "prov:time": "2025-06-05T17:09:23.011825",
+      "as_parameter": "a"
     },
     "_:id5": {
-      "prov:activity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2",
-      "prov:entity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2.outkey",
-      "prov:time": "2025-06-03T16:29:29.221576",
-      "as_parameter": "outkey"
+      "prov:activity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2",
+      "prov:entity": "__dask_blockwise__1.return_value",
+      "prov:time": "2025-06-05T17:09:23.011825",
+      "as_parameter": "b"
     },
     "_:id6": {
-      "prov:activity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2",
-      "prov:entity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2.inkeys",
-      "prov:time": "2025-06-03T16:29:29.221576",
-      "as_parameter": "inkeys"
+      "prov:activity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2",
+      "prov:entity": "__dask_blockwise__1",
+      "prov:time": "2025-06-05T17:09:23.011825"
     },
     "_:id7": {
-      "prov:activity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2",
-      "prov:entity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2.dependencies",
-      "prov:time": "2025-06-03T16:29:29.221576",
-      "as_parameter": "dependencies"
+      "prov:activity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2",
+      "prov:entity": "__dask_blockwise__0",
+      "prov:time": "2025-06-05T17:09:23.011825"
     },
-    "_:id8": {
-      "prov:activity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2",
-      "prov:entity": "original-open_dataset-air-3f1df329a711599ff3e0d046481d61be",
-      "prov:time": "2025-06-03T16:29:29.221576"
+    "_:id9": {
+      "prov:activity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba",
+      "prov:entity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2.return_value",
+      "prov:time": "2025-06-05T17:09:23.011825",
+      "as_parameter": "x"
     },
     "_:id10": {
-      "prov:activity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0",
-      "prov:entity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0.inner_dsk",
-      "prov:time": "2025-06-03T16:29:29.309975",
-      "as_parameter": "inner_dsk"
+      "prov:activity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba",
+      "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba.axis",
+      "prov:time": "2025-06-05T17:09:23.011825",
+      "as_parameter": "axis"
     },
     "_:id11": {
-      "prov:activity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0",
-      "prov:entity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0.outkey",
-      "prov:time": "2025-06-03T16:29:29.309975",
-      "as_parameter": "outkey"
-    },
-    "_:id12": {
-      "prov:activity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0",
-      "prov:entity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0.inkeys",
-      "prov:time": "2025-06-03T16:29:29.309975",
-      "as_parameter": "inkeys"
-    },
-    "_:id13": {
-      "prov:activity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0",
-      "prov:entity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0.dependencies",
-      "prov:time": "2025-06-03T16:29:29.309975",
-      "as_parameter": "dependencies"
+      "prov:activity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba",
+      "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba.keepdims",
+      "prov:time": "2025-06-05T17:09:23.011825",
+      "as_parameter": "keepdims"
     },
     "_:id14": {
-      "prov:activity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0",
-      "prov:entity": "original-open_dataset-air-3f1df329a711599ff3e0d046481d61be",
-      "prov:time": "2025-06-03T16:29:29.309975"
-    },
-    "_:id16": {
-      "prov:activity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1",
-      "prov:entity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1.inner_dsk",
-      "prov:time": "2025-06-03T16:29:29.326624",
-      "as_parameter": "inner_dsk"
+      "prov:activity": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2",
+      "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2.return_value",
+      "prov:time": "2025-06-05T17:09:23.011825",
+      "as_parameter": "pairs"
     },
     "_:id17": {
-      "prov:activity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1",
-      "prov:entity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1.outkey",
-      "prov:time": "2025-06-03T16:29:29.326624",
-      "as_parameter": "outkey"
+      "prov:activity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2",
+      "prov:entity": "__dask_blockwise__0.return_value",
+      "prov:time": "2025-06-05T17:09:23.028173",
+      "as_parameter": "a"
     },
     "_:id18": {
-      "prov:activity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1",
-      "prov:entity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1.inkeys",
-      "prov:time": "2025-06-03T16:29:29.326624",
-      "as_parameter": "inkeys"
+      "prov:activity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2",
+      "prov:entity": "__dask_blockwise__1.return_value",
+      "prov:time": "2025-06-05T17:09:23.028173",
+      "as_parameter": "b"
     },
     "_:id19": {
-      "prov:activity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1",
-      "prov:entity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1.dependencies",
-      "prov:time": "2025-06-03T16:29:29.326624",
-      "as_parameter": "dependencies"
+      "prov:activity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2",
+      "prov:entity": "__dask_blockwise__1",
+      "prov:time": "2025-06-05T17:09:23.028173"
     },
     "_:id20": {
-      "prov:activity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1",
-      "prov:entity": "original-open_dataset-air-3f1df329a711599ff3e0d046481d61be",
-      "prov:time": "2025-06-03T16:29:29.326624"
+      "prov:activity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2",
+      "prov:entity": "__dask_blockwise__0",
+      "prov:time": "2025-06-05T17:09:23.028173"
     },
-    "_:id25": {
-      "prov:activity": "finalize-hlgfinalizecompute-1c21f64eb1644e308b4fb3954ef81443",
-      "prov:entity": "finalize-hlgfinalizecompute-1c21f64eb1644e308b4fb3954ef81443.results",
-      "prov:time": "2025-06-03T16:29:29.368324",
-      "as_parameter": "results"
+    "_:id22": {
+      "prov:activity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba",
+      "prov:entity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2.return_value",
+      "prov:time": "2025-06-05T17:09:23.028173",
+      "as_parameter": "x"
+    },
+    "_:id23": {
+      "prov:activity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba",
+      "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba.axis",
+      "prov:time": "2025-06-05T17:09:23.028173",
+      "as_parameter": "axis"
+    },
+    "_:id24": {
+      "prov:activity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba",
+      "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba.keepdims",
+      "prov:time": "2025-06-05T17:09:23.028173",
+      "as_parameter": "keepdims"
+    },
+    "_:id26": {
+      "prov:activity": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1",
+      "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1.return_value",
+      "prov:time": "2025-06-05T17:09:23.028173",
+      "as_parameter": "pairs"
+    },
+    "_:id29": {
+      "prov:activity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2",
+      "prov:entity": "__dask_blockwise__0.return_value",
+      "prov:time": "2025-06-05T17:09:23.044251",
+      "as_parameter": "a"
     },
     "_:id30": {
-      "prov:activity": "baz-a28e3571a4a7af3fd3f8713990619e52",
-      "prov:entity": "baz-a28e3571a4a7af3fd3f8713990619e52.d",
-      "prov:time": "2025-06-03T16:29:29.404602",
-      "as_parameter": "d"
+      "prov:activity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2",
+      "prov:entity": "__dask_blockwise__1.return_value",
+      "prov:time": "2025-06-05T17:09:23.044251",
+      "as_parameter": "b"
     },
     "_:id31": {
+      "prov:activity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2",
+      "prov:entity": "__dask_blockwise__1",
+      "prov:time": "2025-06-05T17:09:23.044251"
+    },
+    "_:id32": {
+      "prov:activity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2",
+      "prov:entity": "__dask_blockwise__0",
+      "prov:time": "2025-06-05T17:09:23.044251"
+    },
+    "_:id34": {
+      "prov:activity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba",
+      "prov:entity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2.return_value",
+      "prov:time": "2025-06-05T17:09:23.044251",
+      "as_parameter": "x"
+    },
+    "_:id35": {
+      "prov:activity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba",
+      "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba.axis",
+      "prov:time": "2025-06-05T17:09:23.044251",
+      "as_parameter": "axis"
+    },
+    "_:id36": {
+      "prov:activity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba",
+      "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba.keepdims",
+      "prov:time": "2025-06-05T17:09:23.044251",
+      "as_parameter": "keepdims"
+    },
+    "_:id38": {
+      "prov:activity": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0",
+      "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0.return_value",
+      "prov:time": "2025-06-05T17:09:23.044251",
+      "as_parameter": "pairs"
+    },
+    "_:id41": {
+      "prov:activity": "finalize-hlgfinalizecompute-8a7eead79bee4bb69ca56a56ed6999fb",
+      "prov:entity": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0.return_value",
+      "prov:time": "2025-06-05T17:09:23.058210",
+      "as_parameter": "results"
+    },
+    "_:id42": {
+      "prov:activity": "finalize-hlgfinalizecompute-8a7eead79bee4bb69ca56a56ed6999fb",
+      "prov:entity": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2.return_value",
+      "prov:time": "2025-06-05T17:09:23.058210",
+      "as_parameter": "results"
+    },
+    "_:id43": {
+      "prov:activity": "finalize-hlgfinalizecompute-8a7eead79bee4bb69ca56a56ed6999fb",
+      "prov:entity": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1.return_value",
+      "prov:time": "2025-06-05T17:09:23.058210",
+      "as_parameter": "results"
+    },
+    "_:id48": {
+      "prov:activity": "sin-c9f91088372d65e938dce8d4e743692d",
+      "prov:entity": "baz-a28e3571a4a7af3fd3f8713990619e52.return_value",
+      "prov:time": "2025-06-05T17:09:23.072701",
+      "as_parameter": "x"
+    },
+    "_:id51": {
+      "prov:activity": "baz-a28e3571a4a7af3fd3f8713990619e52",
+      "prov:entity": "baz-a28e3571a4a7af3fd3f8713990619e52.d",
+      "prov:time": "2025-06-05T17:09:23.068014",
+      "as_parameter": "d"
+    },
+    "_:id52": {
       "prov:activity": "baz-a28e3571a4a7af3fd3f8713990619e52",
       "prov:entity": "baz-a28e3571a4a7af3fd3f8713990619e52.a",
-      "prov:time": "2025-06-03T16:29:29.404602",
+      "prov:time": "2025-06-05T17:09:23.068014",
       "as_parameter": "a"
     }
   },
@@ -276,58 +398,111 @@
     "_:id3": {
       "prov:entity": "open_dataset-405b6cd8127495e524b06ba7f40a8bb7.return_value",
       "prov:activity": "open_dataset-405b6cd8127495e524b06ba7f40a8bb7",
-      "prov:time": "2025-06-03T16:29:27.818551"
+      "prov:time": "2025-06-05T17:09:22.549840"
     },
-    "_:id9": {
-      "prov:entity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2.return_value",
-      "prov:activity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2",
-      "prov:time": "2025-06-03T16:29:29.224870"
+    "_:id8": {
+      "prov:entity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2.return_value",
+      "prov:activity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2",
+      "prov:time": "2025-06-05T17:09:23.013823"
     },
-    "_:id15": {
-      "prov:entity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0.return_value",
-      "prov:activity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0",
-      "prov:time": "2025-06-03T16:29:29.319876"
+    "_:id13": {
+      "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba.return_value",
+      "prov:activity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba",
+      "prov:time": "2025-06-05T17:09:23.013823"
+    },
+    "_:id16": {
+      "prov:entity": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2.return_value",
+      "prov:activity": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2",
+      "prov:time": "2025-06-05T17:09:23.013823"
     },
     "_:id21": {
-      "prov:entity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1.return_value",
-      "prov:activity": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1",
-      "prov:time": "2025-06-03T16:29:29.335419"
+      "prov:entity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2.return_value",
+      "prov:activity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2",
+      "prov:time": "2025-06-05T17:09:23.030961"
     },
-    "_:id29": {
-      "prov:entity": "finalize-hlgfinalizecompute-1c21f64eb1644e308b4fb3954ef81443.return_value",
-      "prov:activity": "finalize-hlgfinalizecompute-1c21f64eb1644e308b4fb3954ef81443",
-      "prov:time": "2025-06-03T16:29:29.399904"
+    "_:id25": {
+      "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba.return_value",
+      "prov:activity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba",
+      "prov:time": "2025-06-05T17:09:23.030961"
     },
-    "_:id32": {
+    "_:id28": {
+      "prov:entity": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1.return_value",
+      "prov:activity": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1",
+      "prov:time": "2025-06-05T17:09:23.030961"
+    },
+    "_:id33": {
+      "prov:entity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2.return_value",
+      "prov:activity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2",
+      "prov:time": "2025-06-05T17:09:23.049525"
+    },
+    "_:id37": {
+      "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba.return_value",
+      "prov:activity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba",
+      "prov:time": "2025-06-05T17:09:23.049525"
+    },
+    "_:id40": {
+      "prov:entity": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0.return_value",
+      "prov:activity": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0",
+      "prov:time": "2025-06-05T17:09:23.049525"
+    },
+    "_:id47": {
+      "prov:entity": "finalize-hlgfinalizecompute-8a7eead79bee4bb69ca56a56ed6999fb.return_value",
+      "prov:activity": "finalize-hlgfinalizecompute-8a7eead79bee4bb69ca56a56ed6999fb",
+      "prov:time": "2025-06-05T17:09:23.066519"
+    },
+    "_:id50": {
+      "prov:entity": "sin-c9f91088372d65e938dce8d4e743692d.return_value",
+      "prov:activity": "sin-c9f91088372d65e938dce8d4e743692d",
+      "prov:time": "2025-06-05T17:09:23.075865"
+    },
+    "_:id53": {
       "prov:entity": "baz-a28e3571a4a7af3fd3f8713990619e52.return_value",
       "prov:activity": "baz-a28e3571a4a7af3fd3f8713990619e52",
-      "prov:time": "2025-06-03T16:29:29.407168"
+      "prov:time": "2025-06-05T17:09:23.076031"
     }
   },
   "wasInformedBy": {
-    "_:id22": {
+    "_:id12": [
+      {
+        "prov:informed": "mean_chunk-200b37f43f5503d86441f14cbafc5eba",
+        "prov:informant": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2"
+      },
+      {
+        "prov:informed": "mean_chunk-200b37f43f5503d86441f14cbafc5eba",
+        "prov:informant": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2"
+      },
+      {
+        "prov:informed": "mean_chunk-200b37f43f5503d86441f14cbafc5eba",
+        "prov:informant": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2"
+      }
+    ],
+    "_:id15": {
       "prov:informed": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2",
-      "prov:informant": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2"
-    },
-    "_:id23": {
-      "prov:informed": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1",
-      "prov:informant": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1"
-    },
-    "_:id24": {
-      "prov:informed": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0",
-      "prov:informant": "mean_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0"
-    },
-    "_:id26": {
-      "prov:informed": "finalize-hlgfinalizecompute-1c21f64eb1644e308b4fb3954ef81443",
-      "prov:informant": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0"
+      "prov:informant": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2"
     },
     "_:id27": {
-      "prov:informed": "finalize-hlgfinalizecompute-1c21f64eb1644e308b4fb3954ef81443",
+      "prov:informed": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1",
+      "prov:informant": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1"
+    },
+    "_:id39": {
+      "prov:informed": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0",
+      "prov:informant": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0"
+    },
+    "_:id44": {
+      "prov:informed": "finalize-hlgfinalizecompute-8a7eead79bee4bb69ca56a56ed6999fb",
+      "prov:informant": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0"
+    },
+    "_:id45": {
+      "prov:informed": "finalize-hlgfinalizecompute-8a7eead79bee4bb69ca56a56ed6999fb",
       "prov:informant": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1"
     },
-    "_:id28": {
-      "prov:informed": "finalize-hlgfinalizecompute-1c21f64eb1644e308b4fb3954ef81443",
+    "_:id46": {
+      "prov:informed": "finalize-hlgfinalizecompute-8a7eead79bee4bb69ca56a56ed6999fb",
       "prov:informant": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2"
+    },
+    "_:id49": {
+      "prov:informed": "sin-c9f91088372d65e938dce8d4e743692d",
+      "prov:informant": "baz-a28e3571a4a7af3fd3f8713990619e52"
     }
   }
 }

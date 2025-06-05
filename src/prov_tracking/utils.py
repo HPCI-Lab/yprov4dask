@@ -1,45 +1,104 @@
-from dask.task_spec import Task, Alias
+from datetime import datetime
+from dask.task_spec import Task, DataNode, Alias, TaskRef, List
 from dask.typing import Key
-from distributed.scheduler import TaskState
+from distributed.scheduler import T_runspec, TaskState
 
 from collections.abc import Callable
-from typing import Any
+from typing import Any, cast
 import inspect
 
 class RunnableTaskInfo:
-  """Container for all task info that will have to be registered in the
-  provenance document"""
+  """Container class holding info about a runnable task."""
 
-  def __init__(self, task: TaskState):
+  def __init__(
+    self,
+    task: TaskState | None = None,
+    specs: Task | None = None,
+    group_key: str | None = None,
+    dependencies: list[tuple[Key, Task | DataNode | Alias]] | None = None
+  ):
+    if task is not None:
+      self._from_task(task)
+    elif specs is not None and group_key is not None and dependencies is not None:
+      self._from_pieces(specs, group_key, dependencies)
+    else:
+      raise TypeError('''
+RunnableTaskInfo can take either a TaskState object or specs, group_key and dependencies.
+      ''')
+    self.start_time: datetime | None = None
+    self.finish_time: datetime | None = None
+
+    specs = cast(Task, specs or task.run_spec)
+    self.args_dict: dict[str, ReadyValue | GeneratedValue | set[ReadyValue | GeneratedValue]] = {}
+    
+    param_names = []
+    try:
+      param_names = list(inspect.signature(self.func).parameters)
+    except ValueError:
+      # The signature in non-inspectable
+      param_names = [f'arg_{i}' for i in range(len(specs.args))]
+    for name, value in zip(param_names, specs.args):
+      if isinstance(value, List):
+        # Multiple tasks cooperate to produce this value. Maybe it's a list of
+        # values returned by some tasks
+        values = set()
+        _get_values_from_list(value, values)
+        self.args_dict[name] = values
+      else:
+        self.args_dict[name] = _get_value(value)
+
+    if len(specs.args) > len(param_names):
+      values = set()
+      values.add(self.args_dict[param_names[-1]])
+      for value in specs.args[len(param_names):]:
+        if isinstance(value, List):
+          _get_values_from_list(value, values)
+        else:
+          values.add(_get_value(value))
+      self.args_dict[param_names[-1]] = values
+
+    for name, value in specs.kwargs.items():
+      if isinstance(value, List):
+        values = set()
+        _get_values_from_list(value, values)
+        self.args_dict[name] = values
+      else:
+        self.args_dict[name] = _get_value(value)
+    
+
+  def _from_task(self, task: TaskState):
     self.key: Key = task.key
-    specs: Task = task.run_spec
+    specs: Task = cast(Task, task.run_spec)
     self.func: Callable = specs.func
     self.group: str = task.group_key
-    self.dependencies: list[str] = [] # For runnable tasks and aliases
-    self.other_dependencies: list[str] = [] # For non-runnable tasks
+    self.dependencies: list[Key] = [] # For runnable tasks and aliases
+    self.other_dependencies: list[Key] = [] # For non-runnable tasks
     for dep in task.dependencies:
       # This is to avoid registering non-runnable tasks, registered as entities,
       # as informant activities of this task since that would be inconsistent
       # with the W3C Prov data model
-      if isinstance(dep.run_spec, Task) or isinstance(dep.run_spec, Alias):
+      if isinstance(dep.run_spec, (Task, Alias)):
         self.dependencies.append(dep.key)
       else:
         self.other_dependencies.append(dep.key)
-    self.start_time = None
-    self.finish_time = None
 
-    self.args_dict: dict[str, ReadyValue | GeneratedValue] = {}
-    param_names = list(inspect.signature(self.func).parameters)
-    for name, value in zip(param_names, specs.args):
-      if isinstance(value, Alias):
-        self.args_dict[name] = GeneratedValue(str(value.target))
+  def _from_pieces(
+    self, specs: Task, group_key: str,
+    dependencies: list[tuple[Key, Task | DataNode | Alias]]
+  ):
+    self.group: str = group_key
+    self.key: Key = specs.key
+    self.func: Callable = specs.func
+    self.dependencies: list[Key] = [] # For runnable tasks and aliases
+    self.other_dependencies: list[Key] = [] # For non-runnable tasks
+    for key, dep in dependencies:
+      # This is to avoid registering non-runnable tasks, registered as entities,
+      # as informant activities of this task since that would be inconsistent
+      # with the W3C Prov data model
+      if isinstance(dep, (Task, Alias)):
+        self.dependencies.append(key)
       else:
-        self.args_dict[name] = ReadyValue(value)
-    for name, value in specs.kwargs.items():
-      if isinstance(value, Alias):
-        self.args_dict[name] = GeneratedValue(str(value.target))
-      else:
-        self.args_dict[name] = ReadyValue(value)
+        self.other_dependencies.append(key)
 
 
 class ReadyValue:
@@ -48,8 +107,53 @@ class ReadyValue:
   def __init__(self, value: Any):
     self.value = value
 
+  def __eq__(self, o: object) -> bool:
+    if isinstance(o, ReadyValue):
+      return self.value == o.value
+    return False
+  
+  def __hash__(self) -> int:
+    return hash(('value', repr(self.value)))
+
 class GeneratedValue:
   """A value which has been generated by another task"""
 
   def __init__(self, generator: str):
     self.generatedBy = generator
+
+  def __eq__(self, o: object) -> bool:
+    if isinstance(o, GeneratedValue):
+      return self.generatedBy == o.generatedBy
+    return False
+
+  def __hash__(self) -> int:
+    return hash(('generatedBy', self.generatedBy))
+
+def _get_value(obj: Any) -> GeneratedValue | ReadyValue:
+  """Given a parameter value creates a suitable representation for it. If the
+  value comes from another task, returns a `GeneratedValue`, otherwise returns
+  a `ReadyValue`."""
+
+  if isinstance(obj, TaskRef):
+    return GeneratedValue(str(obj.key))
+  elif isinstance(obj, Alias):
+    return GeneratedValue(str(obj.target))
+  elif isinstance(obj, Task):
+    if obj.key is None:
+      # The task is:
+      # <Task None _identity_cast(Alias(t), typ=<class 'list'>)>
+      # t is a task whose also amone the dependencies of this task
+      return GeneratedValue(str(obj.args[0].target))
+    else:
+      return GeneratedValue(str(obj.key))
+  else:
+    return ReadyValue(obj)
+
+def _get_values_from_list(obj: Any, items: set):
+  """Recursively takes all items from a list and its sublists"""
+
+  if not isinstance(obj, List):
+    items.add(_get_value(obj))
+  else:
+    for item in obj:
+      _get_values_from_list(item, items)

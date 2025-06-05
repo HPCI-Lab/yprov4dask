@@ -6,11 +6,15 @@ from distributed.scheduler import TaskState
 import prov.model as prov
 from prov_tracking.utils import RunnableTaskInfo, GeneratedValue, ReadyValue
 
-def _sanitize(string: str):
-  return string.replace('(', '').replace(')', '').replace('\'', '').replace(', ', '_')
-  return string
+def _sanitize(string: str) -> str:
+  """Given a string, returns a new string without `(`, `)`, `\\` and with
+  `,` substituted by `_`."""
 
-def _serialize_value(obj):
+  return string.replace('(', '').replace(')', '').replace('\'', '').replace(', ', '_')
+
+def _serialize_value(obj: Any) -> str:
+  """Ginen an object, serializes it as a string."""
+
   if isinstance(obj, str):
     return obj
   elif isinstance(obj, (list, tuple)):
@@ -24,7 +28,10 @@ def _serialize_value(obj):
   else:
     return str(obj)
 
-def _type(obj) -> str:
+def _type(obj: Any) -> str:
+  """Given and object, returns a string representing its type. The string is
+  richer than that produced by simply calling `str(type(obj))`."""
+
   if isinstance(obj, list):
     if len(obj) == 0:
       return 'list[()]'
@@ -48,25 +55,60 @@ def _type(obj) -> str:
     
 
 class Documenter:
+  """Handles the creation of entities and activities associated with tasks."""
+
   def __init__(self, **kwargs):
+    """Additional arguments:
+    - `destination: str`: where to save the serialized provenance document.
+    Defaults to `./provenance.json`
+    - `format: str`: serialization format for the document. Possible values are
+    `json`, `xml`, `rdf`, `provn`. Defaults to `json`
+    - `rich_types: bool`: tells if datatypes of values such be richer, e.g. for
+    tuples, track the type of each element instead of just saying that the value
+    is a tuple. Defaults to `False`
+    """
+
     self.document = prov.ProvDocument()
     self.document.set_default_namespace('dask-prov.dict')
-    self.format = kwargs.pop('format', 'json')
-    self.destination = kwargs.pop('destination', './provenance.json')
+    self.format: str = kwargs.pop('format', 'json')
+    self.destination: str = kwargs.pop('destination', './provenance.json')
     self.rich_types: bool = kwargs.pop('rich_types', False)
     self.kwargs: dict[str, Any] = kwargs
 
   def register_non_runnable_task(self, task_id: Key, task: DataNode):
-    """Non-runnable tasks are registered as entity as they are in fact just data"""
+    """Non-runnable tasks are registered as entities as they are in fact just data"""
 
     key = _sanitize(str(task_id))
     self.document.entity(
-      identifier=task_id,
+      identifier=key,
       other_attributes={
         'value': _serialize_value(task.value),
         'dtype': str(type(task.typ)) if not self.rich_types else _type(task.typ)
       }
     )
+
+  def register_task_param(self, activity_id: str, name: str, param: ReadyValue | GeneratedValue):
+    """Registers the param name for activity `activity_id` according to its
+    value. If it is a `ReadyValue`, an entity is created for the parameter and
+    the pair `(name, key)` is returned, with `key` being the identifier of the
+    created entity. If instead param is a `GeneratedValue`, the returned pair
+    has the identifier of the entity that represents the return value of the
+    generator activity.
+    """
+
+    if isinstance(param, ReadyValue):
+      key = f'{activity_id}.{name}'
+      self.document.entity(
+        identifier=key,
+        other_attributes={
+          'value': _serialize_value(param.value),
+          'dtype': str(type(param.value)) if not self.rich_types else _type(param.value)
+        }
+      )
+      return (name, key)
+    else:
+      key = f'{_sanitize(param.generatedBy)}.return_value'
+      return (name, key)
 
   def register_runnable_task(self, info: RunnableTaskInfo) -> str:
     """Runnble tasks are registered as activities. Parameters to the task are
@@ -92,19 +134,12 @@ class Documenter:
     # Records the used parameters
     used_params = []
     for name, param in info.args_dict.items():
-      if isinstance(param, ReadyValue):
-        key = f'{activity_id}.{name}'
-        self.document.entity(
-          identifier=key,
-          other_attributes={
-            'value': _serialize_value(param.value),
-            'dtype': str(type(param.value)) if not self.rich_types else _type(param.value)
-          }
-        )
-        used_params.append((name, key))
+      if not isinstance(param, set):
+        used_params.append(self.register_task_param(activity_id, name, param))
       else:
-        key = f'{_sanitize(param.generatedBy)}.return_value'
-        used_params.append((name, key))
+        for value in param:
+          used_params.append(self.register_task_param(activity_id, name, value))
+
     for name, key in used_params:
       self.document.used(
         activity=activity_id,
@@ -131,21 +166,24 @@ class Documenter:
     return activity_id
 
   def register_successful_task(
-    self, info: RunnableTaskInfo, dtype: type, nbytes: int
+    self, info: RunnableTaskInfo, dtype: str | None, nbytes: int | None
   ):
-    """Registers the successful completion of a runnble task that has produced
-    some value"""
+    """Registers the successful completion of a runnble tasks and the value that
+    the task produced."""
 
     activity_id = self.register_runnable_task(info)
 
     # Records the value generated by this funcion
     key = f'{activity_id}.return_value'
+    other_attributes = {}
+    if dtype is not None and nbytes is not None:
+      other_attributes = {
+      'dtype': dtype,
+      'nbytes': str(nbytes)
+    }
     self.document.entity(
       identifier=key,
-      other_attributes={
-        'dtype': dtype,
-        'nbytes': str(nbytes)
-      }
+      other_attributes=other_attributes
     )
     self.document.wasGeneratedBy(
       entity=key,
@@ -154,24 +192,26 @@ class Documenter:
     )
 
   def register_failed_task(
-    self, info: RunnableTaskInfo, exception_text: str, traceback: str | None,
-    blamed_task: TaskState | None
+    self, info: RunnableTaskInfo, exception_text: str | None,
+    traceback: str | None, blamed_task: TaskState | None
   ):
-    """Registers the failed completion of a runnble task that has terminated
-    with an exception"""
+    """Registers the failed completion of some runnble tasks and records the
+    exception they raised."""
 
     activity_id = self.register_runnable_task(info)
     key = f'{activity_id}.return_value'
-    attributes = {
+    attributes: dict[str, Any] = {
       'is_error': True,
-      'exception_text': exception_text,
     }
-    if traceback is not None:
-      attributes['traceback'] = traceback
-    if blamed_task is not None and blamed_task.key != activity_id:
-      other_task_id = _sanitize(str(blamed_task.key))
-      attributes['blamed_task'] = other_task_id
-      self.document.wasInformedBy(informed=activity_id, informant=other_task_id)
+    if exception_text is not None:
+      attributes['exception_text'] = exception_text
+    
+      if traceback is not None:
+        attributes['traceback'] = traceback
+      if blamed_task is not None and blamed_task.key != activity_id:
+        other_task_id = _sanitize(str(blamed_task.key))
+        attributes['blamed_task'] = other_task_id
+        self.document.wasInformedBy(informed=activity_id, informant=other_task_id)
 
     self.document.entity(
       identifier=key,
@@ -179,17 +219,6 @@ class Documenter:
     )
     self.document.wasGeneratedBy(
       entity=key, activity=activity_id, time=info.finish_time
-    )
-
-  def register_alias(self, task: TaskState, target_task: TaskState):
-    task_id = _sanitize(str(task.key))
-    target_id = _sanitize(str(target_task.key))
-    self.document.activity(
-      identifier=task_id,
-    )
-    self.document.wasInformedBy(
-      informed=task_id,
-      informant=target_id
     )
 
   def serialize(self, destination=None, format=None, **kwargs: dict[str, Any]):
@@ -200,7 +229,7 @@ class Documenter:
     `None`.
     """
 
-    if format is None and self.format is not None:
+    if format is None:
       format = self.format
     if destination is None and self.destination is not None:
       destination = self.destination
