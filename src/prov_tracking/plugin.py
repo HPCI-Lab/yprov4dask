@@ -1,13 +1,13 @@
 from dask.order import order
-from dask.task_spec import DataNode, Task
+from dask.task_spec import DataNode, Task, TaskRef, Alias
 from dask.typing import Key
 from distributed.diagnostics.plugin import SchedulerPlugin
-from distributed.scheduler import Scheduler, TaskState, TaskStateState as SchedulerTaskState
+from distributed.scheduler import Scheduler, TaskStateState as SchedulerTaskState
 from prov_tracking.documenter import Documenter
 from prov_tracking.utils import RunnableTaskInfo
 
 import datetime as dt
-from typing import Any
+from typing import Any, cast
 from traceback import format_exc
 
 class ProvTracker(SchedulerPlugin):
@@ -33,7 +33,6 @@ class ProvTracker(SchedulerPlugin):
     self.registered_tasks: set[Key] = set()
     # Keeps info about all tasks encountered
     self.all_tasks: dict[Key, Task | DataNode] = {}
-    self.non_runnables: dict[Key, DataNode] = {}
     self.all_runnables: dict[Key, RunnableTaskInfo] = {}
     self.macro_tasks: dict[Key, list[Key]] = {}
 
@@ -56,7 +55,6 @@ class ProvTracker(SchedulerPlugin):
         self.registered_tasks.add(key)
         if isinstance(task.run_spec, DataNode):
           self.documenter.register_non_runnable_task(str(key), task.run_spec)
-          self.non_runnables[key] = task.run_spec
           self.all_tasks[key] = task.run_spec
         elif isinstance(task.run_spec, Task):
           if not ProvTracker._is_dask_internal(task.run_spec):
@@ -90,6 +88,10 @@ class ProvTracker(SchedulerPlugin):
         self.documenter.register_successful_task(info, dtype, nbytes)
 
       elif start == 'erred' and key in self.macro_tasks:
+        # It's impossible to detect what task has failed, so if this macro task
+        # has many sub-tasks, all are represented as erroneous in the provenance
+        # document
+
         now = dt.datetime.now()
         for sub_key in self.macro_tasks[key][:-1]:
           info = self.all_runnables[sub_key]
@@ -123,6 +125,8 @@ class ProvTracker(SchedulerPlugin):
 
   @staticmethod
   def _is_dask_internal(run_spec: Task) -> bool:
+    """Checks if the given runnable task is a call to a dask internal function."""
+
     func = run_spec.func
     if hasattr(func, '__name__'):
       return (
@@ -131,50 +135,98 @@ class ProvTracker(SchedulerPlugin):
       )
     return False
 
-  def _track_dask_internal(self, run_spec: Task, group_key: str, parent_deps: dict[Key, Any] = {}) -> dict[Key, RunnableTaskInfo]:
-    inner_dsk = run_spec.args[0]
+  @staticmethod
+  def _get_key(parent: Key, child: Key) -> Key:
+    """Takes the key of a task `child` which has been started by `parent`, i.e.
+    child is part of the `inner_dsk` dictionary of `parent.args`. If `child` is
+    a non-unique key, returns a new key that embeds `parent`'s info to produce
+    a new unique key."""
+
+    key = child
+    # This first condition should always be True
+    if isinstance(parent, tuple) and len(parent) > 1:
+      if isinstance(child, tuple) and len(child) == 1:
+        key = (child[0], *parent[1:])
+      elif not isinstance(child, tuple):
+        key = (child, *parent[1:])
+      # Otherwise, the child key is fine as it is
+    return key
+
+  def _track_dask_internal(
+    self, run_spec: Task, group_key: str
+  ) -> dict[Key, RunnableTaskInfo]:
+    """Given a task that executes `dask._task_spec._execute_subgraph` follows
+    the subgraph associated to that call and records all the information about
+    tasks in that subgraph. `self.all_tasks` is kept updated. Returns a
+    dictionary with the info of all analysed tasks.
     
+    #### Note
+    This call is recursive, but this should be safe as the maximum recursion
+    level is (apparently) at most 1.
+    """
+
+    # These are all tasks that will be executed by _execute_subgraph
+    inner_dsk = cast(dict[Key, Task | Alias | DataNode], run_spec.args[0])
     # Some dependencies are referenced with names in inkeys that might be
     # different from names already used before for the same resource
-    inkeys = run_spec.args[2]
-    dependencies = run_spec.args[3:]
+    inkeys = cast(tuple[Key, ...], run_spec.args[2])
+    dependencies = cast(tuple[TaskRef | DataNode, ...], run_spec.args[3:])
+    # Keeps the association between a dependency and its inkey. This dict always
+    # used the original key for a dependency, even if its non-unique
     internal_deps: dict[Key, Any] = {}
+    # Tasks in inner_dsk might be using non-unique keys. This dictionary keeps
+    # the association between the original non-unique key of a task and a new
+    # unique key used later on when the task info is serialized
+    unique_keys: dict[Key, Key] = {}
+
     for key, dep in zip(inkeys, dependencies):
-      if isinstance(dep, DataNode):
-        # Create the entity for the datanode
-        # Forge a custom key to avoid duplicates
-        custom_key = f'{run_spec.key}.key'
-        self.documenter.register_non_runnable_task(custom_key, dep)
-        internal_deps[key] = DataNode(custom_key, dep.value)
-      else:
-        # dep is a TaskRef
+      if isinstance(dep, TaskRef):
+        # Refs are always for already seen tasks, so this is safe. Also, tasks
+        # whose key has been changed because it was non-unique, are never seen
+        # here
         internal_deps[key] = self.all_tasks[dep.key]
+      else:
+        # As this value is actually ready, and doesn't come from any other
+        # recognizable task, just take the raw value
+        internal_deps[key] = dep.value
     
     priorities = order(inner_dsk)
     infos: dict[Key, RunnableTaskInfo] = {}
     for key, node in sorted(inner_dsk.items(), key=lambda it: priorities[it[0]]):
+      # node is an alias or a task executed by a worker
       if isinstance(node, Task):
-        self.all_tasks[key] = node
+        unique_key = ProvTracker._get_key(run_spec.key, key)
+        unique_keys[key] = unique_key
+        self.all_tasks[unique_key] = node
         if ProvTracker._is_dask_internal(node):
-          print(f'{group_key}:{run_spec.key} -> Recursion on {node.key}')
-          infos.update(self._track_dask_internal(node, group_key, internal_deps))
+          # That executing _execute_subgraph, are not saved in the prov document
+          infos.update(self._track_dask_internal(node, group_key))
         else:
           node_deps = []
-          for dep in node.dependencies:
-            if dep in self._scheduler.tasks:
-              node_deps.append((dep, self._scheduler.tasks[dep].run_spec))
-            elif dep in inner_dsk:
-              node_deps.append((dep, inner_dsk[dep]))
-            elif dep in internal_deps:
-              node_deps.append((dep, internal_deps[dep]))
-          infos[key] = RunnableTaskInfo(
-            specs=node, group_key=group_key, dependencies=node_deps
+          for dep in cast(set[Key], node.dependencies):
+            if dep in internal_deps:
+              node_deps.append(internal_deps[dep])
+            else:
+              unique_dep_key = unique_keys.get(dep, dep)
+              node_deps.append(self.all_tasks[unique_dep_key])
+          infos[unique_key] = RunnableTaskInfo(
+            specs=node, group_key=group_key, dependencies=node_deps,
+            interal_deps=internal_deps, unique_keys=unique_keys
           )
-      else:
-        self.all_tasks[key] = self.all_tasks[node.target]
-        if node.target in infos:
-          infos[key] = infos[node.target]
+      elif isinstance(node, Alias):
+        # Not sure if keys can be non-unique
+        unique_key = ProvTracker._get_key(run_spec.key, key)
+        unique_target = unique_keys.get(node.target, node.target)
+        self.all_tasks[unique_key] = self.all_tasks[unique_target]
+        if unique_target in infos:
+          infos[unique_key] = infos[unique_target]
         else:
-          infos[key] = self.all_runnables[node.target] # type: ignore
+          infos[unique_key] = self.all_runnables[unique_target]
+      else:
+        if node.key not in self.all_tasks:
+          self.documenter.register_non_runnable_task(node.key, node)
+          self.all_tasks[node.key] = node
+        else:
+          print('duplicate')
     
     return infos

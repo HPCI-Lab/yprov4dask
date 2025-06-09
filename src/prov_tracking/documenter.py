@@ -4,7 +4,7 @@ from dask.typing import Key
 from distributed.scheduler import TaskState
 
 import prov.model as prov
-from prov_tracking.utils import RunnableTaskInfo, GeneratedValue, ReadyValue
+from prov_tracking.utils import RunnableTaskInfo, GeneratedValue, ReadyValue, Value
 
 def _sanitize(string: str) -> str:
   """Given a string, returns a new string without `(`, `)`, `\\` and with
@@ -87,7 +87,7 @@ class Documenter:
       }
     )
 
-  def register_task_param(self, activity_id: str, name: str, param: ReadyValue | GeneratedValue):
+  def register_task_param(self, activity_id: str, name: str, param: Value):
     """Registers the param name for activity `activity_id` according to its
     value. If it is a `ReadyValue`, an entity is created for the parameter and
     the pair `(name, key)` is returned, with `key` being the identifier of the
@@ -95,8 +95,12 @@ class Documenter:
     has the identifier of the entity that represents the return value of the
     generator activity.
     """
-
+    key = None
     if isinstance(param, ReadyValue):
+      key = param.key
+    elif isinstance(param, GeneratedValue):
+      key = f'{_sanitize(param.generatedBy)}.return_value'
+    else:
       key = f'{activity_id}.{name}'
       self.document.entity(
         identifier=key,
@@ -105,10 +109,8 @@ class Documenter:
           'dtype': str(type(param.value)) if not self.rich_types else _type(param.value)
         }
       )
-      return (name, key)
-    else:
-      key = f'{_sanitize(param.generatedBy)}.return_value'
-      return (name, key)
+      
+    return (name, key)
 
   def register_runnable_task(self, info: RunnableTaskInfo) -> str:
     """Runnble tasks are registered as activities. Parameters to the task are
@@ -150,18 +152,9 @@ class Documenter:
         }
       )
     
-    # Register all dependencies of this task
-    for dep in info.dependencies:
-      key = _sanitize(str(dep))
+    for informant in info.informants:
+      key = _sanitize(str(informant))
       self.document.wasInformedBy(informed=activity_id, informant=key)
-
-    for dep in info.other_dependencies:
-      key = _sanitize(str(dep))
-      self.document.used(
-        entity=key,
-        activity=activity_id,
-        time=info.start_time
-      )
 
     return activity_id
 

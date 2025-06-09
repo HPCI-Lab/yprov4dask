@@ -3,7 +3,6 @@ import xarray as xr
 
 if __name__ == "__main__":
   client = Client(n_workers=2, threads_per_worker=2, memory_limit='8GB')
-  client
 
   from prov_tracking.plugin import ProvTracker
 
