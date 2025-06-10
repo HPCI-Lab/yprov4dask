@@ -17,7 +17,7 @@ class RunnableTaskInfo:
     specs: Task | None = None,
     group_key: str | None = None,
     dependencies: list[Task | DataNode | Alias] | None = None,
-    interal_deps: dict[Key, Task | DataNode] = {},
+    internal_deps: dict[Key, Task | DataNode] = {},
     unique_keys: dict[Key, Key] = {}
   ):
     if task is not None:
@@ -49,28 +49,28 @@ dictionary mapping non-unique keys to their unique alternative.
         # Multiple tasks cooperate to produce this value. Maybe it's a list of
         # values returned by some tasks
         values = set()
-        _get_values_from_list(value, values, interal_deps, unique_keys)
+        _get_values_from_list(value, values, internal_deps, unique_keys)
         self.args_dict[name] = values
       else:
-        self.args_dict[name] = _get_value(value, interal_deps, unique_keys)
+        self.args_dict[name] = _get_value(value, internal_deps, unique_keys)
 
     if len(specs.args) > len(param_names):
       values = set()
       values.add(self.args_dict[param_names[-1]])
       for value in specs.args[len(param_names):]:
         if isinstance(value, List):
-          _get_values_from_list(value, values, interal_deps, unique_keys)
+          _get_values_from_list(value, values, internal_deps, unique_keys)
         else:
-          values.add(_get_value(value, interal_deps, unique_keys))
+          values.add(_get_value(value, internal_deps, unique_keys))
       self.args_dict[param_names[-1]] = values
 
     for name, value in specs.kwargs.items():
       if isinstance(value, List):
         values = set()
-        _get_values_from_list(value, values, interal_deps, unique_keys)
+        _get_values_from_list(value, values, internal_deps, unique_keys)
         self.args_dict[name] = values
       else:
-        self.args_dict[name] = _get_value(value, interal_deps, unique_keys)
+        self.args_dict[name] = _get_value(value, internal_deps, unique_keys)
 
   def _from_task(self, task: TaskState):
     self.key: Key = task.key
@@ -163,7 +163,7 @@ def _get_value(
         print(f'Used for TaskRef [Renamed {type(renamed)}]')
       if isinstance(renamed, DataNode):
         return ReadyValue(str(renamed.key), renamed.value)
-      elif isinstance(rename, Task):
+      elif isinstance(renamed, Task):
         return GeneratedValue(str(renamed.key))
       else:
         return RawValue(renamed)
@@ -183,6 +183,8 @@ def _get_value(
       if key != obj.key:
         print('Used for Task')
       return GeneratedValue(str(key))
+  elif isinstance(obj, DataNode):
+    return RawValue(obj.value)
   else:
     return RawValue(obj)
 

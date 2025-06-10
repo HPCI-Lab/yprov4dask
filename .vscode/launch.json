@@ -9,7 +9,6 @@
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/src/tests/test_netcdf.py",
-            //"program": "${workspaceFolder}/src/tests/xarray_script.py",
             "console": "integratedTerminal",
             "justMyCode": false,
             "subProcess": true
