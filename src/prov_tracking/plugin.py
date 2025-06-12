@@ -25,7 +25,7 @@ class ProvTracker(SchedulerPlugin):
     # methods used by libraries, unpack kwargs and any additional argument would
     # cause an exception
     self.keep_traceback: bool = kwargs.pop('keep_traceback', False)
-    self.documenter = Documenter(**kwargs)
+    self.documenter = Documenter(__name__)
     self.kwargs: dict[str, Any] = kwargs
     self.closed = False
     # Used to avoid registering multiple times the same task. A task can be put
@@ -54,22 +54,27 @@ class ProvTracker(SchedulerPlugin):
       if start == 'waiting' and key not in self.registered_tasks:
         self.registered_tasks.add(key)
         if isinstance(task.run_spec, DataNode):
-          self.documenter.register_non_runnable_task(str(key), task.run_spec)
           self.all_tasks[key] = task.run_spec
+          self.documenter.register_data(task.run_spec)
         elif isinstance(task.run_spec, Task):
           if not ProvTracker._is_dask_internal(task.run_spec):
             # Here we pass all_tasks as internal_deps because the task might
             # contain some TaskRef to another task, so we need a way to follow
             # the ref.
-            self.all_runnables[key] = RunnableTaskInfo(
+            info = RunnableTaskInfo(
               task, internal_deps=self.all_tasks
             )
+            self.all_runnables[key] = info
             self.all_tasks[key] = task.run_spec
             self.macro_tasks[key] = [key]
+            self.documenter.register_task(info)
           else:
             infos = self._track_dask_internal(task.run_spec, task.group_key)
             self.all_runnables.update(infos)
-            self.macro_tasks[key] = [sub_key for sub_key in infos]
+            self.macro_tasks[key] = []
+            for sub_key, info in infos.items():
+              self.macro_tasks[key].append(sub_key)
+              self.documenter.register_task(info)
         else:
           # This task is an alias for another task that calls _execute_subgraph.
           # It should be safe to ignore it, as an actual task with the same key
@@ -87,12 +92,12 @@ class ProvTracker(SchedulerPlugin):
         for sub_key in self.macro_tasks[key][:-1]:
           info = self.all_runnables[sub_key]
           info.finish_time = now
-          self.documenter.register_successful_task(info, None, None)
+          self.documenter.register_task_success(info, None, None)
         dtype = task.type
         nbytes = task.nbytes
         info = self.all_runnables[self.macro_tasks[key][-1]]
         info.finish_time = now
-        self.documenter.register_successful_task(info, dtype, nbytes)
+        self.documenter.register_task_success(info, dtype, nbytes)
         self.macro_tasks.pop(key) # Avoid registering two times the same activity
 
       elif start == 'erred' and key in self.macro_tasks:
@@ -104,7 +109,7 @@ class ProvTracker(SchedulerPlugin):
         for sub_key in self.macro_tasks[key][:-1]:
           info = self.all_runnables[sub_key]
           info.finish_time = now
-          self.documenter.register_failed_task(info, None, None, None)
+          self.documenter.register_task_failure(info, None, None, None)
         # The task is finished with an error, so register the exception
         info = self.all_runnables[self.macro_tasks[key][-1]]
         info.finish_time = now
@@ -113,7 +118,7 @@ class ProvTracker(SchedulerPlugin):
         traceback = None
         if self.keep_traceback:
           traceback = task.traceback_text
-        self.documenter.register_failed_task(info, text, traceback, blamed_task)
+        self.documenter.register_task_failure(info, text, traceback, blamed_task)
         self.macro_tasks.pop(key)
 
         # When an exception occurs, the plugin is closed before it has the chance
@@ -126,6 +131,7 @@ class ProvTracker(SchedulerPlugin):
 
   async def close(self):
     self.closed = True
+    self.documenter.terminate()
 
     try:
       self.documenter.serialize()
@@ -188,7 +194,8 @@ class ProvTracker(SchedulerPlugin):
     internal_deps: dict[Key, Any] = {}
     # Tasks in inner_dsk might be using non-unique keys. This dictionary keeps
     # the association between the original non-unique key of a task and a new
-    # unique key used later on when the task info is serialized
+    # unique key used later on when the task info is serialized. The same holds
+    # for dependencies of tasks in inner_dsk
     unique_keys: dict[Key, Key] = {}
 
     for key, dep in zip(inkeys, dependencies):
@@ -214,13 +221,19 @@ class ProvTracker(SchedulerPlugin):
           # That executing _execute_subgraph, are not saved in the prov document
           infos.update(self._track_dask_internal(node, group_key))
         else:
+          # Since the unique key is never substituted to the original key in
+          # node, here we have to keep paired the new keys 
           node_deps = []
           for dep in cast(set[Key], node.dependencies):
             if dep in internal_deps:
               node_deps.append(internal_deps[dep])
             else:
               unique_dep_key = unique_keys.get(dep, dep)
-              node_deps.append(self.all_tasks[unique_dep_key])
+              dep_node = self.all_tasks[unique_dep_key]
+              if dep_node.key not in unique_keys:
+                unique_keys[dep_node.key] = unique_dep_key
+                print(f'added {dep_node.key} with unique {unique_dep_key}')
+              node_deps.append(dep_node)
           infos[unique_key] = RunnableTaskInfo(
             specs=node, group_key=group_key, dependencies=node_deps,
             internal_deps=internal_deps, unique_keys=unique_keys
@@ -232,7 +245,7 @@ class ProvTracker(SchedulerPlugin):
       else:
         # node is a DataNode
         if node.key not in self.all_tasks:
-          self.documenter.register_non_runnable_task(node.key, node)
+          self.documenter.register_data(node)
           self.all_tasks[node.key] = node
         else:
           # Currently this branch has never been executed, so it might be

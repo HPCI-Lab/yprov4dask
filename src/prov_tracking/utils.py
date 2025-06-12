@@ -99,7 +99,7 @@ dictionary mapping non-unique keys to their unique alternative.
       # as informant activities of this task since that would be inconsistent
       # with the W3C Prov data model
       if isinstance(dep, (Task, Alias)):
-        self.informants.append(unique_keys.get(dep.key, dep.key))
+        self.informants.append(unique_keys[dep.key])
 
 class RawValue:
   """A value already available and is not associated to a `DataNode`, e.g. an
