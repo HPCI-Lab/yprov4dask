@@ -138,7 +138,7 @@ class Documenter:
         task.add_input(data)
         self.workflow.add_input(data)
       except Exception as e:
-        print(f'In data: {e}')
+        print(f'Missing data_id for {info.key}(.., {name}=..): {e}')
     try:
       for informant_key in info.informants:
         informant_id = _sanitize(str(informant_key))
@@ -146,7 +146,7 @@ class Documenter:
         task.add_prev(informant_task)
         informant_task.add_next(task)
     except Exception as e:
-      print(f'In informants: {e}')
+      print(f'Missing informant_id for {info.key}: {e}')
   
   def register_task(self, info: RunnableTaskInfo):
     """Runnble tasks are registered as activities. Parameters and relations with
@@ -228,14 +228,6 @@ class Documenter:
 
   def terminate(self):
     self.workflow._end_time = datetime.now()
-    # Scan self.workflow.inputs and self.workflow.output and removes from them
-    # all data that appears in both
-    #inputs = set(self.workflow._inputs)
-    #outputs = set(self.workflow._outputs)
-    #real_inputs = inputs - outputs
-    #real_outputs = outputs - inputs
-    #self.workflow._inputs = list(real_inputs)
-    #self.workflow._outputs = list(real_outputs)
 
   def serialize(self, destination=None, format=None, **kwargs: dict[str, Any]):
     """Serializes the provenance document into `destination`."""

@@ -4,7 +4,7 @@ from dask.typing import Key
 from distributed.diagnostics.plugin import SchedulerPlugin
 from distributed.scheduler import Scheduler, TaskStateState as SchedulerTaskState
 from prov_tracking.documenter import Documenter
-from prov_tracking.utils import RunnableTaskInfo
+from prov_tracking.utils import RunnableTaskInfo, make_unique_key
 
 import datetime as dt
 from typing import Any, cast
@@ -145,23 +145,6 @@ class ProvTracker(SchedulerPlugin):
       )
     return False
 
-  @staticmethod
-  def _make_unique_key(parent: Key, child: Key) -> Key:
-    """Takes the key of a task `child` which has been started by `parent`, i.e.
-    child is part of the `inner_dsk` dictionary of `parent.args`. If `child` is
-    a non-unique key, returns a new key that embeds `parent`'s info to produce
-    a new unique key."""
-
-    key = child
-    # This first condition should always be True
-    if isinstance(parent, tuple) and len(parent) > 1:
-      if isinstance(child, tuple) and len(child) == 1:
-        key = (child[0], *parent[1:])
-      elif not isinstance(child, tuple):
-        key = (child, *parent[1:])
-      # Otherwise, the child key is fine as it is
-    return key
-
   def _track_dask_internal(
     self, run_spec: Task, group_key: str, unique_keys: dict[Key, Key] = {}
   ) -> dict[Key, RunnableTaskInfo]:
@@ -198,7 +181,7 @@ class ProvTracker(SchedulerPlugin):
     infos: dict[Key, RunnableTaskInfo] = {}
     for key, node in sorted(inner_dsk.items(), key=lambda it: priorities[it[0]]):
       if isinstance(node, Task):
-        unique_key = ProvTracker._make_unique_key(run_spec.key, key)
+        unique_key = make_unique_key(run_spec.key, key)
         unique_keys[key] = unique_key
         self.all_tasks[unique_key] = node
         if ProvTracker._is_dask_internal(node):
@@ -216,7 +199,7 @@ class ProvTracker(SchedulerPlugin):
             all_tasks=self.all_tasks, unique_keys=unique_keys
           )
       elif isinstance(node, Alias):
-        unique_key = ProvTracker._make_unique_key(run_spec.key, key)
+        unique_key = make_unique_key(run_spec.key, key)
         unique_target = unique_keys.get(node.target, node.target)
         self.all_tasks[unique_key] = self.all_tasks[unique_target]
       else:

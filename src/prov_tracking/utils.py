@@ -167,6 +167,9 @@ def _get_value(
       task = dependencies[key]
     else:
       task = all_tasks[key]
+      # Sometimes key is unique and task.key isn't, but they refer to the same task
+      if task.key not in unique_keys and are_equal_keys(task.key, key):
+        unique_keys[task.key] = key
     return _get_value(task, all_tasks, dependencies, unique_keys)
   elif isinstance(obj, Alias):
     target = unique_keys.get(obj.target, obj.target)
@@ -191,6 +194,8 @@ def _get_value(
       return _get_value(task, all_tasks, dependencies, unique_keys)
     else:
       key = unique_keys.get(obj.key, obj.key)
+      if str(key).startswith(('__dask')):
+        pass
       return GeneratedValue(str(key))
   elif isinstance(obj, DataNode):
     if obj.key in all_tasks:
@@ -212,3 +217,29 @@ def _get_values_from_list(
   else:
     for item in obj:
       _get_values_from_list(item, items, all_tasks, dependencies, unique_keys)
+
+def make_unique_key(parent: Key, child: Key) -> Key:
+  """Takes the key of a task `child` which has been started by `parent`, i.e.
+  child is part of the `inner_dsk` dictionary of `parent.args`. If `child` is
+  a non-unique key, returns a new key that embeds `parent`'s info to produce
+  a new unique key."""
+
+  key = child
+  # This first condition should always be True
+  if isinstance(parent, tuple) and len(parent) > 1:
+    if isinstance(child, tuple) and len(child) == 1:
+      key = (child[0], *parent[1:])
+    elif not isinstance(child, tuple):
+      key = (child, *parent[1:])
+    # Otherwise, the child key is fine as it is
+  return key
+
+def are_equal_keys(key1: Key, key2: Key) -> bool:
+  str1 = key1
+  if isinstance(key1, tuple):
+    str1 = key1[0]
+  str2 = key2
+  if isinstance(key2, tuple):
+    str2 = key2[0]
+  return str1 == str2
+  
