@@ -5,7 +5,7 @@ from dask.typing import Key
 from distributed.scheduler import TaskState
 
 from collections.abc import Callable
-from typing import Any, Iterable, cast
+from typing import Any, cast
 import inspect
 
 class RunnableTaskInfo:
@@ -16,14 +16,14 @@ class RunnableTaskInfo:
     task: TaskState | None = None,
     specs: Task | None = None,
     group_key: str | None = None,
-    dependencies: list[Task | DataNode | Alias] | None = None,
-    internal_deps: dict[Key, Task | DataNode] = {},
+    dependencies: dict[Key, Task | DataNode | Alias] = {},
+    all_tasks: dict[Key, Task | DataNode] = {},
     unique_keys: dict[Key, Key] = {}
   ):
     if task is not None:
-      self._from_task(task)
+      self._from_task(task, all_tasks)
     elif specs is not None and group_key is not None and dependencies is not None:
-      self._from_pieces(specs, group_key, dependencies, unique_keys)
+      self._from_pieces(specs, group_key, dependencies, unique_keys, all_tasks)
     else:
       raise TypeError('''
 RunnableTaskInfo can take either a TaskState object or specs, group_key and
@@ -49,57 +49,61 @@ dictionary mapping non-unique keys to their unique alternative.
         # Multiple tasks cooperate to produce this value. Maybe it's a list of
         # values returned by some tasks
         values = set()
-        _get_values_from_list(value, values, internal_deps, unique_keys)
+        _get_values_from_list(value, values, all_tasks, dependencies, unique_keys)
         self.args_dict[name] = values
       else:
-        self.args_dict[name] = _get_value(value, internal_deps, unique_keys)
+        self.args_dict[name] = _get_value(value, all_tasks, dependencies, unique_keys)
 
     if len(specs.args) > len(param_names):
       values = set()
       values.add(self.args_dict[param_names[-1]])
       for value in specs.args[len(param_names):]:
         if isinstance(value, List):
-          _get_values_from_list(value, values, internal_deps, unique_keys)
+          _get_values_from_list(value, values, all_tasks, dependencies, unique_keys)
         else:
-          values.add(_get_value(value, internal_deps, unique_keys))
+          values.add(_get_value(value, all_tasks, dependencies, unique_keys))
       self.args_dict[param_names[-1]] = values
 
     for name, value in specs.kwargs.items():
       if isinstance(value, List):
         values = set()
-        _get_values_from_list(value, values, internal_deps, unique_keys)
+        _get_values_from_list(value, values, all_tasks, dependencies, unique_keys)
         self.args_dict[name] = values
       else:
-        self.args_dict[name] = _get_value(value, internal_deps, unique_keys)
+        self.args_dict[name] = _get_value(value, all_tasks, dependencies, unique_keys)
 
-  def _from_task(self, task: TaskState):
+  def _from_task(self, task: TaskState, all_tasks: dict[Key, Task | DataNode]):
     self.key: Key = task.key
     specs: Task = cast(Task, task.run_spec)
     self.func: Callable = specs.func
     self.group: str = task.group_key
-    self.informants: list[Key] = [] # For runnable tasks and aliases
+    self.informants: list[Key] = []
     for dep in task.dependencies:
-      # This is to avoid registering non-runnable tasks, registered as entities,
-      # as informant activities of this task since that would be inconsistent
-      # with the W3C Prov data model
-      if isinstance(dep.run_spec, (Task, Alias)):
+      if isinstance(dep.run_spec, Task):
         self.informants.append(dep.key)
+      elif isinstance(dep.run_spec, Alias):
+        target = all_tasks[dep.run_spec.target]
+        if isinstance(target, Task):
+          self.informants.append(target.key)
 
   def _from_pieces(
     self, specs: Task, group_key: str,
-    dependencies: list[Task | DataNode | Alias],
-    unique_keys: dict[Key, Key]
+    dependencies: dict[Key, Task | DataNode | Alias],
+    unique_keys: dict[Key, Key],
+    all_tasks: dict[Key, Task | DataNode]
   ):
     self.group: str = group_key
     self.key: Key = unique_keys.get(specs.key, specs.key)
     self.func: Callable = specs.func
-    self.informants: list[Key] = [] # For runnable tasks and aliases
-    for dep in dependencies:
-      # This is to avoid registering non-runnable tasks, registered as entities,
-      # as informant activities of this task since that would be inconsistent
-      # with the W3C Prov data model
-      if isinstance(dep, (Task, Alias)):
+    self.informants: list[Key] = []
+    for dep in dependencies.values():
+      if isinstance(dep, Task):
         self.informants.append(unique_keys.get(dep.key, dep.key))
+      elif isinstance(dep, Alias):
+        target = unique_keys.get(dep.target, dep.target)
+        task = all_tasks[target]
+        if isinstance(task, Task):
+          self.informants.append(unique_keys.get(task.key, task.key))
 
 class RawValue:
   """A value already available and is not associated to a `DataNode`, e.g. an
@@ -148,7 +152,8 @@ class GeneratedValue:
 type Value = GeneratedValue | ReadyValue | RawValue
 
 def _get_value(
-  obj: Any, internal_deps: dict[Key, Task | DataNode | Any],
+  obj: Any, all_tasks: dict[Key, Task | DataNode],
+  dependencies: dict[Key, Task | DataNode | Alias | Any],
   unique_keys: dict[Key, Key]
 ) -> Value:
   """Given a parameter value creates a suitable representation for it. If the
@@ -157,43 +162,53 @@ def _get_value(
 
   if isinstance(obj, TaskRef):
     key = unique_keys.get(obj.key, obj.key)
-    if obj.key in internal_deps:
-      renamed = internal_deps[obj.key]
-      if isinstance(renamed, DataNode):
-        renamed_key = unique_keys.get(renamed.key, renamed.key)
-        return ReadyValue(str(renamed_key), renamed.value)
-      elif isinstance(renamed, Task):
-        renamed_key = unique_keys.get(renamed.key, renamed.key)
-        return GeneratedValue(str(renamed_key))
-      else:
-        return RawValue(renamed)
+    task = None
+    if key in dependencies:
+      task = dependencies[key]
     else:
-      return GeneratedValue(str(key))
+      task = all_tasks[key]
+    return _get_value(task, all_tasks, dependencies, unique_keys)
   elif isinstance(obj, Alias):
     target = unique_keys.get(obj.target, obj.target)
-    return GeneratedValue(str(target))
+    task = None
+    if target in dependencies:
+      task = dependencies[target]
+    else:
+      task = all_tasks[target]
+    return _get_value(task, all_tasks, dependencies, unique_keys)
   elif isinstance(obj, Task):
     if obj.key is None:
       # The task is:
       # <Task None _identity_cast(Alias(t), typ=<class 'list'>)>
-      # t is a task whose also amone the dependencies of this task
-      return GeneratedValue(str(obj.args[0].target))
+      # t is a task who's also among the dependencies of this task
+      target: Key = obj.args[0].target
+      target = unique_keys.get(target, target)
+      task = None
+      if target in dependencies:
+        task = dependencies[target]
+      else:
+        task = all_tasks[target]
+      return _get_value(task, all_tasks, dependencies, unique_keys)
     else:
       key = unique_keys.get(obj.key, obj.key)
       return GeneratedValue(str(key))
   elif isinstance(obj, DataNode):
-    return RawValue(obj.value)
+    if obj.key in all_tasks:
+      return ReadyValue(str(obj.key), obj.value)
+    else:
+      return RawValue(obj.value)
   else:
     return RawValue(obj)
 
 def _get_values_from_list(
-  obj: Any, items: set, internal_deps: dict[Key, Task | DataNode],
+  obj: Any, items: set, all_tasks: dict[Key, Task | DataNode],
+  dependencies: dict[Key, Task | DataNode | Alias | Any],
   unique_keys: dict[Key, Key]
 ):
   """Recursively takes all items from a list and its sublists"""
 
   if not isinstance(obj, List):
-    items.add(_get_value(obj, internal_deps, unique_keys))
+    items.add(_get_value(obj, all_tasks, dependencies, unique_keys))
   else:
     for item in obj:
-      _get_values_from_list(item, items, internal_deps, unique_keys)
+      _get_values_from_list(item, items, all_tasks, dependencies, unique_keys)

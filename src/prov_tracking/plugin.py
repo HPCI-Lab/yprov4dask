@@ -58,11 +58,8 @@ class ProvTracker(SchedulerPlugin):
           self.documenter.register_data(task.run_spec)
         elif isinstance(task.run_spec, Task):
           if not ProvTracker._is_dask_internal(task.run_spec):
-            # Here we pass all_tasks as internal_deps because the task might
-            # contain some TaskRef to another task, so we need a way to follow
-            # the ref.
             info = RunnableTaskInfo(
-              task, internal_deps=self.all_tasks
+              task, all_tasks=self.all_tasks
             )
             self.all_runnables[key] = info
             self.all_tasks[key] = task.run_spec
@@ -75,12 +72,9 @@ class ProvTracker(SchedulerPlugin):
             for sub_key, info in infos.items():
               self.macro_tasks[key].append(sub_key)
               self.documenter.register_task(info)
-              print(f'\t{sub_key}')
         else:
-          # This task is an alias for another task that calls _execute_subgraph.
-          # It should be safe to ignore it as an actual task with the same key
-          # should always exist within the _execute_subgraph call
-          pass
+          target = cast(Alias, task.run_spec).target
+          self.all_tasks[key] = self.all_tasks[target]
 
       elif start == 'processing' and key in self.macro_tasks:
         now = dt.datetime.now()
@@ -152,7 +146,7 @@ class ProvTracker(SchedulerPlugin):
     return False
 
   @staticmethod
-  def _get_key(parent: Key, child: Key) -> Key:
+  def _make_unique_key(parent: Key, child: Key) -> Key:
     """Takes the key of a task `child` which has been started by `parent`, i.e.
     child is part of the `inner_dsk` dictionary of `parent.args`. If `child` is
     a non-unique key, returns a new key that embeds `parent`'s info to produce
@@ -169,7 +163,7 @@ class ProvTracker(SchedulerPlugin):
     return key
 
   def _track_dask_internal(
-    self, run_spec: Task, group_key: str
+    self, run_spec: Task, group_key: str, unique_keys: dict[Key, Key] = {}
   ) -> dict[Key, RunnableTaskInfo]:
     """Given a task that executes `dask._task_spec._execute_subgraph` follows
     the subgraph associated to that call and records all the information about
@@ -183,72 +177,55 @@ class ProvTracker(SchedulerPlugin):
 
     # These are all tasks that will be executed by _execute_subgraph
     inner_dsk = cast(dict[Key, Task | Alias | DataNode], run_spec.args[0])
+
     # Some dependencies are referenced with names in inkeys that might be
     # different from names already used before for the same resource
     inkeys = cast(tuple[Key, ...], run_spec.args[2])
     dependencies = cast(tuple[TaskRef | DataNode, ...], run_spec.args[3:])
-    # Keeps the association between a dependency and its inkey. This dict always
-    # used the original key for a dependency, even if its non-unique
     internal_deps: dict[Key, Any] = {}
-    # Tasks in inner_dsk might be using non-unique keys. This dictionary keeps
-    # the association between the original non-unique key of a task and a new
-    # unique key used later on when the task info is serialized. The same holds
-    # for dependencies of tasks in inner_dsk
-    unique_keys: dict[Key, Key] = {}
-
-    for key, dep in zip(inkeys, dependencies):
-      if isinstance(dep, TaskRef):
+    for key, dep_key in zip(inkeys, dependencies):
+      if isinstance(dep_key, TaskRef):
         # Refs are always for already-seen tasks, so this is safe. Also, tasks
         # whose key has been changed because it was non-unique, are never seen
         # here
-        internal_deps[key] = self.all_tasks[dep.key]
+        internal_deps[key] = self.all_tasks[dep_key.key]
       else:
         # As this value is actually ready and doesn't come from any other
         # recognizable task, just take the raw value
-        internal_deps[key] = dep.value
+        internal_deps[key] = dep_key.value
     
     priorities = order(inner_dsk)
     infos: dict[Key, RunnableTaskInfo] = {}
     for key, node in sorted(inner_dsk.items(), key=lambda it: priorities[it[0]]):
       if isinstance(node, Task):
-        unique_key = ProvTracker._get_key(run_spec.key, key)
+        unique_key = ProvTracker._make_unique_key(run_spec.key, key)
         unique_keys[key] = unique_key
-        # Here node may have a key different from unique_key
         self.all_tasks[unique_key] = node
         if ProvTracker._is_dask_internal(node):
-          # That executing _execute_subgraph, are not saved in the prov document
-          infos.update(self._track_dask_internal(node, group_key))
+          infos.update(self._track_dask_internal(node, group_key, unique_keys))
         else:
-          # Since the unique key is never substituted to the original key in
-          # node, here we have to keep paired the new keys 
-          node_deps = []
-          for dep in cast(set[Key], node.dependencies):
-            if dep in internal_deps:
-              node_deps.append(internal_deps[dep])
+          node_deps = {}
+          for dep_key in cast(set[Key], node.dependencies):
+            if dep_key in internal_deps:
+              node_deps[dep_key] = internal_deps[dep_key]
             else:
-              unique_dep_key = unique_keys.get(dep, dep)
-              dep_node: Task | Alias | DataNode | TaskRef = self.all_tasks[unique_dep_key]
-              if isinstance(dep_node, Alias):
-                unique_target_key = unique_keys.get(dep_node.target, dep_node.target)
-                node_deps.append(self.all_tasks[unique_target_key])
-              else:
-                node_deps.append(dep_node)
+              unique_dep_key = unique_keys.get(dep_key, dep_key)
+              node_deps[dep_key] = self.all_tasks[unique_dep_key]
           infos[unique_key] = RunnableTaskInfo(
             specs=node, group_key=group_key, dependencies=node_deps,
-            internal_deps=internal_deps, unique_keys=unique_keys
+            all_tasks=self.all_tasks, unique_keys=unique_keys
           )
       elif isinstance(node, Alias):
-        unique_key = ProvTracker._get_key(run_spec.key, key)
+        unique_key = ProvTracker._make_unique_key(run_spec.key, key)
         unique_target = unique_keys.get(node.target, node.target)
         self.all_tasks[unique_key] = self.all_tasks[unique_target]
       else:
-        # node is a DataNode
-        if node.key not in self.all_tasks:
-          self.documenter.register_data(node)
-          self.all_tasks[node.key] = node
-        else:
-          # Currently this branch has never been executed, so it might be
-          # safe to assume DataNodes seen here have a unique key
-          print('duplicate')
+        self.documenter.register_data(node)
+        self.all_tasks[node.key] = node
     
+    # Execute subgraph returns the output of task `outkey`, so set this task is
+    # treated as an alias for `outkey`
+    outkey: Key = run_spec.args[1]
+    outkey = unique_keys.get(outkey, outkey)
+    self.all_tasks[run_spec.key] = self.all_tasks[outkey]
     return infos
