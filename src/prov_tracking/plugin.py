@@ -75,9 +75,10 @@ class ProvTracker(SchedulerPlugin):
             for sub_key, info in infos.items():
               self.macro_tasks[key].append(sub_key)
               self.documenter.register_task(info)
+              print(f'\t{sub_key}')
         else:
           # This task is an alias for another task that calls _execute_subgraph.
-          # It should be safe to ignore it, as an actual task with the same key
+          # It should be safe to ignore it as an actual task with the same key
           # should always exist within the _execute_subgraph call
           pass
 
@@ -160,11 +161,8 @@ class ProvTracker(SchedulerPlugin):
     key = child
     # This first condition should always be True
     if isinstance(parent, tuple) and len(parent) > 1:
-      if isinstance(child, tuple):
-        if len(child) == 1:
-          key = (child[0], *parent[1:])
-        #else:
-        #  key = (child[0], *parent[1:], *child[1:])
+      if isinstance(child, tuple) and len(child) == 1:
+        key = (child[0], *parent[1:])
       elif not isinstance(child, tuple):
         key = (child, *parent[1:])
       # Otherwise, the child key is fine as it is
@@ -200,22 +198,22 @@ class ProvTracker(SchedulerPlugin):
 
     for key, dep in zip(inkeys, dependencies):
       if isinstance(dep, TaskRef):
-        # Refs are always for already seen tasks, so this is safe. Also, tasks
+        # Refs are always for already-seen tasks, so this is safe. Also, tasks
         # whose key has been changed because it was non-unique, are never seen
         # here
         internal_deps[key] = self.all_tasks[dep.key]
       else:
-        # As this value is actually ready, and doesn't come from any other
+        # As this value is actually ready and doesn't come from any other
         # recognizable task, just take the raw value
         internal_deps[key] = dep.value
     
     priorities = order(inner_dsk)
     infos: dict[Key, RunnableTaskInfo] = {}
     for key, node in sorted(inner_dsk.items(), key=lambda it: priorities[it[0]]):
-      # node is an alias or a task executed by a worker
       if isinstance(node, Task):
         unique_key = ProvTracker._get_key(run_spec.key, key)
         unique_keys[key] = unique_key
+        # Here node may have a key different from unique_key
         self.all_tasks[unique_key] = node
         if ProvTracker._is_dask_internal(node):
           # That executing _execute_subgraph, are not saved in the prov document
@@ -229,11 +227,12 @@ class ProvTracker(SchedulerPlugin):
               node_deps.append(internal_deps[dep])
             else:
               unique_dep_key = unique_keys.get(dep, dep)
-              dep_node = self.all_tasks[unique_dep_key]
-              if dep_node.key not in unique_keys:
-                unique_keys[dep_node.key] = unique_dep_key
-                print(f'added {dep_node.key} with unique {unique_dep_key}')
-              node_deps.append(dep_node)
+              dep_node: Task | Alias | DataNode | TaskRef = self.all_tasks[unique_dep_key]
+              if isinstance(dep_node, Alias):
+                unique_target_key = unique_keys.get(dep_node.target, dep_node.target)
+                node_deps.append(self.all_tasks[unique_target_key])
+              else:
+                node_deps.append(dep_node)
           infos[unique_key] = RunnableTaskInfo(
             specs=node, group_key=group_key, dependencies=node_deps,
             internal_deps=internal_deps, unique_keys=unique_keys

@@ -99,7 +99,7 @@ dictionary mapping non-unique keys to their unique alternative.
       # as informant activities of this task since that would be inconsistent
       # with the W3C Prov data model
       if isinstance(dep, (Task, Alias)):
-        self.informants.append(unique_keys[dep.key])
+        self.informants.append(unique_keys.get(dep.key, dep.key))
 
 class RawValue:
   """A value already available and is not associated to a `DataNode`, e.g. an
@@ -148,7 +148,7 @@ class GeneratedValue:
 type Value = GeneratedValue | ReadyValue | RawValue
 
 def _get_value(
-  obj: Any, internal_deps: dict[Key, Task | DataNode],
+  obj: Any, internal_deps: dict[Key, Task | DataNode | Any],
   unique_keys: dict[Key, Key]
 ) -> Value:
   """Given a parameter value creates a suitable representation for it. If the
@@ -159,12 +159,12 @@ def _get_value(
     key = unique_keys.get(obj.key, obj.key)
     if obj.key in internal_deps:
       renamed = internal_deps[obj.key]
-      if key != obj.key:
-        print(f'Used for TaskRef [Renamed {type(renamed)}]')
       if isinstance(renamed, DataNode):
-        return ReadyValue(str(renamed.key), renamed.value)
+        renamed_key = unique_keys.get(renamed.key, renamed.key)
+        return ReadyValue(str(renamed_key), renamed.value)
       elif isinstance(renamed, Task):
-        return GeneratedValue(str(renamed.key))
+        renamed_key = unique_keys.get(renamed.key, renamed.key)
+        return GeneratedValue(str(renamed_key))
       else:
         return RawValue(renamed)
     else:
@@ -180,8 +180,6 @@ def _get_value(
       return GeneratedValue(str(obj.args[0].target))
     else:
       key = unique_keys.get(obj.key, obj.key)
-      if key != obj.key:
-        print('Used for Task')
       return GeneratedValue(str(key))
   elif isinstance(obj, DataNode):
     return RawValue(obj.value)

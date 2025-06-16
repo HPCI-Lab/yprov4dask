@@ -132,16 +132,21 @@ class Documenter:
         for value in param:
           used_params.append(self._register_task_param(task._id, name, value))
     for name, data_id in used_params:
-      data: Data = self.data[data_id]
-      data.add_consumer(task)
-      task.add_input(data)
-      self.workflow.add_input(data)
-
-    for informant_key in info.informants:
-      informant_id = _sanitize(str(informant_key))
-      informant_task: Task = self.tasks[informant_id]
-      task.add_prev(informant_task)
-      informant_task.add_next(task)
+      try:
+        data: Data = self.data[data_id]
+        data.add_consumer(task)
+        task.add_input(data)
+        self.workflow.add_input(data)
+      except Exception as e:
+        print(f'In data: {e}')
+    try:
+      for informant_key in info.informants:
+        informant_id = _sanitize(str(informant_key))
+        informant_task: Task = self.tasks[informant_id]
+        task.add_prev(informant_task)
+        informant_task.add_next(task)
+    except Exception as e:
+      print(f'In informants: {e}')
   
   def register_task(self, info: RunnableTaskInfo):
     """Runnble tasks are registered as activities. Parameters and relations with
@@ -159,7 +164,7 @@ class Documenter:
     task._info = attributes
     self.workflow.add_task(task)
     self.tasks[task_id] = task
-    print(f'Registered key: {task_id}')
+    print(f'Registered task {task_id}')
 
     result_id = f'{task._id}.return_value'
     result = Data(id=result_id, name=result_id)
@@ -168,6 +173,7 @@ class Documenter:
     self.workflow.add_data(result)
     self.workflow.add_output(result)
     self.data[result_id] = result    
+    print(f'Registered task result {result_id}')
 
   def register_task_success(
     self, info: RunnableTaskInfo, dtype: str | None, nbytes: int | None
