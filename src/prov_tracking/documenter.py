@@ -228,6 +228,12 @@ class Documenter:
 
   def terminate(self):
     self.workflow._end_time = datetime.now()
+    inputs = set(self.workflow._inputs)
+    outputs = set(self.workflow._outputs)
+    wf_inputs = inputs - outputs
+    wf_outputs = outputs - inputs
+    self.workflow._inputs = list(wf_inputs)
+    self.workflow._outputs = list(wf_outputs)
 
   def serialize(self, destination=None, format=None, **kwargs: dict[str, Any]):
     """Serializes the provenance document into `destination`."""
