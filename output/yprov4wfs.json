@@ -4,146 +4,452 @@
         "yprov4wfs": "http://example.org"
     },
     "activity": {
-        "cd4a8b3b-5164-4c86-b850-4a4c730414f3": {
-            "prov:startTime": "2025-07-02 16:52:40.847118",
-            "prov:endTime": "2025-07-02 16:52:41.344910",
-            "prov:label": "prov_tracking.plugin",
+        "34b22173-c86c-4593-838c-987b456d86ba": {
+            "prov:startTime": "2025-07-09 10:26:56.454255",
+            "prov:endTime": "2025-07-09 10:26:58.025772",
+            "prov:label": "test",
             "prov:type": "prov:Activity",
             "yprov4wfs:level": "None",
             "yprov4wfs:engine": "dask",
             "yprov4wfs:status": "None"
         },
-        "_id-a031eac8b8cb1b04481b66af779ce0ca": {
-            "prov:startTime": "2025-07-02 16:52:40.912099",
-            "prov:endTime": "2025-07-02 16:52:40.963696",
-            "prov:label": "_id-a031eac8b8cb1b04481b66af779ce0ca",
+        "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_2": {
+            "prov:startTime": "2025-07-09 10:26:57.438544",
+            "prov:endTime": "2025-07-09 10:26:57.442407",
+            "prov:label": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_2",
             "prov:type": "prov:Activity",
             "yprov4wfs:status": "success",
             "yprov4wfs:level": "None",
-            "yprov4wfs:group": "id",
-            "yprov4wfs:module": "__main__",
-            "yprov4wfs:name": "<function _id at 0x7efd89c03920>",
-            "yprov4wfs:nice_name": "_id"
+            "yprov4wfs:group": "an_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b",
+            "yprov4wfs:module": "dask.array.core",
+            "yprov4wfs:name": "<function getter at 0x7f4cf440afc0>",
+            "yprov4wfs:nice_name": "getter"
         },
-        "inc-7ea45000cb3760860dcdf8abad5a63db": {
-            "prov:startTime": "2025-07-02 16:52:40.927502",
-            "prov:endTime": "2025-07-02 16:52:40.963566",
-            "prov:label": "inc-7ea45000cb3760860dcdf8abad5a63db",
+        "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2": {
+            "prov:startTime": "2025-07-09 10:26:57.438544",
+            "prov:endTime": "2025-07-09 10:26:57.442407",
+            "prov:label": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2",
             "prov:type": "prov:Activity",
             "yprov4wfs:status": "success",
             "yprov4wfs:level": "None",
-            "yprov4wfs:group": "inc",
-            "yprov4wfs:module": "__main__",
-            "yprov4wfs:name": "<function inc at 0x7efd89c58180>",
-            "yprov4wfs:nice_name": "inc"
+            "yprov4wfs:group": "an_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b",
+            "yprov4wfs:module": "functools",
+            "yprov4wfs:name": "unction nannumel at 0x7f4cdc706e80>, dtype=dtype('float64'))"
         },
-        "add-a951c819359b7078eb96ea7bb52eaf84": {
-            "prov:startTime": "2025-07-02 16:52:40.942690",
-            "prov:endTime": "2025-07-02 16:52:40.963816",
-            "prov:label": "add-a951c819359b7078eb96ea7bb52eaf84",
+        "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2": {
+            "prov:startTime": "2025-07-09 10:26:57.438544",
+            "prov:endTime": "2025-07-09 10:26:57.442407",
+            "prov:label": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2",
             "prov:type": "prov:Activity",
             "yprov4wfs:status": "success",
             "yprov4wfs:level": "None",
-            "yprov4wfs:group": "add",
-            "yprov4wfs:module": "__main__",
-            "yprov4wfs:name": "<function add at 0x7efd89c58400>",
-            "yprov4wfs:nice_name": "add"
+            "yprov4wfs:group": "an_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b",
+            "yprov4wfs:module": "functools",
+            "yprov4wfs:name": "c715620>, dtype=dtype('float64'), axis=(0,), keepdims=False)"
+        },
+        "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_1": {
+            "prov:startTime": "2025-07-09 10:26:57.505747",
+            "prov:endTime": "2025-07-09 10:26:57.509668",
+            "prov:label": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_1",
+            "prov:type": "prov:Activity",
+            "yprov4wfs:status": "success",
+            "yprov4wfs:level": "None",
+            "yprov4wfs:group": "an_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b",
+            "yprov4wfs:module": "dask.array.core",
+            "yprov4wfs:name": "<function getter at 0x7f4cf440afc0>",
+            "yprov4wfs:nice_name": "getter"
+        },
+        "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1": {
+            "prov:startTime": "2025-07-09 10:26:57.505747",
+            "prov:endTime": "2025-07-09 10:26:57.509668",
+            "prov:label": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1",
+            "prov:type": "prov:Activity",
+            "yprov4wfs:status": "success",
+            "yprov4wfs:level": "None",
+            "yprov4wfs:group": "an_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b",
+            "yprov4wfs:module": "functools",
+            "yprov4wfs:name": "unction nannumel at 0x7f4cdc706e80>, dtype=dtype('float64'))"
+        },
+        "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1": {
+            "prov:startTime": "2025-07-09 10:26:57.505747",
+            "prov:endTime": "2025-07-09 10:26:57.509668",
+            "prov:label": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1",
+            "prov:type": "prov:Activity",
+            "yprov4wfs:status": "success",
+            "yprov4wfs:level": "None",
+            "yprov4wfs:group": "an_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b",
+            "yprov4wfs:module": "functools",
+            "yprov4wfs:name": "c715620>, dtype=dtype('float64'), axis=(0,), keepdims=False)"
+        },
+        "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_0": {
+            "prov:startTime": "2025-07-09 10:26:57.506994",
+            "prov:endTime": "2025-07-09 10:26:57.514011",
+            "prov:label": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_0",
+            "prov:type": "prov:Activity",
+            "yprov4wfs:status": "success",
+            "yprov4wfs:level": "None",
+            "yprov4wfs:group": "an_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b",
+            "yprov4wfs:module": "dask.array.core",
+            "yprov4wfs:name": "<function getter at 0x7f4cf440afc0>",
+            "yprov4wfs:nice_name": "getter"
+        },
+        "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0": {
+            "prov:startTime": "2025-07-09 10:26:57.506994",
+            "prov:endTime": "2025-07-09 10:26:57.514011",
+            "prov:label": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0",
+            "prov:type": "prov:Activity",
+            "yprov4wfs:status": "success",
+            "yprov4wfs:level": "None",
+            "yprov4wfs:group": "an_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b",
+            "yprov4wfs:module": "functools",
+            "yprov4wfs:name": "unction nannumel at 0x7f4cdc706e80>, dtype=dtype('float64'))"
+        },
+        "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0": {
+            "prov:startTime": "2025-07-09 10:26:57.506994",
+            "prov:endTime": "2025-07-09 10:26:57.514011",
+            "prov:label": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0",
+            "prov:type": "prov:Activity",
+            "yprov4wfs:status": "success",
+            "yprov4wfs:level": "None",
+            "yprov4wfs:group": "an_chunk-mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b",
+            "yprov4wfs:module": "functools",
+            "yprov4wfs:name": "c715620>, dtype=dtype('float64'), axis=(0,), keepdims=False)"
+        },
+        "finalize-hlgfinalizecompute-bcdb7c391ba04f30a3ecc6f893dccee8": {
+            "prov:startTime": "2025-07-09 10:26:57.532711",
+            "prov:endTime": "2025-07-09 10:26:57.546672",
+            "prov:label": "finalize-hlgfinalizecompute-bcdb7c391ba04f30a3ecc6f893dccee8",
+            "prov:type": "prov:Activity",
+            "yprov4wfs:status": "success",
+            "yprov4wfs:level": "None",
+            "yprov4wfs:group": "finalize-hlgfinalizecompute",
+            "yprov4wfs:module": "dask.array.core",
+            "yprov4wfs:name": "<function finalize at 0x7f4cf4440220>",
+            "yprov4wfs:nice_name": "finalize"
         }
     },
     "entity": {
-        "_id-a031eac8b8cb1b04481b66af779ce0ca.x": {
-            "prov:label": "_id-a031eac8b8cb1b04481b66af779ce0ca.x",
+        "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0.axis": {
+            "prov:label": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0.axis",
             "prov:type": "prov:Entity",
-            "yprov4wfs:value": "1"
+            "yprov4wfs:value": "('0',)",
+            "yprov4wfs:dtype": "tuple[int]"
         },
-        "add-a951c819359b7078eb96ea7bb52eaf84.b": {
-            "prov:label": "add-a951c819359b7078eb96ea7bb52eaf84.b",
+        "original-open_dataset-air-3f1df329a711599ff3e0d046481d61be": {
+            "prov:label": "original-open_dataset-air-3f1df329a711599ff3e0d046481d61be",
             "prov:type": "prov:Entity",
-            "yprov4wfs:value": "10"
+            "yprov4wfs:value": "None), slice(None, None, None), slice(None, None, None))))))",
+            "yprov4wfs:dtype": "xarray.core.indexing.ImplicitToExplicitIndexingAdapter"
         },
-        "add-a951c819359b7078eb96ea7bb52eaf84.return_value": {
-            "prov:label": "add-a951c819359b7078eb96ea7bb52eaf84.return_value",
+        "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2.keepdims": {
+            "prov:label": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2.keepdims",
             "prov:type": "prov:Entity",
-            "yprov4wfs:dtype": "list",
-            "yprov4wfs:nbytes": "144"
+            "yprov4wfs:value": "True",
+            "yprov4wfs:dtype": "bool"
         },
-        "_id-a031eac8b8cb1b04481b66af779ce0ca.return_value": {
-            "prov:label": "_id-a031eac8b8cb1b04481b66af779ce0ca.return_value",
+        "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0.keepdims": {
+            "prov:label": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0.keepdims",
             "prov:type": "prov:Entity",
-            "yprov4wfs:dtype": "int",
-            "yprov4wfs:nbytes": "28"
+            "yprov4wfs:value": "True",
+            "yprov4wfs:dtype": "bool"
         },
-        "inc-7ea45000cb3760860dcdf8abad5a63db.return_value": {
-            "prov:label": "inc-7ea45000cb3760860dcdf8abad5a63db.return_value",
+        "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_1.b": {
+            "prov:label": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_1.b",
             "prov:type": "prov:Entity",
-            "yprov4wfs:dtype": "int",
-            "yprov4wfs:nbytes": "28"
+            "yprov4wfs:value": ", 2920, None)', 'slice(0, 25, None)', 'slice(25, 50, None)')",
+            "yprov4wfs:dtype": "tuple[slice, slice, slice]"
+        },
+        "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2.axis": {
+            "prov:label": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2.axis",
+            "prov:type": "prov:Entity",
+            "yprov4wfs:value": "('0',)",
+            "yprov4wfs:dtype": "tuple[int]"
+        },
+        "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_0.b": {
+            "prov:label": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_0.b",
+            "prov:type": "prov:Entity",
+            "yprov4wfs:value": "0, 2920, None)', 'slice(0, 25, None)', 'slice(0, 25, None)')",
+            "yprov4wfs:dtype": "tuple[slice, slice, slice]"
+        },
+        "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1.keepdims": {
+            "prov:label": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1.keepdims",
+            "prov:type": "prov:Entity",
+            "yprov4wfs:value": "True",
+            "yprov4wfs:dtype": "bool"
+        },
+        "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_2.b": {
+            "prov:label": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_2.b",
+            "prov:type": "prov:Entity",
+            "yprov4wfs:value": ", 2920, None)', 'slice(0, 25, None)', 'slice(50, 53, None)')",
+            "yprov4wfs:dtype": "tuple[slice, slice, slice]"
+        },
+        "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1.axis": {
+            "prov:label": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1.axis",
+            "prov:type": "prov:Entity",
+            "yprov4wfs:value": "('0',)",
+            "yprov4wfs:dtype": "tuple[int]"
+        },
+        "finalize-hlgfinalizecompute-bcdb7c391ba04f30a3ecc6f893dccee8.return_value": {
+            "prov:label": "finalize-hlgfinalizecompute-bcdb7c391ba04f30a3ecc6f893dccee8.return_value",
+            "prov:type": "prov:Entity",
+            "yprov4wfs:dtype": "numpy.ndarray",
+            "yprov4wfs:nbytes": "10600"
+        },
+        "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_2.return_value": {
+            "prov:label": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_2.return_value",
+            "prov:type": "prov:Entity"
+        },
+        "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2.return_value": {
+            "prov:label": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2.return_value",
+            "prov:type": "prov:Entity"
+        },
+        "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2.return_value": {
+            "prov:label": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2.return_value",
+            "prov:type": "prov:Entity",
+            "yprov4wfs:dtype": "numpy.ndarray",
+            "yprov4wfs:nbytes": "600"
+        },
+        "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_1.return_value": {
+            "prov:label": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_1.return_value",
+            "prov:type": "prov:Entity"
+        },
+        "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1.return_value": {
+            "prov:label": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1.return_value",
+            "prov:type": "prov:Entity"
+        },
+        "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1.return_value": {
+            "prov:label": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1.return_value",
+            "prov:type": "prov:Entity",
+            "yprov4wfs:dtype": "numpy.ndarray",
+            "yprov4wfs:nbytes": "5000"
+        },
+        "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_0.return_value": {
+            "prov:label": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_0.return_value",
+            "prov:type": "prov:Entity"
+        },
+        "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0.return_value": {
+            "prov:label": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0.return_value",
+            "prov:type": "prov:Entity"
+        },
+        "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0.return_value": {
+            "prov:label": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0.return_value",
+            "prov:type": "prov:Entity",
+            "yprov4wfs:dtype": "numpy.ndarray",
+            "yprov4wfs:nbytes": "5000"
         }
     },
     "agent": {},
     "used": {
-        "0d92f589-0810-482b-a6bf-4a1f54b12d42": {
-            "prov:activity": "cd4a8b3b-5164-4c86-b850-4a4c730414f3",
-            "prov:entity": "_id-a031eac8b8cb1b04481b66af779ce0ca.x"
+        "fc0986b1-f2b1-47c5-8e84-04ed390457d2": {
+            "prov:activity": "34b22173-c86c-4593-838c-987b456d86ba",
+            "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0.axis"
         },
-        "9128566d-818b-4f00-9e9b-5caad30539c5": {
-            "prov:activity": "cd4a8b3b-5164-4c86-b850-4a4c730414f3",
-            "prov:entity": "add-a951c819359b7078eb96ea7bb52eaf84.b"
+        "6dbe8435-6119-43dc-b9c5-d7ce5b417a16": {
+            "prov:activity": "34b22173-c86c-4593-838c-987b456d86ba",
+            "prov:entity": "original-open_dataset-air-3f1df329a711599ff3e0d046481d61be"
         },
-        "8de25acc-19d1-4343-b5a8-aa2887754910": {
-            "prov:activity": "_id-a031eac8b8cb1b04481b66af779ce0ca",
-            "prov:entity": "_id-a031eac8b8cb1b04481b66af779ce0ca.x"
+        "8ff915db-dd10-4d80-b5b6-06645a8e63bc": {
+            "prov:activity": "34b22173-c86c-4593-838c-987b456d86ba",
+            "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2.keepdims"
         },
-        "9e19f24e-1038-44ef-b214-490fd5762f8d": {
-            "prov:activity": "inc-7ea45000cb3760860dcdf8abad5a63db",
-            "prov:entity": "_id-a031eac8b8cb1b04481b66af779ce0ca.return_value"
+        "4fcb9e2d-a3e2-4351-a478-8ce509e7fe7c": {
+            "prov:activity": "34b22173-c86c-4593-838c-987b456d86ba",
+            "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0.keepdims"
         },
-        "2dfdec80-06ed-4972-8f25-0ec13d7cb039": {
-            "prov:activity": "add-a951c819359b7078eb96ea7bb52eaf84",
-            "prov:entity": "inc-7ea45000cb3760860dcdf8abad5a63db.return_value"
+        "21b3764e-2061-47ea-aaa3-a8c2e672429f": {
+            "prov:activity": "34b22173-c86c-4593-838c-987b456d86ba",
+            "prov:entity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_1.b"
         },
-        "601db569-dc89-433a-9c3f-b10c00246443": {
-            "prov:activity": "add-a951c819359b7078eb96ea7bb52eaf84",
-            "prov:entity": "_id-a031eac8b8cb1b04481b66af779ce0ca.return_value"
+        "f84ec6f7-f318-4db1-b2fd-f8a6d1a87fd6": {
+            "prov:activity": "34b22173-c86c-4593-838c-987b456d86ba",
+            "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2.axis"
         },
-        "dbaafbad-3060-4415-9c6a-7d71cf9431f3": {
-            "prov:activity": "add-a951c819359b7078eb96ea7bb52eaf84",
-            "prov:entity": "add-a951c819359b7078eb96ea7bb52eaf84.b"
+        "d50f3999-caa5-472d-9ee9-8f3db24f9341": {
+            "prov:activity": "34b22173-c86c-4593-838c-987b456d86ba",
+            "prov:entity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_0.b"
+        },
+        "01bd35db-a6c9-4f9c-84a0-6a11b0cee135": {
+            "prov:activity": "34b22173-c86c-4593-838c-987b456d86ba",
+            "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1.keepdims"
+        },
+        "af6498f4-bcef-4382-8e34-768a71eb3c3b": {
+            "prov:activity": "34b22173-c86c-4593-838c-987b456d86ba",
+            "prov:entity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_2.b"
+        },
+        "bc845ada-f025-4954-aa89-058289d51f41": {
+            "prov:activity": "34b22173-c86c-4593-838c-987b456d86ba",
+            "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1.axis"
+        },
+        "9c76aa83-1dca-4c99-a614-f74aae5183a6": {
+            "prov:activity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_2",
+            "prov:entity": "original-open_dataset-air-3f1df329a711599ff3e0d046481d61be"
+        },
+        "f3dbabbd-93f1-4d2a-8a45-f3180f7a32fc": {
+            "prov:activity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_2",
+            "prov:entity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_2.b"
+        },
+        "aa7ed988-caa3-4452-874c-e858341e6d62": {
+            "prov:activity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2",
+            "prov:entity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_2.return_value"
+        },
+        "ca53a3c4-8182-43f8-b6ff-b0715fbce75a": {
+            "prov:activity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2",
+            "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2.axis"
+        },
+        "ec7d7940-69ba-4e4d-8953-f02868c9f57c": {
+            "prov:activity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2",
+            "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2.keepdims"
+        },
+        "ee7f3190-152a-43e5-b20d-a9685a26e4bb": {
+            "prov:activity": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2",
+            "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2.return_value"
+        },
+        "59cdfc3a-9ecc-4e74-8b35-7836eba39bfb": {
+            "prov:activity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_1",
+            "prov:entity": "original-open_dataset-air-3f1df329a711599ff3e0d046481d61be"
+        },
+        "cb72cf98-c5a7-41af-8d3f-443ed87ebbbc": {
+            "prov:activity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_1",
+            "prov:entity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_1.b"
+        },
+        "2993b4a1-7296-40bc-a35e-2dc6f4b3d65c": {
+            "prov:activity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1",
+            "prov:entity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_1.return_value"
+        },
+        "c386621d-aef7-49f0-b619-c2745c581963": {
+            "prov:activity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1",
+            "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1.axis"
+        },
+        "4a99e999-0023-4d4f-81e9-ee5e663fd818": {
+            "prov:activity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1",
+            "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1.keepdims"
+        },
+        "5cefb259-8dc8-42b8-898c-d4377a5822c6": {
+            "prov:activity": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1",
+            "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1.return_value"
+        },
+        "40488e6f-6a68-4649-90d9-45b9f1c60e89": {
+            "prov:activity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_0",
+            "prov:entity": "original-open_dataset-air-3f1df329a711599ff3e0d046481d61be"
+        },
+        "f8a9d8ce-ca60-48c1-bd06-b895219c06c4": {
+            "prov:activity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_0",
+            "prov:entity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_0.b"
+        },
+        "51f61af0-0074-487f-a89e-c11c676c56b7": {
+            "prov:activity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0",
+            "prov:entity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_0.return_value"
+        },
+        "c7ee79d4-e1d9-4abe-9a62-310886354a24": {
+            "prov:activity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0",
+            "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0.axis"
+        },
+        "ef994b09-f1c8-46f6-8502-827b32c87ddb": {
+            "prov:activity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0",
+            "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0.keepdims"
+        },
+        "fb245086-3ce9-4c5a-a6b5-8134dde80f00": {
+            "prov:activity": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0",
+            "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0.return_value"
+        },
+        "8efafef6-ea4b-40d6-b04b-698500a307cd": {
+            "prov:activity": "finalize-hlgfinalizecompute-bcdb7c391ba04f30a3ecc6f893dccee8",
+            "prov:entity": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0.return_value"
+        },
+        "fb28245e-bcd0-4125-9d6b-3259b9e2085d": {
+            "prov:activity": "finalize-hlgfinalizecompute-bcdb7c391ba04f30a3ecc6f893dccee8",
+            "prov:entity": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2.return_value"
+        },
+        "2c3026da-4039-4c94-8064-a7edc8d943ac": {
+            "prov:activity": "finalize-hlgfinalizecompute-bcdb7c391ba04f30a3ecc6f893dccee8",
+            "prov:entity": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1.return_value"
         }
     },
     "wasGeneratedBy": {
-        "4c30f770-25b2-4309-a59d-c0617e2ef6f5": {
-            "prov:entity": "add-a951c819359b7078eb96ea7bb52eaf84.return_value",
-            "prov:activity": "cd4a8b3b-5164-4c86-b850-4a4c730414f3"
+        "100a6c89-6942-4db0-9f72-271d239546b7": {
+            "prov:entity": "finalize-hlgfinalizecompute-bcdb7c391ba04f30a3ecc6f893dccee8.return_value",
+            "prov:activity": "34b22173-c86c-4593-838c-987b456d86ba"
         },
-        "2a0cfdfa-6993-4ea0-a084-9a7362ef9e7d": {
-            "prov:entity": "_id-a031eac8b8cb1b04481b66af779ce0ca.return_value",
-            "prov:activity": "_id-a031eac8b8cb1b04481b66af779ce0ca"
+        "c1537159-892a-4ed5-a21c-189e134771f2": {
+            "prov:entity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_2.return_value",
+            "prov:activity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_2"
         },
-        "09931156-703b-4ff6-a9f0-876d70fdf4f7": {
-            "prov:entity": "inc-7ea45000cb3760860dcdf8abad5a63db.return_value",
-            "prov:activity": "inc-7ea45000cb3760860dcdf8abad5a63db"
+        "1be7b6e4-b700-4069-bb1c-5188705be37e": {
+            "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2.return_value",
+            "prov:activity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2"
         },
-        "f45bdea8-941d-4a7b-a9b5-b5986b0c638b": {
-            "prov:entity": "add-a951c819359b7078eb96ea7bb52eaf84.return_value",
-            "prov:activity": "add-a951c819359b7078eb96ea7bb52eaf84"
+        "870ac876-7ece-498b-a10b-4587bc026428": {
+            "prov:entity": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2.return_value",
+            "prov:activity": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2"
+        },
+        "5b3e3088-0bd1-410f-8231-fac340efc2da": {
+            "prov:entity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_1.return_value",
+            "prov:activity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_1"
+        },
+        "4ceaac3c-bae8-4be0-93fa-9159393e158c": {
+            "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1.return_value",
+            "prov:activity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1"
+        },
+        "87f3ef24-1163-44c0-bfc1-02403ad6732d": {
+            "prov:entity": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1.return_value",
+            "prov:activity": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1"
+        },
+        "ae370342-18c4-4996-82c8-cc880fe6624a": {
+            "prov:entity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_0.return_value",
+            "prov:activity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_0"
+        },
+        "deae9d8e-071d-4385-8756-a38e848b50c0": {
+            "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0.return_value",
+            "prov:activity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0"
+        },
+        "0b85db8f-fa95-4372-a0dd-69570133b6b5": {
+            "prov:entity": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0.return_value",
+            "prov:activity": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0"
+        },
+        "e319047c-aa1c-4354-8dfb-a08c1ebc2164": {
+            "prov:entity": "finalize-hlgfinalizecompute-bcdb7c391ba04f30a3ecc6f893dccee8.return_value",
+            "prov:activity": "finalize-hlgfinalizecompute-bcdb7c391ba04f30a3ecc6f893dccee8"
         }
     },
     "wasAssociatedWith": {},
     "wasAttributedTo": {},
     "actedOnBehalfOf": {},
     "wasInformedBy": {
-        "ffc2f5c7-bf24-4708-bd40-f53223b47716": {
-            "prov:informed": "_id-a031eac8b8cb1b04481b66af779ce0ca",
-            "prov:informant": "inc-7ea45000cb3760860dcdf8abad5a63db"
+        "5eab481f-80e6-47a6-a61f-4ccb08d21d05": {
+            "prov:informed": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2",
+            "prov:informant": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_2"
         },
-        "f1f51da8-ecb4-4518-b24e-cabf90589cc8": {
-            "prov:informed": "_id-a031eac8b8cb1b04481b66af779ce0ca",
-            "prov:informant": "add-a951c819359b7078eb96ea7bb52eaf84"
+        "446356d4-4334-4165-88db-220234e449d9": {
+            "prov:informed": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2",
+            "prov:informant": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2"
         },
-        "2c9c7ebd-4581-407a-87cd-9416fe28097a": {
-            "prov:informed": "inc-7ea45000cb3760860dcdf8abad5a63db",
-            "prov:informant": "add-a951c819359b7078eb96ea7bb52eaf84"
+        "de816b0b-b3c8-4e8c-a510-08fa3abcd174": {
+            "prov:informed": "finalize-hlgfinalizecompute-bcdb7c391ba04f30a3ecc6f893dccee8",
+            "prov:informant": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2"
+        },
+        "8eda9800-d370-4833-9d2d-1c19ff64bd45": {
+            "prov:informed": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1",
+            "prov:informant": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_1"
+        },
+        "c8669ae2-6bfd-4c78-87ab-b82c63f213d1": {
+            "prov:informed": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1",
+            "prov:informant": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1"
+        },
+        "b86e179d-3dea-4185-a0d0-1744bbdd5219": {
+            "prov:informed": "finalize-hlgfinalizecompute-bcdb7c391ba04f30a3ecc6f893dccee8",
+            "prov:informant": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1"
+        },
+        "4c92fa09-49ff-45b7-ab04-dbd8a9f5d889": {
+            "prov:informed": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0",
+            "prov:informant": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_0"
+        },
+        "24ee93c9-421e-4394-a69e-4bc569db5514": {
+            "prov:informed": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0",
+            "prov:informant": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0"
+        },
+        "5d4ea370-ae7b-4847-86f0-70a0845774e4": {
+            "prov:informed": "finalize-hlgfinalizecompute-bcdb7c391ba04f30a3ecc6f893dccee8",
+            "prov:informant": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0"
         }
     }
 }

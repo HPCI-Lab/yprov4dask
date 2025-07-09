@@ -62,11 +62,11 @@ class Documenter:
 
   def __init__(self, name: str, **kwargs):
     """Additional arguments:
-    - `destination: str`: folder in which where to save the serialized
-    provenance document
+    - `destination: str`: folder in which to save the serialized provenance document.
+    A `yprov4wfs.json` is created into that directory.
     - `rich_types: bool`: tells if datatypes of values such be richer, e.g. for
     tuples, track the type of each element instead of just saying that the value
-    is a tuple. Defaults to `False`
+    is a tuple. Defaults to `False`.
     """
     
     self.destination: str = kwargs.pop('destination', './output')
@@ -79,17 +79,16 @@ class Documenter:
     self.data = {}
     self.tasks = {}
 
-    self.kwargs: dict[str, Any] = kwargs
-
   def register_data(self, datanode: DataNode):
     """Non-runnable tasks are registered as entities as they are in fact just data"""
     
     data_id = _sanitize(str(datanode.key))
     data = Data(id=data_id, name=data_id)
-    data._info = {
-      'value': _serialize_value(datanode.value)
-    }
     data.type = str(type(datanode.typ)) if not self.rich_types else _type(datanode.typ)
+    data._info = {
+      'value': _serialize_value(datanode.value),
+      'dtype': data.type
+    }
 
     self.workflow.add_data(data)
     self.data[data_id] = data
@@ -110,10 +109,11 @@ class Documenter:
     else:
       param_id = f'{task_id}.{name}'
       data = Data(id=param_id, name=param_id)
+      data.type = str(type(param.value)) if not self.rich_types else _type(param.value)
       data._info = {
         'value': _serialize_value(param.value),
+        'dtype': data.type
       }
-      data.type = str(type(param.value)) if not self.rich_types else _type(param.value)
       self.workflow.add_data(data)
       self.data[param_id] = data
       
@@ -235,7 +235,7 @@ class Documenter:
     self.workflow._inputs = list(wf_inputs)
     self.workflow._outputs = list(wf_outputs)
 
-  def serialize(self, destination=None, format=None, **kwargs: dict[str, Any]):
+  def serialize(self, destination=None):
     """Serializes the provenance document into `destination`."""
 
     if destination is None and self.destination is not None:

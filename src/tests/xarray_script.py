@@ -6,7 +6,10 @@ if __name__ == "__main__":
 
   from prov_tracking.plugin import ProvTracker
 
-  plugin = ProvTracker(destination = 'prov_script.json', format = 'json', indent = 2, rich_types=True)
+  plugin = ProvTracker(
+    name = 'xarray_script', destination = './output',
+    keep_traceback=True, rich_types=True
+  )
   client.register_plugin(plugin)
   plugin.start(client.cluster.scheduler)
 
