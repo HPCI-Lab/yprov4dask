@@ -3,9 +3,10 @@ from dask.order import order
 from dask.task_spec import DataNode, Task, TaskRef, Alias
 from dask.typing import Key
 from distributed.diagnostics.plugin import SchedulerPlugin
-from distributed.scheduler import Scheduler, TaskState, TaskStateState as SchedulerTaskState
+from distributed.scheduler import Scheduler, TaskStateState as SchedulerTaskState
 from prov_tracking.documenter import Documenter
-from prov_tracking.utils import RunnableTaskInfo, make_unique_key
+from prov_tracking.utils import make_unique_key
+from prov_tracking.task_info import RunnableTaskInfo
 
 import datetime as dt
 from typing import Any, cast
@@ -38,6 +39,9 @@ class ProvTracker(SchedulerPlugin):
     # saved, jusst its children.
     self.macro_tasks: dict[Key, list[Key]] = {}
     self.erred_tasks: dict[Key, Task | DataNode] = {}
+    # For each macro task keeps the dictionary used to translate non-unique keys
+    # info unique ones.
+    self.unique_keys: dict[Key, dict[Key, Key]] = {}
 
   def start(self, scheduler: Scheduler):
     self._scheduler = scheduler
@@ -57,21 +61,11 @@ class ProvTracker(SchedulerPlugin):
           self.all_tasks[key] = task.run_spec
           self.documenter.register_data(task.run_spec)
         elif isinstance(task.run_spec, Task):
-          if str(key).startswith(('rechunk-merge-rechunk-split-store-map', '(\'rechunk-merge-rechunk-split-store-map', 'finalize', '(\'store-map')):
-            pass
+          infos = self._record_task(key, task.group_key, task.run_spec)
           self.macro_tasks[key] = []
-          infos = None
-          if not ProvTracker._is_dask_internal(task.run_spec):
-            self.all_tasks[key] = task.run_spec
-            self.macro_tasks[key].append(key)
-            infos = self._track_task(task)
-          else:
-            infos = self._track_dask_internal(
-              task.run_spec, task.group_key, task.key, sub_tasks={}
-            )
-          self.all_runnables.update(infos)
           for sub_key, info in infos.items():
             self.macro_tasks[key].append(sub_key)
+            self.all_runnables[sub_key] = info
             self.documenter.register_task(info)
         else:
           target = cast(Alias, task.run_spec).target
@@ -79,6 +73,12 @@ class ProvTracker(SchedulerPlugin):
 
       elif start == 'processing' and key in self.macro_tasks:
         now = dt.datetime.now()
+        specs = cast(Task, task.run_spec)
+        infos = self._track_task(key, task.group_key, specs)
+        for sub_key, info in infos.items():
+          self.macro_tasks[key].append(sub_key)
+          self.all_runnables[sub_key] = info
+          self.documenter.register_task(info)
         for sub_key in self.macro_tasks[key]:
           info = self.all_runnables[sub_key]
           info.start_time = now
@@ -136,34 +136,127 @@ class ProvTracker(SchedulerPlugin):
     except Exception as e:
       print(f'Close: {e}')
 
-  def _track_task(self, task: TaskState) -> dict[Key, RunnableTaskInfo]:
-    infos: dict[Key, RunnableTaskInfo] = {}
-    pending_tasks: list[tuple[Key, Task]] = []
-    infos[task.key] = RunnableTaskInfo(
-      task=task, all_tasks=self.all_tasks, pending_tasks=pending_tasks
-    )
-
-    while len(pending_tasks) > 0:
-      new_key, new_task = pending_tasks.pop()
-      self.all_tasks[new_key] = new_task
-      new_task_deps: dict[Key, Any] = { k: self.all_tasks[k] for k in new_task.dependencies }
-      if not ProvTracker._is_dask_internal(new_task):
-        infos[new_key] = RunnableTaskInfo(
-          key=new_key, specs=new_task, group_key=task.group_key,
-          all_tasks=self.all_tasks, dependencies=new_task_deps
-        )
-      else:
-        infos.update(self._track_dask_internal(
-          new_task, task.group_key, new_key, sub_tasks={})
-        )
-    return infos
+  def _record_task(self, key: Key, group_key: str, specs: Task) -> dict[Key, RunnableTaskInfo]:
+    """Records the existance of this task and all its subtasks, if any, in both
+    the provenance document and the plugin itself. Returns a dictionary in which
+    each item pairs info of a task to the unique key for that task.
     
+    The only internal structures that are directly modified by this method are
+    `self.all_tasks` and self.unique_keys, the latter only for the dictionary
+    associated with `key`."""
 
+    infos = {}
+    task_unique_keys: dict[Key, Key] = { key: key }
+    if ProvTracker._is_expandable_task(specs):
+      infos.update(self._record_expandable_task(
+        key, group_key, specs, task_unique_keys
+      ))
+    else:
+      self.all_tasks[key] = specs
+      infos[key] = RunnableTaskInfo(key, group_key, specs)
+    self.unique_keys[key] = task_unique_keys
+    return infos
+
+  def _record_expandable_task(
+    self, key: Key, group_key: Key, specs: Task, unique_keys: dict[Key, Key]
+  ) -> dict[Key, RunnableTaskInfo]:
+    """If the task can be expanded, i.e. this task embedes other subtasks that
+    must be recorded, find all such tasks and returns their infos paired with
+    their unique key."""
+
+    infos: dict[Key, RunnableTaskInfo] = {}
+    inner_dsk = cast(dict[Key, Task | Alias | DataNode], specs.args[0])
+    outkey: Key = specs.args[1]
+    refkey = unique_keys[key] # Key used as reference to make subkeys unique
+    
+    priorities = order(inner_dsk)
+    for key, node in sorted(inner_dsk.items(), key=lambda it: priorities[it[0]]):
+      if isinstance(node, DataNode):
+        self.documenter.register_data(node)
+        self.all_tasks[node.key] = node
+      elif isinstance(node, Alias):
+        unique_key = make_unique_key(refkey, key)
+        unique_keys[key] = unique_key
+        unique_target = unique_keys.get(node.target, node.target)
+        self.all_tasks[unique_key] = self.all_tasks[unique_target]
+        if isinstance(self.all_tasks[unique_key], Task):
+          if unique_target in infos:
+            infos[unique_key] = infos[unique_target]
+          elif unique_target in self.all_runnables:
+            infos[unique_key] = self.all_runnables[unique_target]
+          else:
+            print(f'Non existent alias to runnable task {unique_key} -> {unique_target}')
+      else:
+        unique_key = make_unique_key(refkey, key)
+        unique_keys[key] = unique_key
+        if ProvTracker._is_expandable_task(node):
+          infos.update(self._record_expandable_task(
+            key=unique_key, group_key=group_key, specs=node,
+            unique_keys=unique_keys
+          ))
+        else:
+          self.all_tasks[unique_key] = node
+          infos[unique_key] = RunnableTaskInfo(unique_key, group_key, node)
+
+    outkey = unique_keys.get(outkey, outkey)
+    self.all_tasks[refkey] = self.all_tasks[outkey]
+    return infos
+
+  def _track_task(self, key: Key, group_key: Key, specs: Task) -> dict[Key, RunnableTaskInfo]:
+    """Given a task that has already been recorded, tracks all its dependencies.
+    It might happen that among the dependencies (actually among the arguments to
+    functions) there are tasks that must be created by the plugin in order to be
+    recorded. If any such new tasks exist, their keys are returned toghether
+    with their info."""
+
+    new_infos = {}
+    pending_tasks: list[tuple[Key, Task]] = []
+    task_unique_keys = self.unique_keys[key]
+    if ProvTracker._is_expandable_task(specs):
+      new_infos.update(self._track_expandable_task(
+        specs=specs, group_key=group_key, unique_keys=task_unique_keys
+      ))
+    else:
+      info = self.all_runnables[key]
+      dependencies: dict[Key, Task | DataNode | Alias] = {}
+      for dep_key in cast(set[Key], specs.dependencies):
+        unique_key = task_unique_keys.get(dep_key, dep_key)
+        dependencies[dep_key] = self.all_tasks[unique_key]
+      info.record_dependencies(
+        dependencies=dependencies, all_tasks=self.all_tasks,
+        unique_keys=task_unique_keys, pending_tasks=pending_tasks
+      )
+      if len(pending_tasks) > 0:
+        while len(pending_tasks) > 0:
+          new_key, new_task = pending_tasks.pop()
+          task_unique_keys[new_key] = new_key
+          new_task_deps: dict[Key, Any] = {}
+          for dep_key in cast(set[Key], new_task.dependencies):
+            unique_key = task_unique_keys.get(dep_key, dep_key)
+            new_task_deps[dep_key] = self.all_tasks[unique_key]
+          if ProvTracker._is_expandable_task(new_task):
+            new_infos.update(self._track_expandable_task(
+              group_key=group_key, specs=new_task, unique_keys=task_unique_keys,
+              parent_internal_deps={}
+            ))
+          else:
+            self.all_tasks[new_key] = new_task
+            # Record the new task
+            info = RunnableTaskInfo(
+              key=new_key, specs=new_task, group_key=group_key
+            )
+            info.record_dependencies(
+              dependencies=new_task_deps, all_tasks=self.all_tasks,
+              unique_keys=task_unique_keys, pending_tasks=pending_tasks
+            )
+            new_infos[new_key] = info
+    return new_infos
+    
   @staticmethod
-  def _is_dask_internal(run_spec: Task) -> bool:
-    """Checks if the given runnable task is a call to a dask internal function."""
+  def _is_expandable_task(specs: Task) -> bool:
+    """Checks if the given runnable task expands into multiple tasks."""
 
-    func = run_spec.func
+    func = specs.func
     if hasattr(func, '__name__'):
       return (
         func.__name__ == '_execute_subgraph' and
@@ -171,29 +264,21 @@ class ProvTracker(SchedulerPlugin):
       )
     return False
 
-  def _track_dask_internal(
-    self, run_spec: Task, group_key: str,
-    parent_key: Key,
-    parent_internal_deps: dict[Key, Task | DataNode] = {},
+  def _track_expandable_task(
+    self, group_key: Key, specs: Task,
     unique_keys: dict[Key, Key] = {},
-    sub_tasks: dict[Key, Task | DataNode] = {}
+    parent_internal_deps: dict[Key, Task | DataNode] = {},
   ) -> dict[Key, RunnableTaskInfo]:
-    """Given a task that executes `dask._task_spec._execute_subgraph` follows
-    the subgraph associated to that call and records all the information about
-    tasks in that subgraph. `self.all_tasks` is kept updated. Returns a
-    dictionary with the info of all analysed tasks.
-    
-    #### Note
-    This call is recursive, but this should be safe as the maximum recursion
-    level is (apparently) at most 1.
-    """
+    """Tracks dependecies for an expandable tasks, i.e. tracks the dependecies
+    of all tasks embedded in an expandable task."""
+
     # These are all tasks that will be executed by _execute_subgraph
-    inner_dsk = cast(dict[Key, Task | Alias | DataNode], run_spec.args[0])
+    inner_dsk = cast(dict[Key, Task | Alias | DataNode], specs.args[0])
 
     # Some dependencies are referenced with names in inkeys that might be
     # different from names already used before for the same resource
-    inkeys = cast(tuple[Key, ...], run_spec.args[2])
-    dependencies = cast(tuple[TaskRef | DataNode, ...], run_spec.args[3:])
+    inkeys = cast(tuple[Key, ...], specs.args[2])
+    dependencies = cast(tuple[TaskRef | DataNode, ...], specs.args[3:])
     internal_deps: dict[Key, Any] = {}
     for key, dep in zip(inkeys, dependencies):
       if isinstance(dep, TaskRef):
@@ -214,16 +299,31 @@ class ProvTracker(SchedulerPlugin):
     priorities = order(inner_dsk)
     infos: dict[Key, RunnableTaskInfo] = {}
     for key, node in sorted(inner_dsk.items(), key=lambda it: priorities[it[0]]):
-      if str(key).startswith(('store-map', '(store-map')):
-        pass
-      if isinstance(node, Task):
-        unique_key = make_unique_key(parent_key, key)
-        unique_keys[key] = unique_key
-        self.all_tasks[unique_key] = node
-        sub_tasks[key] = node
-        if ProvTracker._is_dask_internal(node):
-          infos.update(self._track_dask_internal(
-            node, group_key, unique_key, internal_deps, unique_keys, sub_tasks
+      # DataNode and Alias cases happens only if node comes from a pending task
+      # identified by RunnableTaskInfo.record_dependencies, and only if that
+      # node is expandable
+      if isinstance(node, DataNode):
+        if node.key not in self.all_tasks:
+          self.documenter.register_data(node)
+          self.all_tasks[node.key] = node
+      elif isinstance(node, Alias):
+        if node.key not in self.all_tasks:
+          unique_key = unique_keys[node.key]
+          unique_target = unique_keys.get(node.target, node.target)
+          target = self.all_tasks[unique_target]
+          if isinstance(target, Task):
+            if unique_target in infos:
+              infos[unique_key] = infos[unique_target]
+            elif unique_target in self.all_runnables:
+              infos[unique_key] = self.all_runnables[unique_target]
+            else:
+              print(f'Non existent alias to runnable task {unique_key} -> {unique_target}')
+      else:
+        unique_key = unique_keys[key]
+        if ProvTracker._is_expandable_task(node):
+          infos.update(self._track_expandable_task(
+            group_key=group_key, specs=node, unique_keys=unique_keys,
+            parent_internal_deps=internal_deps
           ))
         else:
           node_deps = {}
@@ -233,63 +333,35 @@ class ProvTracker(SchedulerPlugin):
             else:
               unique_dep_key = unique_keys.get(dep, dep)
               node_deps[dep] = self.all_tasks[unique_dep_key]
-          infos[unique_key] = RunnableTaskInfo(
-            key=unique_key, specs=node, group_key=group_key,
+          self.all_runnables[unique_key].record_dependencies(
             dependencies=node_deps, all_tasks=self.all_tasks,
             unique_keys=unique_keys, pending_tasks=pending_tasks
           )
-      elif isinstance(node, Alias):
-        unique_key = make_unique_key(parent_key, key)
-        unique_target = unique_keys.get(node.target, node.target)
-        self.all_tasks[unique_key] = self.all_tasks[unique_target]
-        sub_tasks[key] = self.all_tasks[unique_target]
-        if isinstance(self.all_tasks[unique_key], Task):
-          if unique_target in infos:
-            infos[unique_key] = infos[unique_target]
-          elif unique_target in self.all_runnables:
-            infos[unique_key] = self.all_runnables[unique_target]
-          else:
-            print(f'Non existent alias to runnable task {unique_key} -> {unique_target}')
-      else:
-        self.documenter.register_data(node)
-        self.all_tasks[node.key] = node
-        sub_tasks[node.key] = node
     
+    # Here, any pending task identified by RunnableTaskInfo.record_dependencies
+    # is recorded into the prov document and the plugin
     if len(pending_tasks) > 0:      
-      sub_tasks.update(pending_tasks)
-
       while len(pending_tasks) > 0:
         new_key, new_task = pending_tasks.pop()
-        self.all_tasks[new_key] = new_task
-        new_task_deps: dict[Key, Any] = { k: self.all_tasks[k] for k in new_task.dependencies }
-        if not ProvTracker._is_dask_internal(new_task):
-          infos[new_key] = RunnableTaskInfo(
-            key=new_key, specs=new_task, group_key=group_key,
-            all_tasks=self.all_tasks, dependencies=new_task_deps,
+        unique_keys[new_key] = new_key
+        new_task_deps: dict[Key, Any] = {}
+        for dep_key in cast(set[Key], new_task.dependencies):
+          unique_key = unique_keys.get(dep_key, dep_key)
+          new_task_deps[dep_key] = self.all_tasks[unique_key]
+        if ProvTracker._is_expandable_task(new_task):
+          infos.update(self._track_expandable_task(
+            group_key=group_key, specs=new_task, unique_keys=unique_keys,
+            parent_internal_deps=internal_deps
+          ))
+        else:
+          self.all_tasks[new_key] = new_task
+          # Record the new task
+          info = RunnableTaskInfo(
+            key=new_key, specs=new_task, group_key=group_key
+          )
+          info.record_dependencies(
+            dependencies=new_task_deps, all_tasks=self.all_tasks,
             unique_keys=unique_keys, pending_tasks=pending_tasks
           )
-          sub_tasks.update(pending_tasks)
-        else:
-          infos.update(self._track_dask_internal(
-            new_task, group_key, parent_key,
-            parent_internal_deps=internal_deps, unique_keys=unique_keys,
-            sub_tasks=sub_tasks
-          ))
-
-      # Returns infos in the correct order
-      priorities = order(sub_tasks)
-      ordered_infos: dict[Key, RunnableTaskInfo] = {}
-      for key, node in sorted(sub_tasks.items(), key=lambda it: priorities[it[0]]):
-        if not isinstance(node, DataNode):
-          unique_key = unique_keys.get(key, key)
-          if unique_key not in infos:
-            pass
-          ordered_infos[unique_key] = infos[unique_key]
-      infos = ordered_infos
-
-    # Execute subgraph returns the output of task `outkey`, so this task is
-    # treated as an alias for `outkey`
-    outkey: Key = run_spec.args[1]
-    outkey = unique_keys.get(outkey, outkey)
-    self.all_tasks[run_spec.key] = self.all_tasks[outkey]
+          infos[new_key] = info
     return infos

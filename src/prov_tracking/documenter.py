@@ -3,7 +3,8 @@ from typing import Any
 from dask.task_spec import DataNode
 from distributed.scheduler import TaskState
 
-from prov_tracking.utils import RunnableTaskInfo, GeneratedValue, ReadyValue, Value
+from prov_tracking.utils import GeneratedValue, ReadyValue, Value
+from prov_tracking.task_info import RunnableTaskInfo
 from yprov4wfs.datamodel.workflow import Workflow
 from yprov4wfs.datamodel.data import Data
 from yprov4wfs.datamodel.task import Task
@@ -166,7 +167,6 @@ class Documenter:
     task = Task(id=task_id, name=task_id)
     task._info = attributes
     if task_id not in self.tasks:
-      print(f'Registering Task {task_id}')
       self.workflow.add_task(task)
       self.tasks[task_id] = task
       result_id = f'{task._id}.return_value'
@@ -176,8 +176,6 @@ class Documenter:
       self.workflow.add_data(result)
       self.workflow.add_output(result)
       self.data[result_id] = result
-    else:
-      print(f'Seen Task {task_id}')
     
     return task
 
