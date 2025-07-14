@@ -1,8 +1,9 @@
+from logging import info
 from dask.order import order
 from dask.task_spec import DataNode, Task, TaskRef, Alias
 from dask.typing import Key
 from distributed.diagnostics.plugin import SchedulerPlugin
-from distributed.scheduler import Scheduler, TaskStateState as SchedulerTaskState
+from distributed.scheduler import Scheduler, TaskState, TaskStateState as SchedulerTaskState
 from prov_tracking.documenter import Documenter
 from prov_tracking.utils import RunnableTaskInfo, make_unique_key
 
@@ -36,6 +37,7 @@ class ProvTracker(SchedulerPlugin):
     # the task that executes _execute_subgraph. That task info are not actually
     # saved, jusst its children.
     self.macro_tasks: dict[Key, list[Key]] = {}
+    self.erred_tasks: dict[Key, Task | DataNode] = {}
 
   def start(self, scheduler: Scheduler):
     self._scheduler = scheduler
@@ -55,21 +57,22 @@ class ProvTracker(SchedulerPlugin):
           self.all_tasks[key] = task.run_spec
           self.documenter.register_data(task.run_spec)
         elif isinstance(task.run_spec, Task):
+          if str(key).startswith(('rechunk-merge-rechunk-split-store-map', '(\'rechunk-merge-rechunk-split-store-map', 'finalize', '(\'store-map')):
+            pass
+          self.macro_tasks[key] = []
+          infos = None
           if not ProvTracker._is_dask_internal(task.run_spec):
-            info = RunnableTaskInfo(
-              task, all_tasks=self.all_tasks
-            )
-            self.all_runnables[key] = info
             self.all_tasks[key] = task.run_spec
-            self.macro_tasks[key] = [key]
-            self.documenter.register_task(info)
+            self.macro_tasks[key].append(key)
+            infos = self._track_task(task)
           else:
-            infos = self._track_dask_internal(task.run_spec, task.group_key)
-            self.all_runnables.update(infos)
-            self.macro_tasks[key] = []
-            for sub_key, info in infos.items():
-              self.macro_tasks[key].append(sub_key)
-              self.documenter.register_task(info)
+            infos = self._track_dask_internal(
+              task.run_spec, task.group_key, task.key, sub_tasks={}
+            )
+          self.all_runnables.update(infos)
+          for sub_key, info in infos.items():
+            self.macro_tasks[key].append(sub_key)
+            self.documenter.register_task(info)
         else:
           target = cast(Alias, task.run_spec).target
           self.all_tasks[key] = self.all_tasks[target]
@@ -79,6 +82,7 @@ class ProvTracker(SchedulerPlugin):
         for sub_key in self.macro_tasks[key]:
           info = self.all_runnables[sub_key]
           info.start_time = now
+          self.documenter.register_task_dependencies(info)
 
       elif start == 'memory' and key in self.macro_tasks:
         now = dt.datetime.now()
@@ -100,6 +104,7 @@ class ProvTracker(SchedulerPlugin):
 
         now = dt.datetime.now()
         for sub_key in self.macro_tasks[key][:-1]:
+          self.erred_tasks[sub_key] = self.all_tasks[sub_key]
           info = self.all_runnables[sub_key]
           info.finish_time = now
           self.documenter.register_task_failure(info, None, None, None)
@@ -131,6 +136,29 @@ class ProvTracker(SchedulerPlugin):
     except Exception as e:
       print(f'Close: {e}')
 
+  def _track_task(self, task: TaskState) -> dict[Key, RunnableTaskInfo]:
+    infos: dict[Key, RunnableTaskInfo] = {}
+    pending_tasks: list[tuple[Key, Task]] = []
+    infos[task.key] = RunnableTaskInfo(
+      task=task, all_tasks=self.all_tasks, pending_tasks=pending_tasks
+    )
+
+    while len(pending_tasks) > 0:
+      new_key, new_task = pending_tasks.pop()
+      self.all_tasks[new_key] = new_task
+      new_task_deps: dict[Key, Any] = { k: self.all_tasks[k] for k in new_task.dependencies }
+      if not ProvTracker._is_dask_internal(new_task):
+        infos[new_key] = RunnableTaskInfo(
+          key=new_key, specs=new_task, group_key=task.group_key,
+          all_tasks=self.all_tasks, dependencies=new_task_deps
+        )
+      else:
+        infos.update(self._track_dask_internal(
+          new_task, task.group_key, new_key, sub_tasks={})
+        )
+    return infos
+    
+
   @staticmethod
   def _is_dask_internal(run_spec: Task) -> bool:
     """Checks if the given runnable task is a call to a dask internal function."""
@@ -144,7 +172,11 @@ class ProvTracker(SchedulerPlugin):
     return False
 
   def _track_dask_internal(
-    self, run_spec: Task, group_key: str, unique_keys: dict[Key, Key] = {}
+    self, run_spec: Task, group_key: str,
+    parent_key: Key,
+    parent_internal_deps: dict[Key, Task | DataNode] = {},
+    unique_keys: dict[Key, Key] = {},
+    sub_tasks: dict[Key, Task | DataNode] = {}
   ) -> dict[Key, RunnableTaskInfo]:
     """Given a task that executes `dask._task_spec._execute_subgraph` follows
     the subgraph associated to that call and records all the information about
@@ -155,7 +187,6 @@ class ProvTracker(SchedulerPlugin):
     This call is recursive, but this should be safe as the maximum recursion
     level is (apparently) at most 1.
     """
-
     # These are all tasks that will be executed by _execute_subgraph
     inner_dsk = cast(dict[Key, Task | Alias | DataNode], run_spec.args[0])
 
@@ -164,47 +195,99 @@ class ProvTracker(SchedulerPlugin):
     inkeys = cast(tuple[Key, ...], run_spec.args[2])
     dependencies = cast(tuple[TaskRef | DataNode, ...], run_spec.args[3:])
     internal_deps: dict[Key, Any] = {}
-    for key, dep_key in zip(inkeys, dependencies):
-      if isinstance(dep_key, TaskRef):
+    for key, dep in zip(inkeys, dependencies):
+      if isinstance(dep, TaskRef):
         # Refs are always for already-seen tasks, so this is safe. Also, tasks
         # whose key has been changed because it was non-unique, are never seen
         # here
-        internal_deps[key] = self.all_tasks[dep_key.key]
+        if dep.key in parent_internal_deps:
+          internal_deps[key] = parent_internal_deps[dep.key]
+        else:
+          unique_dep_key = unique_keys.get(dep.key, dep.key)
+          internal_deps[key] = self.all_tasks[unique_dep_key]
       else:
         # As this value is actually ready and doesn't come from any other
         # recognizable task, just take the raw value
-        internal_deps[key] = dep_key.value
+        internal_deps[key] = dep.value
     
+    pending_tasks: list[tuple[Key, Task]] = []
     priorities = order(inner_dsk)
     infos: dict[Key, RunnableTaskInfo] = {}
     for key, node in sorted(inner_dsk.items(), key=lambda it: priorities[it[0]]):
+      if str(key).startswith(('store-map', '(store-map')):
+        pass
       if isinstance(node, Task):
-        unique_key = make_unique_key(run_spec.key, key)
+        unique_key = make_unique_key(parent_key, key)
         unique_keys[key] = unique_key
         self.all_tasks[unique_key] = node
+        sub_tasks[key] = node
         if ProvTracker._is_dask_internal(node):
-          infos.update(self._track_dask_internal(node, group_key, unique_keys))
+          infos.update(self._track_dask_internal(
+            node, group_key, unique_key, internal_deps, unique_keys, sub_tasks
+          ))
         else:
           node_deps = {}
-          for dep_key in cast(set[Key], node.dependencies):
-            if dep_key in internal_deps:
-              node_deps[dep_key] = internal_deps[dep_key]
+          for dep in cast(set[Key], node.dependencies):
+            if dep in internal_deps:
+              node_deps[dep] = internal_deps[dep]
             else:
-              unique_dep_key = unique_keys.get(dep_key, dep_key)
-              node_deps[dep_key] = self.all_tasks[unique_dep_key]
+              unique_dep_key = unique_keys.get(dep, dep)
+              node_deps[dep] = self.all_tasks[unique_dep_key]
           infos[unique_key] = RunnableTaskInfo(
-            specs=node, group_key=group_key, dependencies=node_deps,
-            all_tasks=self.all_tasks, unique_keys=unique_keys
+            key=unique_key, specs=node, group_key=group_key,
+            dependencies=node_deps, all_tasks=self.all_tasks,
+            unique_keys=unique_keys, pending_tasks=pending_tasks
           )
       elif isinstance(node, Alias):
-        unique_key = make_unique_key(run_spec.key, key)
+        unique_key = make_unique_key(parent_key, key)
         unique_target = unique_keys.get(node.target, node.target)
         self.all_tasks[unique_key] = self.all_tasks[unique_target]
+        sub_tasks[key] = self.all_tasks[unique_target]
+        if isinstance(self.all_tasks[unique_key], Task):
+          if unique_target in infos:
+            infos[unique_key] = infos[unique_target]
+          elif unique_target in self.all_runnables:
+            infos[unique_key] = self.all_runnables[unique_target]
+          else:
+            print(f'Non existent alias to runnable task {unique_key} -> {unique_target}')
       else:
         self.documenter.register_data(node)
         self.all_tasks[node.key] = node
+        sub_tasks[node.key] = node
     
-    # Execute subgraph returns the output of task `outkey`, so set this task is
+    if len(pending_tasks) > 0:      
+      sub_tasks.update(pending_tasks)
+
+      while len(pending_tasks) > 0:
+        new_key, new_task = pending_tasks.pop()
+        self.all_tasks[new_key] = new_task
+        new_task_deps: dict[Key, Any] = { k: self.all_tasks[k] for k in new_task.dependencies }
+        if not ProvTracker._is_dask_internal(new_task):
+          infos[new_key] = RunnableTaskInfo(
+            key=new_key, specs=new_task, group_key=group_key,
+            all_tasks=self.all_tasks, dependencies=new_task_deps,
+            unique_keys=unique_keys, pending_tasks=pending_tasks
+          )
+          sub_tasks.update(pending_tasks)
+        else:
+          infos.update(self._track_dask_internal(
+            new_task, group_key, parent_key,
+            parent_internal_deps=internal_deps, unique_keys=unique_keys,
+            sub_tasks=sub_tasks
+          ))
+
+      # Returns infos in the correct order
+      priorities = order(sub_tasks)
+      ordered_infos: dict[Key, RunnableTaskInfo] = {}
+      for key, node in sorted(sub_tasks.items(), key=lambda it: priorities[it[0]]):
+        if not isinstance(node, DataNode):
+          unique_key = unique_keys.get(key, key)
+          if unique_key not in infos:
+            pass
+          ordered_infos[unique_key] = infos[unique_key]
+      infos = ordered_infos
+
+    # Execute subgraph returns the output of task `outkey`, so this task is
     # treated as an alias for `outkey`
     outkey: Key = run_spec.args[1]
     outkey = unique_keys.get(outkey, outkey)

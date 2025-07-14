@@ -119,10 +119,12 @@ class Documenter:
       
     return (name, param_id)
 
-  def _register_task_dependencies(self, task: Task, info: RunnableTaskInfo):
+  def register_task_dependencies(self, info: RunnableTaskInfo):
     """Parameters to the task are registered as entities linked to the activity
     via used relations. All runnable dependencies of the task are registered via
     communication relations."""
+    task_id = _sanitize(str(info.key))
+    task = self.tasks[task_id]
 
     used_params = []
     for name, param in info.args_dict.items():
@@ -148,9 +150,10 @@ class Documenter:
     except Exception as e:
       print(f'Missing informant_id for {info.key}: {e}')
   
-  def register_task(self, info: RunnableTaskInfo):
-    """Runnble tasks are registered as activities. Parameters and relations with
-    other tasks are not registered. That must be done upon task completion."""
+  def register_task(self, info: RunnableTaskInfo) -> Task:
+    """Runnble tasks are registered as activities and their returned values as
+    entities. No other info is recorded here. For registering dependencies see
+    `Documenter.register_task_dependencies`"""
 
     task_id = _sanitize(str(info.key))
     attributes = {
@@ -162,18 +165,21 @@ class Documenter:
       attributes['nice_name'] = info.func.__name__
     task = Task(id=task_id, name=task_id)
     task._info = attributes
-    self.workflow.add_task(task)
-    self.tasks[task_id] = task
-
-    result_id = f'{task._id}.return_value'
-    result = Data(id=result_id, name=result_id)
-    result.set_producer(task)
-    task.add_output(result)
-    self.workflow.add_data(result)
-    self.workflow.add_output(result)
-    self.data[result_id] = result
-
-    self._register_task_dependencies(task, info)
+    if task_id not in self.tasks:
+      print(f'Registering Task {task_id}')
+      self.workflow.add_task(task)
+      self.tasks[task_id] = task
+      result_id = f'{task._id}.return_value'
+      result = Data(id=result_id, name=result_id)
+      result.set_producer(task)
+      task.add_output(result)
+      self.workflow.add_data(result)
+      self.workflow.add_output(result)
+      self.data[result_id] = result
+    else:
+      print(f'Seen Task {task_id}')
+    
+    return task
 
   def register_task_success(
     self, info: RunnableTaskInfo, dtype: str | None, nbytes: int | None

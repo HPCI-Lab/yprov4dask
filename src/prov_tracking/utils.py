@@ -1,5 +1,5 @@
 from datetime import datetime
-from dask.config import rename
+from uuid import uuid4
 from dask.task_spec import Task, DataNode, Alias, TaskRef, List
 from dask.typing import Key
 from distributed.scheduler import TaskState
@@ -14,22 +14,28 @@ class RunnableTaskInfo:
   def __init__(
     self,
     task: TaskState | None = None,
+    key: Key | None = None,
     specs: Task | None = None,
     group_key: str | None = None,
     dependencies: dict[Key, Task | DataNode | Alias] = {},
     all_tasks: dict[Key, Task | DataNode] = {},
-    unique_keys: dict[Key, Key] = {}
+    unique_keys: dict[Key, Key] = {},
+    pending_tasks: list[tuple[Key, Task]] = []
   ):
     if task is not None:
       self._from_task(task, all_tasks)
-    elif specs is not None and group_key is not None and dependencies is not None:
+    elif key is not None and specs is not None and group_key is not None:
       self._from_pieces(specs, group_key, dependencies, unique_keys, all_tasks)
     else:
-      raise TypeError('''
-RunnableTaskInfo can take either a TaskState object or specs, group_key and
-dependencies. Optionally, it accepts a dictionary of internal dependencies, i.e.
-dependencies which are referenced with a locally-defined key and a
-dictionary mapping non-unique keys to their unique alternative.
+      raise ValueError('''
+RunnableTaskInfo can take either a TaskState object or key, specs and group_key.
+Dependencies are also likely needed it the task has any. Optionally, it accepts
+a dictionary of internal dependencies through `all_tasks`, i.e. dependencies
+which are referenced with a locally-defined key, and a dictionary mapping
+non-unique keys to their unique alternative. As it might happen that some task
+references other tasks which never pass through the scheduler, `pending_tasks`
+is a list populated with these tasks that will have to be dealt with after this
+method completes.
       ''')
     self.start_time: datetime | None = None
     self.finish_time: datetime | None = None
@@ -49,28 +55,28 @@ dictionary mapping non-unique keys to their unique alternative.
         # Multiple tasks cooperate to produce this value. Maybe it's a list of
         # values returned by some tasks
         values = set()
-        _get_values_from_list(value, values, all_tasks, dependencies, unique_keys)
+        _get_values_from_list(value, values, all_tasks, dependencies, unique_keys, pending_tasks)
         self.args_dict[name] = values
       else:
-        self.args_dict[name] = _get_value(value, all_tasks, dependencies, unique_keys)
+        self.args_dict[name] = _get_value(value, all_tasks, dependencies, unique_keys, pending_tasks)
 
     if len(specs.args) > len(param_names):
       values = set()
       values.add(self.args_dict[param_names[-1]])
       for value in specs.args[len(param_names):]:
         if isinstance(value, List):
-          _get_values_from_list(value, values, all_tasks, dependencies, unique_keys)
+          _get_values_from_list(value, values, all_tasks, dependencies, unique_keys, pending_tasks)
         else:
-          values.add(_get_value(value, all_tasks, dependencies, unique_keys))
+          values.add(_get_value(value, all_tasks, dependencies, unique_keys, pending_tasks))
       self.args_dict[param_names[-1]] = values
 
     for name, value in specs.kwargs.items():
       if isinstance(value, List):
         values = set()
-        _get_values_from_list(value, values, all_tasks, dependencies, unique_keys)
+        _get_values_from_list(value, values, all_tasks, dependencies, unique_keys, pending_tasks)
         self.args_dict[name] = values
       else:
-        self.args_dict[name] = _get_value(value, all_tasks, dependencies, unique_keys)
+        self.args_dict[name] = _get_value(value, all_tasks, dependencies, unique_keys, pending_tasks)
 
   def _from_task(self, task: TaskState, all_tasks: dict[Key, Task | DataNode]):
     self.key: Key = task.key
@@ -154,23 +160,24 @@ type Value = GeneratedValue | ReadyValue | RawValue
 def _get_value(
   obj: Any, all_tasks: dict[Key, Task | DataNode],
   dependencies: dict[Key, Task | DataNode | Alias | Any],
-  unique_keys: dict[Key, Key]
+  unique_keys: dict[Key, Key],
+  pending_tasks: list[tuple[Key, Task]]
 ) -> Value:
   """Given a parameter value creates a suitable representation for it. If the
   value comes from another task, returns a `GeneratedValue`, otherwise returns
   a `ReadyValue`."""
 
   if isinstance(obj, TaskRef):
-    key = unique_keys.get(obj.key, obj.key)
     task = None
-    if key in dependencies:
-      task = dependencies[key]
+    if obj.key in dependencies:
+      task = dependencies[obj.key]
     else:
+      key = unique_keys.get(obj.key, obj.key)
       task = all_tasks[key]
       # Sometimes key is unique and task.key isn't, but they refer to the same task
       if task.key not in unique_keys and are_equal_keys(task.key, key):
         unique_keys[task.key] = key
-    return _get_value(task, all_tasks, dependencies, unique_keys)
+    return _get_value(task, all_tasks, dependencies, unique_keys, pending_tasks)
   elif isinstance(obj, Alias):
     target = unique_keys.get(obj.target, obj.target)
     task = None
@@ -178,25 +185,18 @@ def _get_value(
       task = dependencies[target]
     else:
       task = all_tasks[target]
-    return _get_value(task, all_tasks, dependencies, unique_keys)
+    return _get_value(task, all_tasks, dependencies, unique_keys, pending_tasks)
   elif isinstance(obj, Task):
-    if obj.key is None:
-      # The task is:
-      # <Task None _identity_cast(Alias(t), typ=<class 'list'>)>
-      # t is a task who's also among the dependencies of this task
-      target: Key = obj.args[0].target
-      target = unique_keys.get(target, target)
-      task = None
-      if target in dependencies:
-        task = dependencies[target]
-      else:
-        task = all_tasks[target]
-      return _get_value(task, all_tasks, dependencies, unique_keys)
-    else:
-      key = unique_keys.get(obj.key, obj.key)
-      if str(key).startswith(('__dask')):
-        pass
+    key = unique_keys.get(obj.key, obj.key)
+    if obj.key in dependencies or key in all_tasks:
       return GeneratedValue(str(key))
+    else:
+      # Create a new key and later register the new task
+      func_name = obj.func.__name__
+      new_key = f'{func_name}-{uuid4()}'
+      new_task = Task(new_key, obj.func, *obj.args, **obj.kwargs)
+      pending_tasks.append((new_key, new_task))
+      return GeneratedValue(str(new_key))
   elif isinstance(obj, DataNode):
     if obj.key in all_tasks:
       return ReadyValue(str(obj.key), obj.value)
@@ -208,15 +208,16 @@ def _get_value(
 def _get_values_from_list(
   obj: Any, items: set, all_tasks: dict[Key, Task | DataNode],
   dependencies: dict[Key, Task | DataNode | Alias | Any],
-  unique_keys: dict[Key, Key]
+  unique_keys: dict[Key, Key],
+  pending_tasks: list[tuple[Key, Task]]
 ):
   """Recursively takes all items from a list and its sublists"""
 
   if not isinstance(obj, List):
-    items.add(_get_value(obj, all_tasks, dependencies, unique_keys))
+    items.add(_get_value(obj, all_tasks, dependencies, unique_keys, pending_tasks))
   else:
     for item in obj:
-      _get_values_from_list(item, items, all_tasks, dependencies, unique_keys)
+      _get_values_from_list(item, items, all_tasks, dependencies, unique_keys, pending_tasks)
 
 def make_unique_key(parent: Key, child: Key) -> Key:
   """Takes the key of a task `child` which has been started by `parent`, i.e.
