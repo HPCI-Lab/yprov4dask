@@ -4,7 +4,10 @@ from prov_tracking import ProvTracker
 
 if __name__ == '__main__':
   client = Client()
-  plugin = ProvTracker(destination = 'prov_netcdf.json', format = 'json', indent = 2, rich_types = True)
+  plugin = ProvTracker(
+    name = 'test_netcdf', destination = './output',
+    keep_traceback=True, rich_types=True
+  )
   client.register_plugin(plugin)
   plugin.start(client.scheduler)
 

@@ -1,16 +1,24 @@
+from datetime import datetime
 from typing import Any
-from dask.task_spec import DataNode, Task, Alias
-from dask.typing import Key
+from dask.task_spec import DataNode
 from distributed.scheduler import TaskState
 
-import prov.model as prov
-from prov_tracking.utils import RunnableTaskInfo, GeneratedValue, ReadyValue
+from prov_tracking.utils import GeneratedValue, ReadyValue, Value
+from prov_tracking.task_info import RunnableTaskInfo
+from yprov4wfs.datamodel.workflow import Workflow
+from yprov4wfs.datamodel.data import Data
+from yprov4wfs.datamodel.task import Task
+from uuid import uuid4
 
-def _sanitize(string: str):
+def _sanitize(string: str) -> str:
+  """Given a string, returns a new string without `(`, `)`, `\\` and with
+  `,` substituted by `_`."""
+
   return string.replace('(', '').replace(')', '').replace('\'', '').replace(', ', '_')
-  return string
 
-def _serialize_value(obj):
+def _serialize_value(obj: Any) -> str:
+  """Ginen an object, serializes it as a string."""
+
   if isinstance(obj, str):
     return obj
   elif isinstance(obj, (list, tuple)):
@@ -24,7 +32,10 @@ def _serialize_value(obj):
   else:
     return str(obj)
 
-def _type(obj) -> str:
+def _type(obj: Any) -> str:
+  """Given and object, returns a string representing its type. The string is
+  richer than that produced by simply calling `str(type(obj))`."""
+
   if isinstance(obj, list):
     if len(obj) == 0:
       return 'list[()]'
@@ -48,165 +59,189 @@ def _type(obj) -> str:
     
 
 class Documenter:
-  def __init__(self, **kwargs):
-    self.document = prov.ProvDocument()
-    self.document.set_default_namespace('dask-prov.dict')
-    self.format = kwargs.pop('format', 'json')
-    self.destination = kwargs.pop('destination', './provenance.json')
+  """Handles the creation of entities and activities associated with tasks."""
+
+  def __init__(self, name: str, **kwargs):
+    """Additional arguments:
+    - `destination: str`: folder in which to save the serialized provenance document.
+    A `yprov4wfs.json` is created into that directory.
+    - `rich_types: bool`: tells if datatypes of values such be richer, e.g. for
+    tuples, track the type of each element instead of just saying that the value
+    is a tuple. Defaults to `False`.
+    """
+    
+    self.destination: str = kwargs.pop('destination', './output')
     self.rich_types: bool = kwargs.pop('rich_types', False)
-    self.kwargs: dict[str, Any] = kwargs
 
-  def register_non_runnable_task(self, task_id: Key, task: DataNode):
-    """Non-runnable tasks are registered as entity as they are in fact just data"""
+    self.workflow = Workflow(id = str(uuid4()), name=name)
+    self.workflow._num_tasks = 0
+    self.workflow._engineWMS = 'dask'
+    self.workflow._start_time = datetime.now()
+    self.data = {}
+    self.tasks = {}
 
-    key = _sanitize(str(task_id))
-    self.document.entity(
-      identifier=task_id,
-      other_attributes={
-        'value': _serialize_value(task.value),
-        'dtype': str(type(task.typ)) if not self.rich_types else _type(task.typ)
+  def register_data(self, datanode: DataNode):
+    """Non-runnable tasks are registered as entities as they are in fact just data"""
+    
+    data_id = _sanitize(str(datanode.key))
+    data = Data(id=data_id, name=data_id)
+    data.type = str(type(datanode.typ)) if not self.rich_types else _type(datanode.typ)
+    data._info = {
+      'value': _serialize_value(datanode.value),
+      'dtype': data.type
+    }
+
+    self.workflow.add_data(data)
+    self.data[data_id] = data
+
+  def _register_task_param(self, task_id: str, name: str, param: Value) -> tuple[str, str]:
+    """Registers the param name for activity `activity_id` according to its
+    value. If it is a `ReadyValue`, an entity is created for the parameter and
+    the pair `(name, key)` is returned, with `key` being the identifier of the
+    created entity. If instead param is a `GeneratedValue`, the returned pair
+    has the identifier of the entity that represents the return value of the
+    generator activity.
+    """
+    param_id = None
+    if isinstance(param, ReadyValue):
+      param_id = _sanitize(param.key)
+    elif isinstance(param, GeneratedValue):
+      param_id = f'{_sanitize(param.generatedBy)}.return_value'
+    else:
+      param_id = f'{task_id}.{name}'
+      data = Data(id=param_id, name=param_id)
+      data.type = str(type(param.value)) if not self.rich_types else _type(param.value)
+      data._info = {
+        'value': _serialize_value(param.value),
+        'dtype': data.type
       }
-    )
+      self.workflow.add_data(data)
+      self.data[param_id] = data
+      
+    return (name, param_id)
 
-  def register_runnable_task(self, info: RunnableTaskInfo) -> str:
-    """Runnble tasks are registered as activities. Parameters to the task are
-    registered as entities linked to the activity via used relations. All
-    runnable dependencies of the task are registered via communication relations."""
+  def register_task_dependencies(self, info: RunnableTaskInfo):
+    """Parameters to the task are registered as entities linked to the activity
+    via used relations. All runnable dependencies of the task are registered via
+    communication relations."""
+    task_id = _sanitize(str(info.key))
+    task = self.tasks[task_id]
 
-    activity_id = _sanitize(str(info.key))
+    used_params = []
+    for name, param in info.args_dict.items():
+      if not isinstance(param, set):
+        used_params.append(self._register_task_param(task._id, name, param))
+      else:
+        for value in param:
+          used_params.append(self._register_task_param(task._id, name, value))
+    for name, data_id in used_params:
+      try:
+        data: Data = self.data[data_id]
+        data.add_consumer(task)
+        task.add_input(data)
+        self.workflow.add_input(data)
+      except Exception as e:
+        print(f'Missing data_id for {info.key}(.., {name}=..): {e}')
+    try:
+      for informant_key in info.informants:
+        informant_id = _sanitize(str(informant_key))
+        informant_task: Task = self.tasks[informant_id]
+        task.add_prev(informant_task)
+        informant_task.add_next(task)
+    except Exception as e:
+      print(f'Missing informant_id for {info.key}: {e}')
+  
+  def register_task(self, info: RunnableTaskInfo) -> Task:
+    """Runnble tasks are registered as activities and their returned values as
+    entities. No other info is recorded here. For registering dependencies see
+    `Documenter.register_task_dependencies`"""
+
+    task_id = _sanitize(str(info.key))
     attributes = {
-      'name': str(info.func),
-      'module': info.func.__module__,
       'group': info.group,
+      'module': info.func.__module__,
+      'name': str(info.func),
     }
     if hasattr(info.func, '__name__'):
       attributes['nice_name'] = info.func.__name__
-
-    self.document.activity(
-      identifier=activity_id,
-      startTime=info.start_time,
-      endTime=info.finish_time,
-      other_attributes=attributes
-    )
-
-    # Records the used parameters
-    used_params = []
-    for name, param in info.args_dict.items():
-      if isinstance(param, ReadyValue):
-        key = f'{activity_id}.{name}'
-        self.document.entity(
-          identifier=key,
-          other_attributes={
-            'value': _serialize_value(param.value),
-            'dtype': str(type(param.value)) if not self.rich_types else _type(param.value)
-          }
-        )
-        used_params.append((name, key))
-      else:
-        key = f'{_sanitize(param.generatedBy)}.return_value'
-        used_params.append((name, key))
-    for name, key in used_params:
-      self.document.used(
-        activity=activity_id,
-        entity=key,
-        time=info.start_time,
-        other_attributes={
-          'as_parameter': name
-        }
-      )
+    task = Task(id=task_id, name=task_id)
+    task._info = attributes
+    if task_id not in self.tasks:
+      self.workflow.add_task(task)
+      self.tasks[task_id] = task
+      result_id = f'{task._id}.return_value'
+      result = Data(id=result_id, name=result_id)
+      result.set_producer(task)
+      task.add_output(result)
+      self.workflow.add_data(result)
+      self.workflow.add_output(result)
+      self.data[result_id] = result
     
-    # Register all dependencies of this task
-    for dep in info.dependencies:
-      key = _sanitize(str(dep))
-      self.document.wasInformedBy(informed=activity_id, informant=key)
+    return task
 
-    for dep in info.other_dependencies:
-      key = _sanitize(str(dep))
-      self.document.used(
-        entity=key,
-        activity=activity_id,
-        time=info.start_time
-      )
-
-    return activity_id
-
-  def register_successful_task(
-    self, info: RunnableTaskInfo, dtype: type, nbytes: int
+  def register_task_success(
+    self, info: RunnableTaskInfo, dtype: str | None, nbytes: int | None
   ):
-    """Registers the successful completion of a runnble task that has produced
-    some value"""
+    """Registers the successful completion of a runnble tasks and the value that
+    the task produced."""
 
-    activity_id = self.register_runnable_task(info)
+    task_id = _sanitize(str(info.key))
+    task: Task = self.tasks[task_id]
+    task._status = 'success'
+    task._start_time = info.start_time
+    task._end_time = info.finish_time
 
     # Records the value generated by this funcion
-    key = f'{activity_id}.return_value'
-    self.document.entity(
-      identifier=key,
-      other_attributes={
+    result = task._outputs[0] # Tasks always have exactly one output
+    attributes = {}
+    if dtype is not None and nbytes is not None:
+      attributes = {
         'dtype': dtype,
         'nbytes': str(nbytes)
-      }
-    )
-    self.document.wasGeneratedBy(
-      entity=key,
-      activity=activity_id,
-      time=info.finish_time
-    )
-
-  def register_failed_task(
-    self, info: RunnableTaskInfo, exception_text: str, traceback: str | None,
-    blamed_task: TaskState | None
-  ):
-    """Registers the failed completion of a runnble task that has terminated
-    with an exception"""
-
-    activity_id = self.register_runnable_task(info)
-    key = f'{activity_id}.return_value'
-    attributes = {
-      'is_error': True,
-      'exception_text': exception_text,
     }
-    if traceback is not None:
-      attributes['traceback'] = traceback
-    if blamed_task is not None and blamed_task.key != activity_id:
-      other_task_id = _sanitize(str(blamed_task.key))
-      attributes['blamed_task'] = other_task_id
-      self.document.wasInformedBy(informed=activity_id, informant=other_task_id)
+    result._info = attributes
 
-    self.document.entity(
-      identifier=key,
-      other_attributes=attributes
-    )
-    self.document.wasGeneratedBy(
-      entity=key, activity=activity_id, time=info.finish_time
-    )
+  def register_task_failure(
+    self, info: RunnableTaskInfo, exception_text: str | None,
+    traceback: str | None, blamed_task: TaskState | None
+  ):
+    """Registers the failed completion of some runnble tasks and records the
+    exception they raised."""
 
-  def register_alias(self, task: TaskState, target_task: TaskState):
-    task_id = _sanitize(str(task.key))
-    target_id = _sanitize(str(target_task.key))
-    self.document.activity(
-      identifier=task_id,
-    )
-    self.document.wasInformedBy(
-      informed=task_id,
-      informant=target_id
-    )
+    task_id = _sanitize(str(info.key))
+    task: Task = self.tasks[task_id]
+    task._status = 'failure'
+    task._start_time = info.start_time
+    task._end_time = info.finish_time
 
-  def serialize(self, destination=None, format=None, **kwargs: dict[str, Any]):
-    """
-    Serializes the provenance document into `destination`, or returns the
-    serialized string if no destination was provided. The format used is `format`,
-    or the default format provided on initialization if the parameter here is
-    `None`.
-    """
+    # Records the value generated by this funcion
+    result = task._outputs[0] # Tasks always have exactly one output
+    attributes = {}  
+    attributes: dict[str, Any] = {
+      'is_error': True,
+    }
+    if exception_text is not None:
+      attributes['exception_text'] = exception_text
+    
+      if traceback is not None:
+        attributes['traceback'] = traceback
+      if blamed_task is not None and blamed_task.key != task._id:
+        other_task_id = _sanitize(str(blamed_task.key))
+        attributes['blamed_task'] = other_task_id
+    result._info = attributes
 
-    if format is None and self.format is not None:
-      format = self.format
+  def terminate(self):
+    self.workflow._end_time = datetime.now()
+    inputs = set(self.workflow._inputs)
+    outputs = set(self.workflow._outputs)
+    wf_inputs = inputs - outputs
+    wf_outputs = outputs - inputs
+    self.workflow._inputs = list(wf_inputs)
+    self.workflow._outputs = list(wf_outputs)
+
+  def serialize(self, destination=None):
+    """Serializes the provenance document into `destination`."""
+
     if destination is None and self.destination is not None:
       destination = self.destination
-    if len(kwargs) == 0:
-      kwargs = self.kwargs
-
-    return self.document.serialize(
-      destination=destination, format=format, **kwargs
-    )
+    self.workflow.prov_to_json(directory_path=destination)
