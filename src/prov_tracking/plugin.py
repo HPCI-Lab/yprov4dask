@@ -38,7 +38,6 @@ class ProvTracker(SchedulerPlugin):
     # the task that executes _execute_subgraph. That task info are not actually
     # saved, jusst its children.
     self.macro_tasks: dict[Key, list[Key]] = {}
-    self.erred_tasks: dict[Key, Task | DataNode] = {}
     # For each macro task keeps the dictionary used to translate non-unique keys
     # info unique ones.
     self.unique_keys: dict[Key, dict[Key, Key]] = {}
@@ -112,7 +111,6 @@ class ProvTracker(SchedulerPlugin):
         # document
         now = dt.datetime.now()
         for sub_key in self.macro_tasks[key][:-1]:
-          self.erred_tasks[sub_key] = self.all_tasks[sub_key]
           info = self.all_runnables[sub_key]
           info.finish_time = now
           self.documenter.register_task_failure(info, None, None, None)
