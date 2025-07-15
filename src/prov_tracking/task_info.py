@@ -65,6 +65,13 @@ class RunnableTaskInfo:
       else:
         self.args_dict[name] = get_value(value, all_tasks, dependencies, unique_keys, pending_tasks, self.key)
 
+    if str(self.key).startswith('finalize'):
+      pass
     for v in self.args_dict.values():
-      if isinstance(v, GeneratedValue):
-        self.informants.append(v.generatedBy)
+      if isinstance(v, set):
+        for item in v:
+          if isinstance(item, GeneratedValue):
+            self.informants.append(item.generatedBy)
+      else:
+        if isinstance(v, GeneratedValue):
+          self.informants.append(v.generatedBy)

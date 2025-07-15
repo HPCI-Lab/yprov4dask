@@ -3,7 +3,7 @@ from dask.order import order
 from dask.task_spec import DataNode, Task, TaskRef, Alias
 from dask.typing import Key
 from distributed.diagnostics.plugin import SchedulerPlugin
-from distributed.scheduler import Scheduler, TaskStateState as SchedulerTaskState
+from distributed.scheduler import Scheduler, TaskState, TaskStateState as SchedulerTaskState
 from prov_tracking.documenter import Documenter
 from prov_tracking.utils import make_unique_key
 from prov_tracking.task_info import RunnableTaskInfo
@@ -56,6 +56,11 @@ class ProvTracker(SchedulerPlugin):
       # Here tasks are seen in reverse dependency order, i.e. tasks with no
       # dependencies are seen before tasks which depend on them
       if start == 'waiting' and key not in self.registered_tasks:
+        if finish == 'released' and not ProvTracker._has_erred_dep(task):
+          # Ignore this task as one of its dependent tasks has failed and
+          # hence this will no longer be executed
+          return
+
         self.registered_tasks.add(key)
         if isinstance(task.run_spec, DataNode):
           self.all_tasks[key] = task.run_spec
@@ -70,8 +75,10 @@ class ProvTracker(SchedulerPlugin):
         else:
           target = cast(Alias, task.run_spec).target
           self.all_tasks[key] = self.all_tasks[target]
-
+          
       elif start == 'processing' and key in self.macro_tasks:
+        if str(key).startswith(('finalize', '(\'rechunk-merge-rechunk-split-store-map')):
+          pass
         now = dt.datetime.now()
         specs = cast(Task, task.run_spec)
         infos = self._track_task(key, task.group_key, specs)
@@ -85,6 +92,8 @@ class ProvTracker(SchedulerPlugin):
           self.documenter.register_task_dependencies(info)
 
       elif start == 'memory' and key in self.macro_tasks:
+        if str(key).startswith(('finalize', '(\'rechunk-merge-rechunk-split-store-map')):
+          pass
         now = dt.datetime.now()
         for sub_key in self.macro_tasks[key][:-1]:
           info = self.all_runnables[sub_key]
@@ -97,11 +106,10 @@ class ProvTracker(SchedulerPlugin):
         self.documenter.register_task_success(info, dtype, nbytes)
         self.macro_tasks.pop(key) # Avoid registering two times the same activity
 
-      elif start == 'erred' and key in self.macro_tasks:
+      elif (start == 'erred' or finish == 'erred') and key in self.macro_tasks:
         # It's impossible to detect what task has failed, so if this macro task
         # has many sub-tasks, all are represented as erroneous in the provenance
         # document
-
         now = dt.datetime.now()
         for sub_key in self.macro_tasks[key][:-1]:
           self.erred_tasks[sub_key] = self.all_tasks[sub_key]
@@ -117,7 +125,6 @@ class ProvTracker(SchedulerPlugin):
         if self.keep_traceback:
           traceback = task.traceback_text
         self.documenter.register_task_failure(info, text, traceback, blamed_task)
-        self.macro_tasks.pop(key)
 
         # When an exception occurs, the plugin is closed before it has the chance
         # to detect the erred task and register its information. So, if the plugin
@@ -365,3 +372,7 @@ class ProvTracker(SchedulerPlugin):
           )
           infos[new_key] = info
     return infos
+
+  @staticmethod
+  def _has_erred_dep(task: TaskState) -> bool:
+    return any((dep.state == 'erred') for dep in task.dependencies)
