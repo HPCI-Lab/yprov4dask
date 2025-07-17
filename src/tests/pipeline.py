@@ -1,17 +1,8 @@
 from dask.distributed import Client
 from prov_tracking import ProvTracker
 
-def _id(x):
-  return x
-
-def inc(i):
-  return i + 1
-
 def add(a, b):
-  c = []
-  for i in a[0]:
-    c.append(i + b)
-  return c
+  return a + b
 
 if __name__ == "__main__":
   client = Client()
@@ -22,9 +13,9 @@ if __name__ == "__main__":
   client.register_plugin(plugin) 
   plugin.start(client.scheduler)
 
-  x = client.submit(_id, 1)
-  y = client.submit(inc, x)
-  z = client.submit(add, [[y, x]], 10)
+  x = client.submit(add, 1, 1)
+  y = client.submit(add, x, 1)
+  z = client.submit(add, y, 1)
   print(z.result())
 
   client.close()

@@ -5,7 +5,6 @@ from dask.typing import Key
 
 from prov_tracking.utils import GeneratedValue, Value, get_value, get_values_from_list
 
-
 class RunnableTaskInfo:
   """Container class holding info about a runnable task."""
 
