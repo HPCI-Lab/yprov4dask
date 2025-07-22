@@ -4,115 +4,88 @@
         "yprov4wfs": "http://example.org"
     },
     "activity": {
-        "a944fac9-405c-46a9-a02b-028ce670e7f0": {
-            "prov:startTime": "2025-07-22 09:18:54.474894",
-            "prov:endTime": "2025-07-22 09:18:54.961410",
-            "prov:label": "multi_super",
-            "prov:type": "prov:Activity",
-            "yprov4wfs:level": "None",
-            "yprov4wfs:engine": "dask",
-            "yprov4wfs:status": "None"
-        },
-        "inc-fa3b626ca8ebb9e9d7722cd9148f66c3": {
-            "prov:startTime": "2025-07-22 09:18:54.516387",
-            "prov:endTime": "2025-07-22 09:18:54.592454",
-            "prov:label": "inc-fa3b626ca8ebb9e9d7722cd9148f66c3",
+        "inc-1": {
+            "prov:startTime": "2025-07-22 11:50:57.789996",
+            "prov:endTime": "2025-07-22 11:50:57.810623",
+            "prov:label": "inc-1",
             "prov:type": "prov:Activity",
             "yprov4wfs:status": "success",
             "yprov4wfs:level": "None",
             "yprov4wfs:group": "inc",
             "yprov4wfs:module": "__main__",
-            "yprov4wfs:name": "<function inc at 0x7fc8446f4180>",
+            "yprov4wfs:name": "<function inc at 0x7fcc6da54c20>",
             "yprov4wfs:nice_name": "inc"
         },
-        "inc-54b65c8bd66ab9a89b85c543f7e0058c": {
-            "prov:startTime": "2025-07-22 09:18:54.528705",
-            "prov:endTime": "2025-07-22 09:18:54.592593",
-            "prov:label": "inc-54b65c8bd66ab9a89b85c543f7e0058c",
+        "inc-2": {
+            "prov:startTime": "2025-07-22 11:50:57.792080",
+            "prov:endTime": "2025-07-22 11:50:57.810453",
+            "prov:label": "inc-2",
             "prov:type": "prov:Activity",
             "yprov4wfs:status": "success",
             "yprov4wfs:level": "None",
             "yprov4wfs:group": "inc",
             "yprov4wfs:module": "__main__",
-            "yprov4wfs:name": "<function inc at 0x7fc84d0a22a0>",
+            "yprov4wfs:name": "<function inc at 0x7fcc6da545e0>",
             "yprov4wfs:nice_name": "inc"
         },
-        "square-15ad2040adb58f2c36c02b0d4518655d": {
-            "prov:startTime": "2025-07-22 09:18:54.535898",
-            "prov:endTime": "2025-07-22 09:18:54.591800",
-            "prov:label": "square-15ad2040adb58f2c36c02b0d4518655d",
-            "prov:type": "prov:Activity",
-            "yprov4wfs:status": "success",
-            "yprov4wfs:level": "None",
-            "yprov4wfs:group": "square",
-            "yprov4wfs:module": "__main__",
-            "yprov4wfs:name": "<function square at 0x7fc8446f5120>",
-            "yprov4wfs:nice_name": "square"
-        },
-        "square-bc8b7895cd4489f92dcbb86a9c7cef93": {
-            "prov:startTime": "2025-07-22 09:18:54.541244",
-            "prov:endTime": "2025-07-22 09:18:54.592750",
-            "prov:label": "square-bc8b7895cd4489f92dcbb86a9c7cef93",
-            "prov:type": "prov:Activity",
-            "yprov4wfs:status": "success",
-            "yprov4wfs:level": "None",
-            "yprov4wfs:group": "square",
-            "yprov4wfs:module": "__main__",
-            "yprov4wfs:name": "<function square at 0x7fc84790b7e0>",
-            "yprov4wfs:nice_name": "square"
-        },
-        "add-9fb185e7bddb23b7cdb636078afc2afb": {
-            "prov:startTime": "2025-07-22 09:18:54.568135",
-            "prov:endTime": "2025-07-22 09:18:54.592074",
-            "prov:label": "add-9fb185e7bddb23b7cdb636078afc2afb",
+        "add": {
+            "prov:startTime": "2025-07-22 11:50:57.801219",
+            "prov:endTime": "2025-07-22 11:50:57.810560",
+            "prov:label": "add",
             "prov:type": "prov:Activity",
             "yprov4wfs:status": "success",
             "yprov4wfs:level": "None",
             "yprov4wfs:group": "add",
             "yprov4wfs:module": "__main__",
-            "yprov4wfs:name": "<function add at 0x7fc84790b880>",
+            "yprov4wfs:name": "<function add at 0x7fcc6da54680>",
             "yprov4wfs:nice_name": "add"
+        },
+        "square": {
+            "prov:startTime": "2025-07-22 11:50:57.799595",
+            "prov:endTime": "2025-07-22 11:50:57.810507",
+            "prov:label": "square",
+            "prov:type": "prov:Activity",
+            "yprov4wfs:status": "success",
+            "yprov4wfs:level": "None",
+            "yprov4wfs:group": "square",
+            "yprov4wfs:module": "__main__",
+            "yprov4wfs:name": "<function square at 0x7fcc6da54e00>",
+            "yprov4wfs:nice_name": "square"
         }
     },
     "entity": {
-        "inc-fa3b626ca8ebb9e9d7722cd9148f66c3.a": {
-            "prov:label": "inc-fa3b626ca8ebb9e9d7722cd9148f66c3.a",
-            "prov:type": "prov:Entity",
-            "yprov4wfs:value": "1",
-            "yprov4wfs:dtype": "int"
-        },
-        "inc-54b65c8bd66ab9a89b85c543f7e0058c.a": {
-            "prov:label": "inc-54b65c8bd66ab9a89b85c543f7e0058c.a",
+        "inc-2.a": {
+            "prov:label": "inc-2.a",
             "prov:type": "prov:Entity",
             "yprov4wfs:value": "2",
             "yprov4wfs:dtype": "int"
         },
-        "add-9fb185e7bddb23b7cdb636078afc2afb.return_value": {
-            "prov:label": "add-9fb185e7bddb23b7cdb636078afc2afb.return_value",
+        "inc-1.a": {
+            "prov:label": "inc-1.a",
+            "prov:type": "prov:Entity",
+            "yprov4wfs:value": "1",
+            "yprov4wfs:dtype": "int"
+        },
+        "square.return_value": {
+            "prov:label": "square.return_value",
             "prov:type": "prov:Entity",
             "yprov4wfs:dtype": "int",
             "yprov4wfs:nbytes": "28"
         },
-        "inc-fa3b626ca8ebb9e9d7722cd9148f66c3.return_value": {
-            "prov:label": "inc-fa3b626ca8ebb9e9d7722cd9148f66c3.return_value",
+        "add.return_value": {
+            "prov:label": "add.return_value",
             "prov:type": "prov:Entity",
             "yprov4wfs:dtype": "int",
             "yprov4wfs:nbytes": "28"
         },
-        "inc-54b65c8bd66ab9a89b85c543f7e0058c.return_value": {
-            "prov:label": "inc-54b65c8bd66ab9a89b85c543f7e0058c.return_value",
+        "inc-1.return_value": {
+            "prov:label": "inc-1.return_value",
             "prov:type": "prov:Entity",
             "yprov4wfs:dtype": "int",
             "yprov4wfs:nbytes": "28"
         },
-        "square-15ad2040adb58f2c36c02b0d4518655d.return_value": {
-            "prov:label": "square-15ad2040adb58f2c36c02b0d4518655d.return_value",
-            "prov:type": "prov:Entity",
-            "yprov4wfs:dtype": "int",
-            "yprov4wfs:nbytes": "28"
-        },
-        "square-bc8b7895cd4489f92dcbb86a9c7cef93.return_value": {
-            "prov:label": "square-bc8b7895cd4489f92dcbb86a9c7cef93.return_value",
+        "inc-2.return_value": {
+            "prov:label": "inc-2.return_value",
             "prov:type": "prov:Entity",
             "yprov4wfs:dtype": "int",
             "yprov4wfs:nbytes": "28"
@@ -120,100 +93,60 @@
     },
     "agent": {},
     "used": {
-        "1fdd79d6-6970-4fdf-bf74-275f87c3bebb": {
-            "prov:activity": "a944fac9-405c-46a9-a02b-028ce670e7f0",
-            "prov:entity": "inc-fa3b626ca8ebb9e9d7722cd9148f66c3.a"
+        "e7d8eca0-7d87-4bc8-877d-ff7a3b25cc9c": {
+            "prov:activity": "inc-1",
+            "prov:entity": "inc-1.a"
         },
-        "10c7496f-fc60-46ca-9d67-3a6867371134": {
-            "prov:activity": "a944fac9-405c-46a9-a02b-028ce670e7f0",
-            "prov:entity": "inc-54b65c8bd66ab9a89b85c543f7e0058c.a"
+        "3c4521be-b429-47db-a4e0-6f04d208aebd": {
+            "prov:activity": "inc-2",
+            "prov:entity": "inc-2.a"
         },
-        "57a2d6bc-1f65-4da3-b615-6b716c17fa12": {
-            "prov:activity": "inc-fa3b626ca8ebb9e9d7722cd9148f66c3",
-            "prov:entity": "inc-fa3b626ca8ebb9e9d7722cd9148f66c3.a"
+        "a6c7d1e6-2f16-4281-b70e-712a6df25e27": {
+            "prov:activity": "add",
+            "prov:entity": "inc-1.return_value"
         },
-        "272063d8-c87f-4fa3-a57f-ab6070d3436d": {
-            "prov:activity": "inc-54b65c8bd66ab9a89b85c543f7e0058c",
-            "prov:entity": "inc-54b65c8bd66ab9a89b85c543f7e0058c.a"
+        "1b9f34dc-6150-44a0-9ac0-9accd0684fb8": {
+            "prov:activity": "add",
+            "prov:entity": "inc-2.return_value"
         },
-        "7d9fb707-f4dc-42d7-acc1-e3812cba3766": {
-            "prov:activity": "square-15ad2040adb58f2c36c02b0d4518655d",
-            "prov:entity": "inc-fa3b626ca8ebb9e9d7722cd9148f66c3.return_value"
-        },
-        "71cc7eae-b99e-42ed-9051-581eadcedfc4": {
-            "prov:activity": "square-bc8b7895cd4489f92dcbb86a9c7cef93",
-            "prov:entity": "inc-54b65c8bd66ab9a89b85c543f7e0058c.return_value"
-        },
-        "e341895e-f9b8-4bb7-a9d2-3a2c04d85c95": {
-            "prov:activity": "add-9fb185e7bddb23b7cdb636078afc2afb",
-            "prov:entity": "inc-54b65c8bd66ab9a89b85c543f7e0058c.return_value"
-        },
-        "0baefef6-7802-47b2-bd48-e3b3d6cd87f7": {
-            "prov:activity": "add-9fb185e7bddb23b7cdb636078afc2afb",
-            "prov:entity": "square-15ad2040adb58f2c36c02b0d4518655d.return_value"
-        },
-        "34dbec40-a966-4f68-a5d6-9172149729c2": {
-            "prov:activity": "add-9fb185e7bddb23b7cdb636078afc2afb",
-            "prov:entity": "inc-fa3b626ca8ebb9e9d7722cd9148f66c3.return_value"
-        },
-        "8658b383-0c10-4893-955a-c3c3e455ab86": {
-            "prov:activity": "add-9fb185e7bddb23b7cdb636078afc2afb",
-            "prov:entity": "square-bc8b7895cd4489f92dcbb86a9c7cef93.return_value"
+        "4183d806-3818-4830-9f5b-6604f76215a1": {
+            "prov:activity": "square",
+            "prov:entity": "inc-2.return_value"
         }
     },
     "wasGeneratedBy": {
-        "fd751312-0d26-48b4-bd01-1e4926f11c94": {
-            "prov:entity": "add-9fb185e7bddb23b7cdb636078afc2afb.return_value",
-            "prov:activity": "a944fac9-405c-46a9-a02b-028ce670e7f0"
+        "dc4c7a13-05e7-4f4e-98b9-5a3293d63555": {
+            "prov:entity": "inc-1.return_value",
+            "prov:activity": "inc-1"
         },
-        "3201ae53-ec1c-4430-a161-df457def708f": {
-            "prov:entity": "inc-fa3b626ca8ebb9e9d7722cd9148f66c3.return_value",
-            "prov:activity": "inc-fa3b626ca8ebb9e9d7722cd9148f66c3"
+        "96159c40-5f5d-44d3-9a73-02d1d33eb0b2": {
+            "prov:entity": "inc-2.return_value",
+            "prov:activity": "inc-2"
         },
-        "1da83a8b-fef3-42da-bc74-8b37d156ef91": {
-            "prov:entity": "inc-54b65c8bd66ab9a89b85c543f7e0058c.return_value",
-            "prov:activity": "inc-54b65c8bd66ab9a89b85c543f7e0058c"
+        "4a6ee172-c36c-4f33-a5a7-84418bbf56ec": {
+            "prov:entity": "add.return_value",
+            "prov:activity": "add"
         },
-        "4c0be05f-1548-4fea-8852-0ea2b5b36662": {
-            "prov:entity": "square-15ad2040adb58f2c36c02b0d4518655d.return_value",
-            "prov:activity": "square-15ad2040adb58f2c36c02b0d4518655d"
-        },
-        "f834debf-69d4-4a14-b4bd-1d0b0569f002": {
-            "prov:entity": "square-bc8b7895cd4489f92dcbb86a9c7cef93.return_value",
-            "prov:activity": "square-bc8b7895cd4489f92dcbb86a9c7cef93"
-        },
-        "06c506d2-48c0-4b2c-9c4c-849692187240": {
-            "prov:entity": "add-9fb185e7bddb23b7cdb636078afc2afb.return_value",
-            "prov:activity": "add-9fb185e7bddb23b7cdb636078afc2afb"
+        "462ddfd5-d710-46a4-bb34-86fa1b4a413c": {
+            "prov:entity": "square.return_value",
+            "prov:activity": "square"
         }
     },
     "wasAssociatedWith": {},
     "wasAttributedTo": {},
     "actedOnBehalfOf": {},
     "wasInformedBy": {
-        "311c772b-6673-45d2-bea6-c6b6b3ea573a": {
-            "prov:informed": "square-15ad2040adb58f2c36c02b0d4518655d",
-            "prov:informant": "inc-fa3b626ca8ebb9e9d7722cd9148f66c3"
+        "1eff7d3f-95e1-438b-b7a7-a6f4133a476e": {
+            "prov:informed": "add",
+            "prov:informant": "inc-1"
         },
-        "388de7dd-e652-4d7d-a766-42bf7989d376": {
-            "prov:informed": "add-9fb185e7bddb23b7cdb636078afc2afb",
-            "prov:informant": "inc-fa3b626ca8ebb9e9d7722cd9148f66c3"
+        "9674dcb4-682c-42cb-90ca-3cb93385115d": {
+            "prov:informed": "square",
+            "prov:informant": "inc-2"
         },
-        "ac069b10-00ee-4b7d-bfdf-bc9ca104a85e": {
-            "prov:informed": "square-bc8b7895cd4489f92dcbb86a9c7cef93",
-            "prov:informant": "inc-54b65c8bd66ab9a89b85c543f7e0058c"
-        },
-        "b30dba39-2ff0-4cb7-bef0-524f73d47456": {
-            "prov:informed": "add-9fb185e7bddb23b7cdb636078afc2afb",
-            "prov:informant": "inc-54b65c8bd66ab9a89b85c543f7e0058c"
-        },
-        "4891838a-e27d-459d-a77c-29e2dde8d270": {
-            "prov:informed": "add-9fb185e7bddb23b7cdb636078afc2afb",
-            "prov:informant": "square-15ad2040adb58f2c36c02b0d4518655d"
-        },
-        "5106f2f5-6927-4577-abd6-be507449e6df": {
-            "prov:informed": "add-9fb185e7bddb23b7cdb636078afc2afb",
-            "prov:informant": "square-bc8b7895cd4489f92dcbb86a9c7cef93"
+        "96b697da-2684-4e69-a77a-ae2e63e0a043": {
+            "prov:informed": "add",
+            "prov:informant": "inc-2"
         }
     }
 }

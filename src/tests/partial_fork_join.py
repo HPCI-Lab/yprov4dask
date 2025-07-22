@@ -13,15 +13,17 @@ def square(a):
 if __name__ == "__main__":
   client = Client()
   plugin = ProvTracker(
-    name = 'super', destination = './output',
+    name = 'partial_fork_join', destination = './output',
     keep_traceback=True, rich_types=True
   )
   client.register_plugin(plugin) 
   plugin.start(client.scheduler)
 
   x = client.submit(inc, 1)
-  y = client.submit(square, x)
+  y = client.submit(inc, 2)
   z = client.submit(add, x, y)
-  print(z.result())
+  w = client.submit(square, y)
+  
+  print(f'z = {z.result()}, w = {w.result()}')
 
   client.close()

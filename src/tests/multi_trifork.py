@@ -13,7 +13,7 @@ def square(a):
 if __name__ == "__main__":
   client = Client()
   plugin = ProvTracker(
-    name = 'multi_super', destination = './output',
+    name = 'multi_trifork', destination = './output',
     keep_traceback=True, rich_types=True
   )
   client.register_plugin(plugin) 
