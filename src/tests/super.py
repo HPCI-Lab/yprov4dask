@@ -7,18 +7,21 @@ def inc(a):
 def add(a, b):
   return a + b
 
+def square(a):
+  return a * a
+
 if __name__ == "__main__":
   client = Client()
   plugin = ProvTracker(
-    name = 'join', destination = './output',
+    name = 'super', destination = './output',
     keep_traceback=True, rich_types=True
   )
   client.register_plugin(plugin) 
   plugin.start(client.scheduler)
 
   x = client.submit(inc, 1)
-  y = client.submit(add, x, 2)
-  z = client.submit(add, x, 3)
+  y = client.submit(square, x)
+  z = client.submit(add, x, y)
   print(z.result())
 
   client.close()
