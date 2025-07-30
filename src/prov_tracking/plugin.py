@@ -76,8 +76,6 @@ class ProvTracker(SchedulerPlugin):
           self.all_tasks[key] = self.all_tasks[target]
           
       elif start == 'processing' and key in self.macro_tasks:
-        if str(key).startswith(('finalize', '(\'rechunk-merge-rechunk-split-store-map')):
-          pass
         now = dt.datetime.now()
         specs = cast(Task, task.run_spec)
         infos = self._track_task(key, task.group_key, specs)
@@ -91,8 +89,6 @@ class ProvTracker(SchedulerPlugin):
           self.documenter.register_task_dependencies(info)
 
       elif start == 'memory' and key in self.macro_tasks:
-        if str(key).startswith(('finalize', '(\'rechunk-merge-rechunk-split-store-map')):
-          pass
         now = dt.datetime.now()
         for sub_key in self.macro_tasks[key][:-1]:
           info = self.all_runnables[sub_key]
