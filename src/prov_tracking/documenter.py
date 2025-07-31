@@ -74,9 +74,6 @@ class Documenter:
     self.rich_types: bool = kwargs.pop('rich_types', False)
 
     self.workflow = Workflow(id = str(uuid4()), name=name)
-    self.workflow._num_tasks = 0
-    self.workflow._engineWMS = 'dask'
-    self.workflow._start_time = datetime.now()
     self.data = {}
     self.tasks = {}
 
@@ -139,7 +136,6 @@ class Documenter:
         data: Data = self.data[data_id]
         data.add_consumer(task)
         task.add_input(data)
-        self.workflow.add_input(data)
       except Exception as e:
         print(f'Missing data_id for {info.key}(.., {name}=..): {e}')
     try:
@@ -174,7 +170,6 @@ class Documenter:
       result.set_producer(task)
       task.add_output(result)
       self.workflow.add_data(result)
-      self.workflow.add_output(result)
       self.data[result_id] = result
     
     return task
@@ -229,15 +224,6 @@ class Documenter:
         other_task_id = _sanitize(str(blamed_task.key))
         attributes['blamed_task'] = other_task_id
     result._info = attributes
-
-  def terminate(self):
-    self.workflow._end_time = datetime.now()
-    inputs = set(self.workflow._inputs)
-    outputs = set(self.workflow._outputs)
-    wf_inputs = inputs - outputs
-    wf_outputs = outputs - inputs
-    self.workflow._inputs = list(wf_inputs)
-    self.workflow._outputs = list(wf_outputs)
 
   def serialize(self, destination=None):
     """Serializes the provenance document into `destination`."""

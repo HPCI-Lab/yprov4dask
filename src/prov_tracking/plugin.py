@@ -36,7 +36,7 @@ class ProvTracker(SchedulerPlugin):
     self.all_runnables: dict[Key, RunnableTaskInfo] = {}
     # Tasks executed within _execute_subgraph are saved here under the key of
     # the task that executes _execute_subgraph. That task info are not actually
-    # saved, jusst its children.
+    # saved, just its children.
     self.macro_tasks: dict[Key, list[Key]] = {}
     # For each macro task keeps the dictionary used to translate non-unique keys
     # info unique ones.
@@ -130,7 +130,6 @@ class ProvTracker(SchedulerPlugin):
 
   async def close(self):
     self.closed = True
-    self.documenter.terminate()
 
     try:
       self.documenter.serialize()
