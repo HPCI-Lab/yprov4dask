@@ -1,21 +1,11 @@
 from distributed import Client
 from prov_tracking.plugin import ProvTracker
 import xarray as xr
-import math
-
-def bar(x, y):
-  return x - y
-
-def foo(x, y):
-  return x + bar(x, y)
-
-def baz(a, d):
-  return a * d
 
 if __name__ == '__main__':
   client: Client = Client()
   plugin = ProvTracker(
-    name = 'test', destination = './output',
+    destination = './output',
     keep_traceback=True, rich_types=True
   )
   client.register_plugin(plugin)
@@ -37,5 +27,5 @@ if __name__ == '__main__':
   air = ds['air']
   ds_mean = ds.mean(dim = 'time')
   ds_mean = ds_mean.compute()
-  
+
   client.close()

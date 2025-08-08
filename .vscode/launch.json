@@ -8,7 +8,7 @@
             "name": "Python Debugger: Current File",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/src/tests/test.py",
+            "program": "${workspaceFolder}/src/tests/test_netcdf.py",
             //"program": "${workspaceFolder}/../heavy_tests/climate_data_analysis_visualization_and_fairness_in_practice/climate_data_analysis_visualization_and_fairness_in_practice.py",
             "console": "integratedTerminal",
             "justMyCode": false,

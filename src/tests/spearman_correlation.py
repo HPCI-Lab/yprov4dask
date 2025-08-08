@@ -1,5 +1,6 @@
 from dask.distributed import Client
 import xarray as xr
+import bottleneck
 
 if __name__ == "__main__":
   client = Client(n_workers=2, threads_per_worker=2, memory_limit='8GB')
@@ -15,30 +16,12 @@ if __name__ == "__main__":
 
   ds = xr.tutorial.open_dataset(
     'air_temperature',
-    chunks={
-      'lat': 25, 'lon': 25, 'time': -1
-    }
+    chunks={'lat': 25, 'lon': 25, 'time': -1}
   )
-
   da = ds['air']
-  da2 = da.groupby('time.month').mean('time')
-  da3 = da - da2
-  computed_da = da3.compute()
   da = da.persist()
-
-  resampled_da = da.resample(time='1w').mean('time')
-  resampled_da.std('time')
-
-  resampled_da.std('time').plot(figsize=(12, 8))
-
   da_smooth = da.rolling(time=30).mean()
-
-  da.sel(time='2013-01-01T18:00:00')
   da.sel(time='2013-01-01T18:00:00').load()
-
-  import numpy as np
-  import xarray as xr
-  import bottleneck
 
   def covariance_gufunc(x, y):
     return (
@@ -63,9 +46,6 @@ if __name__ == "__main__":
     )
 
   corr = spearman_correlation(
-    da.chunk({'time': -1}),
-    da_smooth.chunk({'time': -1}),
-    'time'
+    da.chunk({'time': -1}), da_smooth.chunk({'time': -1}), 'time'
   )
-
   corr.plot(figsize=(12, 8))

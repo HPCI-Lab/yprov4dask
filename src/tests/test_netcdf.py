@@ -5,7 +5,7 @@ from prov_tracking import ProvTracker
 if __name__ == '__main__':
   client = Client()
   plugin = ProvTracker(
-    name = 'test_netcdf', destination = './output',
+    destination = './output',
     keep_traceback=True, rich_types=True
   )
   client.register_plugin(plugin)
@@ -16,6 +16,7 @@ if __name__ == '__main__':
     'time': -1
   })
   print(ds)
+  print(ds.attrs)
   ds_mean = ds.mean(dim='bnds')
   ds_mean_groups = ds_mean.groupby(group='time.year')
   summed_values = ds_mean_groups.sum()
