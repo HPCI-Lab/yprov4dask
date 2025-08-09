@@ -176,7 +176,7 @@ class ProvTracker(SchedulerPlugin):
 
   async def close(self):
     self.closed = True
-    if self.jupyter_listener is not None:
+    if self.connection is not None and self.connection.closed:
       self.thread_pool.shutdown(wait=False)
       self.connection.send(True)
       self.connection.close()

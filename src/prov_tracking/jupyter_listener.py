@@ -20,9 +20,10 @@ def listen(connection):
     client.load_connection_file()
     socket = client.connect_iopub()
     connection.send(True)
-  except Exception as e:
-    connection.send(False)
-    connection.close()
+  except:
+    if not connection.closed:
+      connection.send(False)
+      connection.close()
     # Terminate the thread
     return
 
