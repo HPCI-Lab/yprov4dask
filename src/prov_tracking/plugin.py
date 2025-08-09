@@ -60,15 +60,15 @@ class ProvTracker(SchedulerPlugin):
     self._scheduler = scheduler
     if self.track_jupyter:
       plugin_end, listener_end = mp.Pipe(duplex=True)
+      self.connection = plugin_end
       self.thread_pool = ThreadPoolExecutor(max_workers=1)
       self.jupyter_listener = self.thread_pool.submit(listen, listener_end)
       resp = plugin_end.recv()
-      if resp:
-        self.connection = plugin_end
-      else:
+      if not resp:
         self.thread_pool.shutdown()
         self.jupyter_listener = None
-        plugin_end.close()
+        self.connection.close()
+        self.track_jupyter = False
         print("""Warning: Jupyter tracking is enabled, but the deamon could not
         be started for some reason. The tracking will proceed as if
         jupyter_tracking was set to False.""")
@@ -95,7 +95,7 @@ class ProvTracker(SchedulerPlugin):
         elif isinstance(task.run_spec, Task):
           # Retrieve Jupyter-related info
           cell_id: int | None = self.last_cell_id
-          if self.jupyter_listener is not None and self.connection.poll():
+          if self.track_jupyter and self.connection.poll():
             cell_id = self.connection.recv()
             while self.connection.poll():
               cell_id = self.connection.recv()
@@ -176,7 +176,7 @@ class ProvTracker(SchedulerPlugin):
 
   async def close(self):
     self.closed = True
-    if self.connection is not None and self.connection.closed:
+    if not self.connection.closed:
       self.thread_pool.shutdown(wait=False)
       self.connection.send(True)
       self.connection.close()
