@@ -1,0 +1,248 @@
+{
+  "prefix": {
+    "default": "http://anotherexample.org/",
+    "yprov4wfs": "http://example.org",
+    "analytics4yprov": "http://example.org"
+  },
+  "entity": {
+    "original-open_dataset-air-3f1df329a711599ff3e0d046481d61be": {
+      "prov:label": "original-open_dataset-air-3f1df329a711599ff3e0d046481d61be",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    },
+    "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_2.b": {
+      "prov:label": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_2.b",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    },
+    "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2.axis": {
+      "prov:label": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2.axis",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    },
+    "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2.keepdims": {
+      "prov:label": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2.keepdims",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    },
+    "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_1.b": {
+      "prov:label": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_1.b",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    },
+    "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1.axis": {
+      "prov:label": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1.axis",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    },
+    "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1.keepdims": {
+      "prov:label": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1.keepdims",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    },
+    "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_0.b": {
+      "prov:label": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_0.b",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    },
+    "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0.axis": {
+      "prov:label": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0.axis",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    },
+    "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0.keepdims": {
+      "prov:label": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0.keepdims",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    },
+    "_identity_cast-b3008516-f939-40a7-8910-d08e21ef5498_0_2.typ": {
+      "prov:label": "_identity_cast-b3008516-f939-40a7-8910-d08e21ef5498_0_2.typ",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    },
+    "_identity_cast-81690852-45d1-4179-8035-bc1e71e6ab49_0_0.typ": {
+      "prov:label": "_identity_cast-81690852-45d1-4179-8035-bc1e71e6ab49_0_0.typ",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    },
+    "_identity_cast-a24f23f2-1de5-4ee2-a4e9-e4ac28109df0_0_1.typ": {
+      "prov:label": "_identity_cast-a24f23f2-1de5-4ee2-a4e9-e4ac28109df0_0_1.typ",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    },
+    "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0.return_value": {
+      "prov:label": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0.return_value",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    },
+    "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2.return_value": {
+      "prov:label": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2.return_value",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    },
+    "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1.return_value": {
+      "prov:label": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1.return_value",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    },
+    "finalize-hlgfinalizecompute-31d0ec441546455d9393e53cd66cb3a4.return_value": {
+      "prov:label": "finalize-hlgfinalizecompute-31d0ec441546455d9393e53cd66cb3a4.return_value",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    }
+  },
+  "activity": {
+    "finalize-hlgfinalizecompute-31d0ec441546455d9393e53cd66cb3a4": {
+      "prov:label": "finalize-hlgfinalizecompute-31d0ec441546455d9393e53cd66cb3a4",
+      "prov:type": "prov:Activity",
+      "analytics4yprov:level": 0
+    },
+    "pipeline_1_0": {
+      "prov:label": "pipeline_1_0",
+      "prov:type": "reduced_pipeline",
+      "analytics4yprov:level": 1,
+      "analytics4yprov:source": "./output/dataset_mean_0.json",
+      "analytics4yprov:aggregates": [
+        "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_2",
+        "_identity_cast-b3008516-f939-40a7-8910-d08e21ef5498_0_2",
+        "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2",
+        "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2"
+      ]
+    },
+    "pipeline_1_1": {
+      "prov:label": "pipeline_1_1",
+      "prov:type": "reduced_pipeline",
+      "analytics4yprov:level": 1,
+      "analytics4yprov:source": "./output/dataset_mean_0.json",
+      "analytics4yprov:aggregates": [
+        "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_1",
+        "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1",
+        "_identity_cast-a24f23f2-1de5-4ee2-a4e9-e4ac28109df0_0_1",
+        "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1"
+      ]
+    },
+    "pipeline_1_2": {
+      "prov:label": "pipeline_1_2",
+      "prov:type": "reduced_pipeline",
+      "analytics4yprov:level": 1,
+      "analytics4yprov:source": "./output/dataset_mean_0.json",
+      "analytics4yprov:aggregates": [
+        "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_0",
+        "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0",
+        "_identity_cast-81690852-45d1-4179-8035-bc1e71e6ab49_0_0",
+        "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0"
+      ]
+    }
+  },
+  "agent": {},
+  "used": {
+    "(34, 35)": {
+      "prov:activity": "finalize-hlgfinalizecompute-31d0ec441546455d9393e53cd66cb3a4",
+      "prov:entity": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0.return_value"
+    },
+    "(34, 36)": {
+      "prov:activity": "finalize-hlgfinalizecompute-31d0ec441546455d9393e53cd66cb3a4",
+      "prov:entity": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2.return_value"
+    },
+    "(34, 37)": {
+      "prov:activity": "finalize-hlgfinalizecompute-31d0ec441546455d9393e53cd66cb3a4",
+      "prov:entity": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1.return_value"
+    },
+    "(39, 1)": {
+      "prov:activity": "pipeline_1_0",
+      "prov:entity": "original-open_dataset-air-3f1df329a711599ff3e0d046481d61be"
+    },
+    "(39, 2)": {
+      "prov:activity": "pipeline_1_0",
+      "prov:entity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_2.b"
+    },
+    "(39, 5)": {
+      "prov:activity": "pipeline_1_0",
+      "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2.axis"
+    },
+    "(39, 6)": {
+      "prov:activity": "pipeline_1_0",
+      "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2.keepdims"
+    },
+    "(39, 27)": {
+      "prov:activity": "pipeline_1_0",
+      "prov:entity": "_identity_cast-b3008516-f939-40a7-8910-d08e21ef5498_0_2.typ"
+    },
+    "(40, 1)": {
+      "prov:activity": "pipeline_1_1",
+      "prov:entity": "original-open_dataset-air-3f1df329a711599ff3e0d046481d61be"
+    },
+    "(40, 10)": {
+      "prov:activity": "pipeline_1_1",
+      "prov:entity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_1.b"
+    },
+    "(40, 13)": {
+      "prov:activity": "pipeline_1_1",
+      "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1.axis"
+    },
+    "(40, 14)": {
+      "prov:activity": "pipeline_1_1",
+      "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1.keepdims"
+    },
+    "(40, 33)": {
+      "prov:activity": "pipeline_1_1",
+      "prov:entity": "_identity_cast-a24f23f2-1de5-4ee2-a4e9-e4ac28109df0_0_1.typ"
+    },
+    "(41, 1)": {
+      "prov:activity": "pipeline_1_2",
+      "prov:entity": "original-open_dataset-air-3f1df329a711599ff3e0d046481d61be"
+    },
+    "(41, 18)": {
+      "prov:activity": "pipeline_1_2",
+      "prov:entity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_0.b"
+    },
+    "(41, 21)": {
+      "prov:activity": "pipeline_1_2",
+      "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0.axis"
+    },
+    "(41, 22)": {
+      "prov:activity": "pipeline_1_2",
+      "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0.keepdims"
+    },
+    "(41, 30)": {
+      "prov:activity": "pipeline_1_2",
+      "prov:entity": "_identity_cast-81690852-45d1-4179-8035-bc1e71e6ab49_0_0.typ"
+    }
+  },
+  "wasGeneratedBy": {
+    "(35, 41)": {
+      "prov:entity": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_0.return_value",
+      "prov:activity": "pipeline_1_2"
+    },
+    "(36, 39)": {
+      "prov:entity": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_2.return_value",
+      "prov:activity": "pipeline_1_0"
+    },
+    "(37, 40)": {
+      "prov:entity": "mean_agg-aggregate-fef5e0f6c2e700ac0b4cbd358b52677b_0_1.return_value",
+      "prov:activity": "pipeline_1_1"
+    },
+    "(38, 34)": {
+      "prov:entity": "finalize-hlgfinalizecompute-31d0ec441546455d9393e53cd66cb3a4.return_value",
+      "prov:activity": "finalize-hlgfinalizecompute-31d0ec441546455d9393e53cd66cb3a4"
+    }
+  },
+  "wasAssociatedWith": {},
+  "wasAttributedTo": {},
+  "actedOnBehalfOf": {},
+  "wasInformedBy": {
+    "(34, 39)": {
+      "prov:informed": "finalize-hlgfinalizecompute-31d0ec441546455d9393e53cd66cb3a4",
+      "prov:informant": "pipeline_1_0"
+    },
+    "(34, 40)": {
+      "prov:informed": "finalize-hlgfinalizecompute-31d0ec441546455d9393e53cd66cb3a4",
+      "prov:informant": "pipeline_1_1"
+    },
+    "(34, 41)": {
+      "prov:informed": "finalize-hlgfinalizecompute-31d0ec441546455d9393e53cd66cb3a4",
+      "prov:informant": "pipeline_1_2"
+    }
+  },
+  "wasDerivedFrom": {}
+}

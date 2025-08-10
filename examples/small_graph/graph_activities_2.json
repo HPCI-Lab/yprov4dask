@@ -1,0 +1,30 @@
+{
+  "prefix": {
+    "default": "http://anotherexample.org/",
+    "yprov4wfs": "http://example.org",
+    "analytics4yprov": "http://example.org"
+  },
+  "entity": {},
+  "activity": {
+    "fork_2_0": {
+      "prov:label": "fork_2_0",
+      "prov:type": "reduced_fork",
+      "analytics4yprov:level": 2,
+      "analytics4yprov:source": "./output/dataset_mean_1.json",
+      "analytics4yprov:aggregates": [
+        "pipeline_1_0",
+        "pipeline_1_1",
+        "pipeline_1_2",
+        "finalize-hlgfinalizecompute-31d0ec441546455d9393e53cd66cb3a4"
+      ]
+    }
+  },
+  "agent": {},
+  "used": {},
+  "wasGeneratedBy": {},
+  "wasAssociatedWith": {},
+  "wasAttributedTo": {},
+  "actedOnBehalfOf": {},
+  "wasInformedBy": {},
+  "wasDerivedFrom": {}
+}

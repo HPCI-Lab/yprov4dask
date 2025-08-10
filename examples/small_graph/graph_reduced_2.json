@@ -1,0 +1,159 @@
+{
+  "prefix": {
+    "default": "http://anotherexample.org/",
+    "yprov4wfs": "http://example.org",
+    "analytics4yprov": "http://example.org"
+  },
+  "entity": {
+    "original-open_dataset-air-3f1df329a711599ff3e0d046481d61be": {
+      "prov:label": "original-open_dataset-air-3f1df329a711599ff3e0d046481d61be",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    },
+    "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_2.b": {
+      "prov:label": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_2.b",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    },
+    "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2.axis": {
+      "prov:label": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2.axis",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    },
+    "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2.keepdims": {
+      "prov:label": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2.keepdims",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    },
+    "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_1.b": {
+      "prov:label": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_1.b",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    },
+    "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1.axis": {
+      "prov:label": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1.axis",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    },
+    "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1.keepdims": {
+      "prov:label": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1.keepdims",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    },
+    "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_0.b": {
+      "prov:label": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_0.b",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    },
+    "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0.axis": {
+      "prov:label": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0.axis",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    },
+    "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0.keepdims": {
+      "prov:label": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0.keepdims",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    },
+    "_identity_cast-b3008516-f939-40a7-8910-d08e21ef5498_0_2.typ": {
+      "prov:label": "_identity_cast-b3008516-f939-40a7-8910-d08e21ef5498_0_2.typ",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    },
+    "_identity_cast-81690852-45d1-4179-8035-bc1e71e6ab49_0_0.typ": {
+      "prov:label": "_identity_cast-81690852-45d1-4179-8035-bc1e71e6ab49_0_0.typ",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    },
+    "_identity_cast-a24f23f2-1de5-4ee2-a4e9-e4ac28109df0_0_1.typ": {
+      "prov:label": "_identity_cast-a24f23f2-1de5-4ee2-a4e9-e4ac28109df0_0_1.typ",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    },
+    "finalize-hlgfinalizecompute-31d0ec441546455d9393e53cd66cb3a4.return_value": {
+      "prov:label": "finalize-hlgfinalizecompute-31d0ec441546455d9393e53cd66cb3a4.return_value",
+      "prov:type": "prov:Entity",
+      "analytics4yprov:level": 0
+    }
+  },
+  "activity": {
+    "fork_2_0": {
+      "prov:label": "fork_2_0",
+      "prov:type": "reduced_fork",
+      "analytics4yprov:level": 2,
+      "analytics4yprov:source": "./output/dataset_mean_1.json",
+      "analytics4yprov:aggregates": [
+        "pipeline_1_0",
+        "pipeline_1_1",
+        "pipeline_1_2",
+        "finalize-hlgfinalizecompute-31d0ec441546455d9393e53cd66cb3a4"
+      ]
+    }
+  },
+  "agent": {},
+  "used": {
+    "(21, 0)": {
+      "prov:activity": "fork_2_0",
+      "prov:entity": "original-open_dataset-air-3f1df329a711599ff3e0d046481d61be"
+    },
+    "(21, 1)": {
+      "prov:activity": "fork_2_0",
+      "prov:entity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_2.b"
+    },
+    "(21, 2)": {
+      "prov:activity": "fork_2_0",
+      "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2.axis"
+    },
+    "(21, 3)": {
+      "prov:activity": "fork_2_0",
+      "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_2.keepdims"
+    },
+    "(21, 10)": {
+      "prov:activity": "fork_2_0",
+      "prov:entity": "_identity_cast-b3008516-f939-40a7-8910-d08e21ef5498_0_2.typ"
+    },
+    "(21, 4)": {
+      "prov:activity": "fork_2_0",
+      "prov:entity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_1.b"
+    },
+    "(21, 5)": {
+      "prov:activity": "fork_2_0",
+      "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1.axis"
+    },
+    "(21, 6)": {
+      "prov:activity": "fork_2_0",
+      "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_1.keepdims"
+    },
+    "(21, 12)": {
+      "prov:activity": "fork_2_0",
+      "prov:entity": "_identity_cast-a24f23f2-1de5-4ee2-a4e9-e4ac28109df0_0_1.typ"
+    },
+    "(21, 7)": {
+      "prov:activity": "fork_2_0",
+      "prov:entity": "open_dataset-air-3f1df329a711599ff3e0d046481d61be_.0_.1_.2_0_0_0.b"
+    },
+    "(21, 8)": {
+      "prov:activity": "fork_2_0",
+      "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0.axis"
+    },
+    "(21, 9)": {
+      "prov:activity": "fork_2_0",
+      "prov:entity": "mean_chunk-200b37f43f5503d86441f14cbafc5eba_0_0_0.keepdims"
+    },
+    "(21, 11)": {
+      "prov:activity": "fork_2_0",
+      "prov:entity": "_identity_cast-81690852-45d1-4179-8035-bc1e71e6ab49_0_0.typ"
+    }
+  },
+  "wasGeneratedBy": {
+    "(17, 21)": {
+      "prov:entity": "finalize-hlgfinalizecompute-31d0ec441546455d9393e53cd66cb3a4.return_value",
+      "prov:activity": "fork_2_0"
+    }
+  },
+  "wasAssociatedWith": {},
+  "wasAttributedTo": {},
+  "actedOnBehalfOf": {},
+  "wasInformedBy": {},
+  "wasDerivedFrom": {}
+}
