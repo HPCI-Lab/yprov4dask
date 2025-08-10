@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import Any
 from dask.task_spec import DataNode
 from distributed.scheduler import TaskState
@@ -63,8 +62,8 @@ class Documenter:
 
   def __init__(self, name: str, **kwargs):
     """Additional arguments:
-    - `destination: str`: folder in which to save the serialized provenance document.
-    A `yprov4wfs.json` is created into that directory.
+    - `destination: str`: folder in which the provenance graph is saved. The file is
+    always named `yprov4wfs.json`. Defaults to `./output`.
     - `rich_types: bool`: tells if datatypes of values such be richer, e.g. for
     tuples, track the type of each element instead of just saying that the value
     is a tuple. Defaults to `False`.
@@ -137,7 +136,7 @@ class Documenter:
         data.add_consumer(task)
         task.add_input(data)
       except Exception as e:
-        print(f'Missing data_id for {info.key}(.., {name}=..): {e}')
+        print(f'Warning: missing data_id for {info.key}(.., {name}=..): {e}')
     try:
       for informant_key in info.informants:
         informant_id = _sanitize(str(informant_key))
@@ -145,7 +144,14 @@ class Documenter:
         task.add_prev(informant_task)
         informant_task.add_next(task)
     except Exception as e:
-      print(f'Missing informant_id for {info.key}: {e}')
+      print(f'Warning: missing informant_id for {info.key}: {e}')
+
+  def register_task_worker(self, info: RunnableTaskInfo):
+    """Registers the worker on which the task was processed."""
+
+    task_id = _sanitize(str(info.key))
+    task = self.tasks[task_id]
+    task._info['processed_on'] = info.processed_on
   
   def register_task(self, info: RunnableTaskInfo) -> Task:
     """Runnble tasks are registered as activities and their returned values as
@@ -154,12 +160,15 @@ class Documenter:
 
     task_id = _sanitize(str(info.key))
     attributes = {
+      'processed_on': info.processed_on,
       'group': info.group,
       'module': info.func.__module__,
       'name': str(info.func),
     }
     if hasattr(info.func, '__name__'):
       attributes['nice_name'] = info.func.__name__
+    if info.jupyter_cell is not None:
+      attributes['jupyter_cell'] = info.jupyter_cell
     task = Task(id=task_id, name=task_id)
     task._info = attributes
     if task_id not in self.tasks:

@@ -7,7 +7,7 @@ def add(a, b):
 if __name__ == "__main__":
   client = Client()
   plugin = ProvTracker(
-    name = 'pipeline', destination = './output',
+    destination = './output',
     keep_traceback=True, rich_types=True
   )
   client.register_plugin(plugin) 

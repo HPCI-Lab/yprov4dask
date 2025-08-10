@@ -17,6 +17,8 @@ class RunnableTaskInfo:
     self.finish_time: datetime | None = None
     self.args_dict: dict[str, Value | set[Value]] = {}
     self.informants: list[Key] = []
+    self.processed_on: str | None = None
+    self.jupyter_cell: int | None = None
 
   def record_dependencies(
     self,
