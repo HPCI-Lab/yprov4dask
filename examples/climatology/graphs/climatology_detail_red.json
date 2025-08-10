@@ -1,0 +1,83 @@
+{
+  "prefix": {
+    "default": "http://anotherexample.org/",
+    "yprov4wfs": "http://example.org",
+    "analytics4yprov": "http://example.org"
+  },
+  "entity": {},
+  "activity": {
+    "open_dataset-tas-fc1793aacd546641349b18f2672f231c_0_1_3": {
+      "prov:label": "open_dataset-tas-fc1793aacd546641349b18f2672f231c_0_1_3",
+      "prov:type": "prov:Activity",
+      "analytics4yprov:level": 0
+    },
+    "sub-d94efa65890a0b76ff93ef7f5a490fdb_1_3": {
+      "prov:label": "sub-d94efa65890a0b76ff93ef7f5a490fdb_1_3",
+      "prov:type": "prov:Activity",
+      "analytics4yprov:level": 0
+    },
+    "finalize-hlgfinalizecompute-742bc095bf3746c0a1766ee33d28234b": {
+      "prov:label": "finalize-hlgfinalizecompute-742bc095bf3746c0a1766ee33d28234b",
+      "prov:type": "prov:Activity",
+      "analytics4yprov:level": 0
+    },
+    "pipeline_1_0": {
+      "prov:label": "pipeline_1_0",
+      "prov:type": "reduced_pipeline",
+      "analytics4yprov:level": 1,
+      "analytics4yprov:source": "./output/portion_0.json",
+      "analytics4yprov:aggregates": [
+        "getitem-f27ec2b4fafbbf0df7d2839ee3746cd4_0_1_3",
+        "mean_chunk-00044ac9fca0fac686acbfe9a42a2092_0_1_3",
+        "mean_agg-aggregate-aa94dee652d4ccfa8e1fa80bcee0efcd_1_3",
+        "_identity_cast-f6e74079-139a-42a4-baf5-d3db98089a6e_1_3",
+        "sub-315a30e86bbf14a57be6f0d484c262be_.1_.0_1_3"
+      ]
+    },
+    "pipeline_1_1": {
+      "prov:label": "pipeline_1_1",
+      "prov:type": "reduced_pipeline",
+      "analytics4yprov:level": 1,
+      "analytics4yprov:source": "./output/portion_0.json",
+      "analytics4yprov:aggregates": [
+        "getitem-dce3eb49cbd9b3be2e2593d68588df32_0_1_3",
+        "getitem-3da54060ed61103184398b9f49331e4d_0_1_3",
+        "mean_chunk-16228e7f4aed7f9fecc371bbc8f7a4b4_0_1_3",
+        "mean_agg-aggregate-e6eaedef04b2cc152b20958d443a9513_1_3",
+        "_identity_cast-bf39bc72-d60f-4503-8c31-a4e0dfe93a86_1_3",
+        "stack-13573408d06c70a0e7bac63aa5fb405a_1_1_3",
+        "sub-2a9ef4e5f943f42fbe8e13b732f356f8_1_1_3",
+        "getitem-d7e3e8c82ec025d111e1e7e152d68782_1_3"
+      ]
+    }
+  },
+  "agent": {},
+  "used": {},
+  "wasGeneratedBy": {},
+  "wasAssociatedWith": {},
+  "wasAttributedTo": {},
+  "actedOnBehalfOf": {},
+  "wasInformedBy": {
+    "(14, 17)": {
+      "prov:informed": "sub-d94efa65890a0b76ff93ef7f5a490fdb_1_3",
+      "prov:informant": "pipeline_1_1"
+    },
+    "(14, 16)": {
+      "prov:informed": "sub-d94efa65890a0b76ff93ef7f5a490fdb_1_3",
+      "prov:informant": "pipeline_1_0"
+    },
+    "(15, 14)": {
+      "prov:informed": "finalize-hlgfinalizecompute-742bc095bf3746c0a1766ee33d28234b",
+      "prov:informant": "sub-d94efa65890a0b76ff93ef7f5a490fdb_1_3"
+    },
+    "(16, 1)": {
+      "prov:informed": "pipeline_1_0",
+      "prov:informant": "open_dataset-tas-fc1793aacd546641349b18f2672f231c_0_1_3"
+    },
+    "(17, 1)": {
+      "prov:informed": "pipeline_1_1",
+      "prov:informant": "open_dataset-tas-fc1793aacd546641349b18f2672f231c_0_1_3"
+    }
+  },
+  "wasDerivedFrom": {}
+}
